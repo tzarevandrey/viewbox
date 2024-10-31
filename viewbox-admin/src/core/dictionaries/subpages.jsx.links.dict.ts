@@ -1,16 +1,16 @@
 import { FC } from 'react';
 import { Subpage } from '../enums/subpages.enum';
-import { Viewpoint } from '../../components/viewpoints/viewpoint.page';
-import { ViewpointEdit } from '../../components/viewpoints/viewpoint.edit.page';
-import { ViewpointCreate } from '../../components/viewpoints/viewpoint.create.page';
-import { Playlist } from '../../components/playlists/playlist.page';
-import { PlaylistEdit } from '../../components/playlists/playlist.edit.page';
-import { PlaylistCreate } from '../../components/playlists/playlist.create.page';
-import { Content } from '../../components/contents/content.page';
-import { ContentEdit } from '../../components/contents/content.edit.page';
-import { Group } from '../../components/groups/group.page';
-import { GroupEdit } from '../../components/groups/group.edit.page';
-import { JournalDetails } from '../../components/journal/journal-details.page';
+import { Viewpoint } from '../../components/pages/viewpoints/viewpoint.page';
+import { ViewpointEdit } from '../../components/pages/viewpoints/viewpoint.edit.page';
+import { ViewpointCreate } from '../../components/pages/viewpoints/viewpoint.create.page';
+import { Playlist } from '../../components/pages/playlists/playlist.page';
+import { PlaylistEdit } from '../../components/pages/playlists/playlist.edit.page';
+import { PlaylistCreate } from '../../components/pages/playlists/playlist.create.page';
+import { Content } from '../../components/pages/contents/content.page';
+import { ContentEdit } from '../../components/pages/contents/content.edit.page';
+import { Group } from '../../components/pages/groups/group.page';
+import { GroupEdit } from '../../components/pages/groups/group.edit.page';
+import { JournalDetails } from '../../components/pages/journal/journal-details.page';
 
 export const SUBPAGES_JSX_LINKS: { page: Subpage, Jsx: FC, link: string }[] = [
   {

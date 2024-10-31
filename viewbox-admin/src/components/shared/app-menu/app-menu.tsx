@@ -1,7 +1,7 @@
 import { Menu, MenuProps } from "antd";
-import { Page } from '../../core/enums/pages.enum';
-import { PAGES_MENU_NAMES } from '../../core/dictionaries/pages.menu-names.dict';
-import { PAGES_JSX_LINKS } from '../../core/dictionaries/pages.jsx.links.dict';
+import { Page } from '../../../core/enums/pages.enum';
+import { PAGES_MENU_NAMES } from '../../../core/dictionaries/pages.menu-names.dict';
+import { PAGES_JSX_LINKS } from '../../../core/dictionaries/pages.jsx.links.dict';
 import { useNavigate } from 'react-router-dom';
 import { useEffect } from 'react';
 

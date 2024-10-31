@@ -1,16 +1,16 @@
 import { BrowserRouter, Route, Routes } from 'react-router-dom';
 import { useAppDispatch, useAuth } from './hooks';
 import './app.css';
-import { AppMenu } from './components/app-menu/app-menu';
-import { Loading } from './components/loading/loading.page';
-import { Error } from './components/error/error.page';
+import { AppMenu } from './components/shared/app-menu/app-menu';
+import { Loading } from './components/shared/loading/loading.page';
+import { Error } from './components/shared/error/error.page';
 import { ROLES_PAGES } from './core/dictionaries/roles.pages.dict';
 import { Page } from './core/enums/pages.enum';
 import { Subpage } from './core/enums/subpages.enum';
 import { Functional } from './core/enums/functional.enum';
 import { PAGES_JSX_LINKS } from './core/dictionaries/pages.jsx.links.dict';
 import { SUBPAGES_JSX_LINKS } from './core/dictionaries/subpages.jsx.links.dict';
-import { BasePage } from './components/base-page/base.page';
+import { BasePage } from './components/shared/base-page/base.page';
 import { setAuth } from './reducers/user.slice';
 import { useEffect } from 'react';
 

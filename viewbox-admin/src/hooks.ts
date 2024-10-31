@@ -14,3 +14,8 @@ export const useAuth = (): { isLoading: boolean, isError: boolean, data: TAuthRe
   } = useGetAuthQuery(0);
   return { isLoading, isError, data };
 }
+
+export const useTitle = (title: string) => {
+  const element = document.getElementById('title-field');
+  if (element) element.innerText = title;
+}
