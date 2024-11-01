@@ -7,9 +7,9 @@ export const viewpointsApi = api.injectEndpoints({
     getAllViewpoints: builder.query<TGetViewpointDTO[], any>({
       query: () => ({
         url: '/viewpoints',
-        method: 'get'
+        method: 'get',
       }),
-      providesTags: (res) => queryTags(`${Api.Viewpoints}`, res)
+      providesTags: (result) => queryTags(`${Api.Viewpoints}`, result || [])
     }),
 
   }),

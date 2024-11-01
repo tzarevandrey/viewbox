@@ -10,7 +10,7 @@ type TProps = {
 
 export const Playlists = ({ subpages, functionals }: TProps) => {
   const dispatch = useAppDispatch();
-  dispatch(setTitle('Панели воспроизведения'));
+  dispatch(setTitle('Списки воспроизведения'));
   return (
     <></>
   )

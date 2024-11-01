@@ -54,12 +54,12 @@ function App() {
                       const item = PAGES_JSX_LINKS.find(x => x.page === pageItem.page);
                       if (item) {
                         return (
-                          <Route path={item.link} element={<BasePage Jsx={item.Jsx} subpages={pageItem.subpages} functionals={pageItem.functionals} />} key={pageItem.page}>
+                          <Route path={item.link} element={<BasePage Jsx={item.Jsx} token={data.token} subpages={pageItem.subpages} functionals={pageItem.functionals} />} key={pageItem.page}>
                             {pageItem.subpages.map(subpageItem => {
                               const subItem = SUBPAGES_JSX_LINKS.find(x => x.page === +subpageItem);
                               if (subItem) {
                                 return (
-                                  <Route path={subItem.link} element={<BasePage Jsx={subItem.Jsx} functionals={pageItem.functionals} />} key={subItem.page} />
+                                  <Route path={subItem.link} element={<BasePage Jsx={subItem.Jsx} token={data.token} functionals={pageItem.functionals} />} key={subItem.page} />
                                 )
                               } else return null;
                             })}

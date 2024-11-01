@@ -6,13 +6,18 @@ import { ViewpointCreateDto } from './dto/viewpoints.create.dto';
 @Injectable()
 export class ViewpointsService {
 
-    constructor(
-        @InjectModel(Viewpoint) private viewpointRepository: typeof Viewpoint
-    ) {}
+  constructor(
+    @InjectModel(Viewpoint) private viewpointRepository: typeof Viewpoint
+  ) { }
 
-    async addViewpoint(dto: ViewpointCreateDto) {
-        const viewpoint = await this.viewpointRepository.create(dto);
-        return viewpoint;
-    }
+  async addViewpoint(dto: ViewpointCreateDto) {
+    const viewpoint = await this.viewpointRepository.create(dto);
+    return viewpoint;
+  }
+
+  async getAll() {
+    const viewpoints = await this.viewpointRepository.findAll();
+    return viewpoints;
+  }
 
 }

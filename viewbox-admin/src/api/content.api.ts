@@ -1,17 +1,17 @@
 import { api } from "./api";
 
 export const contentApi = api.injectEndpoints({
-    endpoints: (builder) => ({
-        getAllContent: builder.query({
-            query: () => ({
-                url: '/content/test',
-                method: 'get'
-            }),
-        }),
+  endpoints: (builder) => ({
+    getAllContent: builder.query({
+      query: () => ({
+        url: '/content/test',
+        method: 'get'
+      }),
     }),
-    overrideExisting: false
+  }),
+  overrideExisting: false
 })
 
 export const {
-    useGetAllContentQuery,
+  useGetAllContentQuery,
 } = contentApi;
