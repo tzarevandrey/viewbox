@@ -13,7 +13,7 @@ export const api0 = createApi({
 
 export const authApi = api0.injectEndpoints({
   endpoints: (builder) => ({
-    getAuth: builder.query<TAuthResponseDto, {}>({
+    getAuth: builder.query<TAuthResponseDto, any>({
       query: () => ({
         url: '/login',
         method: 'get'
