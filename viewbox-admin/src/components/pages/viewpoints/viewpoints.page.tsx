@@ -31,9 +31,7 @@ export const Viewpoints = ({ subpages, functionals }: TProps) => {
     </Card>
   )
   if (isError) return (
-    <Card>
-      <ViewpointsErrorCard />
-    </Card>
+    <ViewpointsErrorCard />
   )
   return (
     <Flex wrap gap='small'>

@@ -24,7 +24,7 @@ export const BasePage = ({ Jsx, token, subpages, functionals }: TProps) => {
     )
   } else {
     return (
-      <Flex vertical>
+      <Flex vertical style={{ width: '100%' }}>
         <TitleElement />
         <Jsx token={token} subpages={subpages} functionals={functionals} />
       </Flex>

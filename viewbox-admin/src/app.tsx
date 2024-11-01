@@ -13,6 +13,7 @@ import { SUBPAGES_JSX_LINKS } from './core/dictionaries/subpages.jsx.links.dict'
 import { BasePage } from './components/shared/base-page/base.page';
 import { setAuth } from './reducers/user.slice';
 import { useEffect } from 'react';
+import { BaseModal } from './components/shared/base-modal/base.modal';
 
 function App() {
   const dispatch = useAppDispatch();
@@ -48,6 +49,7 @@ function App() {
             ? (
               <div className='app-container'>
                 <AppMenu pages={pages.map(x => x.page)} />
+                <BaseModal />
                 <div className='page-container'>
                   <Routes>
                     {pages.map(pageItem => {
