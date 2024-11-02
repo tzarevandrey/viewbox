@@ -2,6 +2,7 @@ import { Card, Form, Input } from 'antd';
 import { Functional } from '../../../core/enums/functional.enum';
 import { useAppDispatch } from '../../../hooks';
 import { setTitle } from '../../../reducers/title.slice';
+import TextArea from 'antd/es/input/TextArea';
 
 type TProps = {
   functionals?: Functional[];
@@ -16,9 +17,18 @@ export const ViewpointCreate = ({ functionals }: TProps) => {
         <Form.Item
           label='Наименование'
           name='name'
-          rules={[{ required: true }]}
+          rules={[
+            { required: true, message: 'Наименование обязательно' },
+            { min: 3, message: 'Не менее 3 символов' }
+          ]}
         >
-          <Input />
+          <Input autoComplete='off' />
+        </Form.Item>
+        <Form.Item
+          label='Описание'
+          name='description'
+        >
+          <TextArea rows={8} autoComplete='off' />
         </Form.Item>
       </Form>
     </Card>
