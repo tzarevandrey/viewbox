@@ -16,6 +16,7 @@ export const useAuth = (): { isLoading: boolean, isError: boolean, data: TAuthRe
 }
 
 export const useTitle = (title: string) => {
+  document.title = `Viewbox - ${title}`
   const element = document.getElementById('title-field');
   if (element) element.innerText = title;
 }

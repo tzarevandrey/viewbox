@@ -2,7 +2,7 @@ import { FC } from 'react';
 import { Subpage } from '../enums/subpages.enum';
 import { Viewpoint } from '../../components/pages/viewpoints/viewpoint.page';
 import { ViewpointEdit } from '../../components/pages/viewpoints/viewpoint.edit.page';
-import { ViewpointCreate } from '../../components/pages/viewpoints/viewpoint.create.page';
+import { ViewpointCreate } from '../../components/pages/viewpoints/viewpoint.create.modal';
 import { Playlist } from '../../components/pages/playlists/playlist.page';
 import { PlaylistEdit } from '../../components/pages/playlists/playlist.edit.page';
 import { PlaylistCreate } from '../../components/pages/playlists/playlist.create.page';

@@ -12,7 +12,6 @@ export const BaseModal = () => {
       footer={null}
       closable={false}
       centered
-      title={'null'}
     >
       {Element !== null && <Element />}
     </Modal>

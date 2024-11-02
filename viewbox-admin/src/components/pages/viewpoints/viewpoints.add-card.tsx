@@ -2,7 +2,7 @@ import { PlusCircleOutlined } from '@ant-design/icons'
 import { Card, Popover } from 'antd'
 import { useAppDispatch } from '../../../hooks'
 import { openModal } from '../../../reducers/modal.slice';
-import { TestPage } from '../../shared/test.page';
+import { ViewpointCreate } from './viewpoint.create.modal';
 
 export const ViewpointsAddCard = () => {
   const dispatch = useAppDispatch();
@@ -11,7 +11,7 @@ export const ViewpointsAddCard = () => {
       <Card
         hoverable
         className='viewpoints-card'
-        onClick={() => dispatch(openModal(TestPage))}
+        onClick={() => dispatch(openModal(ViewpointCreate))}
       >
         <PlusCircleOutlined className='viewpoint-card__icon_big item_add' />
       </Card>

@@ -10,7 +10,6 @@ export class ViewpointsController {
 
   @Get()
   async getAll() {
-    // throw new HttpException([], HttpStatus.BAD_REQUEST)
     return await this.viewpointsService.getAll();
   }
 }
