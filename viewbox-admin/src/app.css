@@ -35,3 +35,8 @@
 .item_add {
   color: lightblue;
 }
+
+.buttons-block {
+  justify-content: end;
+  gap: 10px;
+}

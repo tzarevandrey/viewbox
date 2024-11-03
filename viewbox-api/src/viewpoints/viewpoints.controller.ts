@@ -1,4 +1,4 @@
-import { Controller, Get, HttpException, HttpStatus, UseGuards } from '@nestjs/common';
+import { Controller, Get, UseGuards } from '@nestjs/common';
 import { ViewpointsService } from './viewpoints.service';
 import { JwtAuthGuard } from 'src/auth/jwt.auth.guard';
 
@@ -12,4 +12,5 @@ export class ViewpointsController {
   async getAll() {
     return await this.viewpointsService.getAll();
   }
+
 }
