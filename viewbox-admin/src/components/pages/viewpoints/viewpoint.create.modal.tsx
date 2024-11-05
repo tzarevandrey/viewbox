@@ -4,17 +4,21 @@ import { setTitle } from '../../../reducers/title.slice';
 import TextArea from 'antd/es/input/TextArea';
 import { useGetAllPlaylistsQuery } from '../../../api/playlists.api';
 import { closeModal } from '../../../reducers/modal.slice';
-import { useAddVewpointMutation } from '../../../api/viewpoints.api';
+import { useAddViewpointMutation } from '../../../api/viewpoints.api';
+import { useEffect } from 'react';
 
 export const ViewpointCreate = () => {
   const dispatch = useAppDispatch();
-  dispatch(setTitle('Панели воспроизведения'));
+  useEffect(() => {
+    dispatch(setTitle('Новая панель воспроизведения'))
+    // eslint-disable-next-line
+  }, [])
   const {
     data,
     isLoading,
     isError
   } = useGetAllPlaylistsQuery(null);
-  const [addViewpoint] = useAddVewpointMutation();
+  const [addViewpoint] = useAddViewpointMutation();
   return (
     <Card title='Новая панель воспроизведения'>
       <Form

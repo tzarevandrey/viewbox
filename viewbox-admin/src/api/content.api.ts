@@ -11,6 +11,15 @@ export const contentApi = api.injectEndpoints({
       }),
       providesTags: (result) => result ? queryTags(`${Api.Contents}`, result) : []
     }),
+    addContent: builder.mutation({
+      query: (body) => ({
+        url: '',
+        method: 'post',
+        body
+      }),
+      invalidatesTags: (result, error) => error ? [] : [`${Api.Contents}`]
+    }),
+
   }),
   overrideExisting: false
 })

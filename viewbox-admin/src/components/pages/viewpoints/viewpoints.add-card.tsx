@@ -7,10 +7,10 @@ import { ViewpointCreate } from './viewpoint.create.modal';
 export const ViewpointsAddCard = () => {
   const dispatch = useAppDispatch();
   return (
-    <Popover content='Создать панель воспроизведения'>
+    <Popover content='Добавить панель воспроизведения'>
       <Card
         hoverable
-        className='viewpoints-card'
+        className='viewpoints-card card-only-icon'
         onClick={() => dispatch(openModal(ViewpointCreate))}
       >
         <PlusCircleOutlined className='viewpoint-card__icon_big item_add' />

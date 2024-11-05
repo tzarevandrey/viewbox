@@ -9,11 +9,12 @@ type TProps = {
 }
 
 export const ViewpointsCard = ({ viewpoint, isDetailed = false }: TProps) => {
-  const navigate = useNavigate()
+  const navigate = useNavigate();
   return (
     <Card
       hoverable={isDetailed}
-      onClick={() => navigate(`viewpoints/${viewpoint.id}`)}
+      onClick={() => { if (isDetailed) navigate(`viewpoints/${viewpoint.id}`) }}
+      className='viewpoints-card'
     >
       <Meta title={viewpoint.name} description={viewpoint.description} />
     </Card>

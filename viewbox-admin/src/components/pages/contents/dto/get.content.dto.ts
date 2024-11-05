@@ -6,5 +6,5 @@ export type TGetContentDto = {
   description?: string;
   itemId: number;
   name: string;
-  originalName?: string;
+  lastUpdated: Date;
 }
