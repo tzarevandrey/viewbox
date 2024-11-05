@@ -16,7 +16,7 @@ export class Viewpoint extends Model<Viewpoint, ViewpointCreationAttr> {
     @Column({type: DataType.STRING, allowNull: false})
     name: string;
 
-    @Column({type: DataType.STRING, allowNull: true})
+    @Column({type: DataType.TEXT, allowNull: true})
     description: string | null;
 
     @Column({type: DataType.INTEGER, allowNull: true})

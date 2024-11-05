@@ -3,7 +3,6 @@ import { api } from "./api/api";
 import { userReducer } from "./reducers/user.slice";
 import { api0 } from "./api/auth-api";
 import { titleReducer } from "./reducers/title.slice";
-import rtkQueryLogger from './middleware/rtkQueryLogger';
 import { modalReducer } from "./reducers/modal.slice";
 
 const store = configureStore({
@@ -15,7 +14,7 @@ const store = configureStore({
     modal: modalReducer,
   },
   middleware: (getDefaultMiddleware) =>
-    getDefaultMiddleware({ serializableCheck: false }).concat(api0.middleware).concat(api.middleware).concat(rtkQueryLogger)
+    getDefaultMiddleware({ serializableCheck: false }).concat(api0.middleware).concat(api.middleware)
 })
 
 export default store;

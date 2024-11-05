@@ -1,15 +1,12 @@
 import { Button, Card, Flex, Form, Input, Select } from 'antd';
-import { Functional } from '../../../core/enums/functional.enum';
 import { useAppDispatch } from '../../../hooks';
 import { setTitle } from '../../../reducers/title.slice';
 import TextArea from 'antd/es/input/TextArea';
 import { useGetAllPlaylistsQuery } from '../../../api/playlists.api';
+import { closeModal } from '../../../reducers/modal.slice';
+import { useAddVewpointMutation } from '../../../api/viewpoints.api';
 
-type TProps = {
-  functionals?: Functional[];
-}
-
-export const ViewpointCreate = ({ functionals }: TProps) => {
+export const ViewpointCreate = () => {
   const dispatch = useAppDispatch();
   dispatch(setTitle('Панели воспроизведения'));
   const {
@@ -17,15 +14,24 @@ export const ViewpointCreate = ({ functionals }: TProps) => {
     isLoading,
     isError
   } = useGetAllPlaylistsQuery(null);
+  const [addViewpoint] = useAddVewpointMutation();
   return (
     <Card title='Новая панель воспроизведения'>
-      <Form layout='vertical' onFinish={(e) => { console.log(e) }} onReset={() => { console.log('cancellation') }}>
+      <Form
+        layout='vertical'
+        onFinish={(values) => {
+          addViewpoint(values);
+          dispatch(closeModal());
+        }}
+        onReset={() => dispatch(closeModal())}
+      >
         <Form.Item
           label='Наименование'
           name='name'
           rules={[
             { required: true, message: 'Наименование обязательно' },
-            { min: 3, message: 'Не менее 3 символов' }
+            { min: 3, message: 'Не менее 3 символов' },
+            { max: 255, message: 'Не более 255 символов' }
           ]}
         >
           <Input autoComplete='off' />

@@ -35,12 +35,15 @@ export const Viewpoints = ({ subpages, functionals }: TProps) => {
   )
   return (
     <Flex wrap gap='small'>
-      {data ? data.map(vps => (
+      {data ? data.sort((a, b) => {
+        if (a.name > b.name) return 1;
+        if (a.name < b.name) return -1;
+        return 0;
+      }).map(vps => (
         <ViewpointsCard
+          key={vps.id}
           viewpoint={vps}
           isDetailed={subpages?.includes(Subpage.ViewpointView)}
-          isEdited={subpages?.includes(Subpage.ViewpointEdit)}
-          isDeleted={functionals?.includes(Functional.Delete)}
         />
       )) : null}
       {functionals?.includes(Functional.Add) ? (

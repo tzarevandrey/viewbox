@@ -16,7 +16,7 @@ export class PlaylistItem extends Model<PlaylistItem> {
     @BelongsTo(() => ContentItem, 'contentItemId')
     contentItem: ContentItem;
 
-    @Column({type: DataType.SMALLINT, allowNull: false, primaryKey: true})
+    @Column({type: DataType.SMALLINT, allowNull: false})
     position: number;
 
     @Column({type: DataType.INTEGER, allowNull: true})

@@ -1,14 +1,17 @@
 import ReactDOM from 'react-dom/client';
 import './index.css';
 import App from './app';
-import {Provider} from 'react-redux';
+import { Provider } from 'react-redux';
 import store from './store';
+import { SnackbarProvider } from 'notistack';
 
 const root = ReactDOM.createRoot(
   document.getElementById('root') as HTMLElement
 );
 root.render(
-    <Provider store={store}>
+  <Provider store={store}>
+    <SnackbarProvider maxSnack={3}>
       <App />
-    </Provider>
+    </SnackbarProvider>
+  </Provider>
 );

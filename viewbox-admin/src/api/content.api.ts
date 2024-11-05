@@ -1,12 +1,15 @@
-import { api } from "./api";
+import { TGetContentDto } from "../components/pages/contents/dto/get.content.dto";
+import { Api } from "../core/enums/api.enum";
+import { api, queryTags } from "./api";
 
 export const contentApi = api.injectEndpoints({
   endpoints: (builder) => ({
-    getAllContent: builder.query({
+    getAllContent: builder.query<TGetContentDto[], any>({
       query: () => ({
-        url: '/content/test',
+        url: '/content',
         method: 'get'
       }),
+      providesTags: (result) => result ? queryTags(`${Api.Contents}`, result) : []
     }),
   }),
   overrideExisting: false

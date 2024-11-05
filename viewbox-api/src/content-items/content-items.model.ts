@@ -15,7 +15,7 @@ export class ContentItem extends Model<ContentItem> {
     @Column({type: DataType.SMALLINT, allowNull: false})
     contentType: ContentType;
 
-    @Column({type: DataType.STRING, allowNull: true})
+    @Column({type: DataType.TEXT, allowNull: true})
     description: string | null;
 
     @HasOne(() => ImageItem)
