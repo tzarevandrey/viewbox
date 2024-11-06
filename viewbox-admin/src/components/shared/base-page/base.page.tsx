@@ -7,13 +7,12 @@ import { Flex } from 'antd';
 import { TitleElement } from './title.element';
 
 type TProps = {
-  Jsx: FC<{ token: string, subpages?: Subpage[], functionals?: Functional[] }>;
-  token: string;
+  Jsx: FC<{ subpages?: Subpage[], functionals?: Functional[] }>;
   subpages?: Subpage[];
   functionals?: Functional[];
 }
 
-export const BasePage = ({ Jsx, token, subpages, functionals }: TProps) => {
+export const BasePage = ({ Jsx, subpages, functionals }: TProps) => {
   const {
     expired
   } = useAppSelector(x => x.user);
@@ -26,7 +25,7 @@ export const BasePage = ({ Jsx, token, subpages, functionals }: TProps) => {
     return (
       <Flex vertical style={{ width: '100%', overflowY: 'auto' }}>
         <TitleElement />
-        <Jsx token={token} subpages={subpages} functionals={functionals} />
+        <Jsx subpages={subpages} functionals={functionals} />
       </Flex>
     )
   }

@@ -11,15 +11,15 @@ export const PAGES_JSX_LINKS: { page: Page, Jsx: FC, link: string }[] = [
     page: Page.Viewpoints, Jsx: Viewpoints, link: '/'
   },
   {
-    page: Page.Playlists, Jsx: Playlists, link: 'playlists'
+    page: Page.Playlists, Jsx: Playlists, link: '/playlists'
   },
   {
-    page: Page.Contents, Jsx: Contents, link: 'contents'
+    page: Page.Contents, Jsx: Contents, link: '/contents'
   },
   {
-    page: Page.Groups, Jsx: Groups, link: 'groups'
+    page: Page.Groups, Jsx: Groups, link: '/groups'
   },
   {
-    page: Page.Journal, Jsx: Journal, link: 'journal'
+    page: Page.Journal, Jsx: Journal, link: '/journal'
   },
 ]

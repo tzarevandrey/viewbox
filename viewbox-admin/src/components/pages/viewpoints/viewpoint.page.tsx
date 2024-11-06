@@ -15,6 +15,7 @@ export const Viewpoint = ({ functionals }: TProps) => {
   const { id } = useParams<TParams>();
   const dispatch = useAppDispatch();
   dispatch(setTitle('Панели воспроизведения'));
+
   return (
     <div>{id}</div>
   )

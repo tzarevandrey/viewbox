@@ -10,6 +10,6 @@ export const Content = ({ functionals }: TProps) => {
   const dispatch = useAppDispatch();
   dispatch(setTitle('Панели воспроизведения'));
   return (
-    <></>
+    <div>content je</div>
   )
 }

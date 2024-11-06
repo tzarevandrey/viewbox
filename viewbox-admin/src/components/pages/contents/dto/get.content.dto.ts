@@ -4,7 +4,6 @@ export type TGetContentDto = {
   id: number;
   contentType: ContentType;
   description?: string;
-  itemId: number;
   name: string;
   lastUpdated: Date;
 }

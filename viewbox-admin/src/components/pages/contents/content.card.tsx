@@ -13,27 +13,45 @@ type TProps = {
 export const ContentCard = ({ content, isDetailed = false }: TProps) => {
   const navigate = useNavigate();
   return (
-    <Badge
-      count={content.contentType === ContentType.Picture
-        ? <PictureTwoTone className='content-card__badge' twoToneColor={'black'} title='Изображение' />
-        : (
-          content.contentType === ContentType.Video
-            ? <PlaySquareTwoTone className='content-card__badge' twoToneColor={'black'} title='Видео' />
-            : <CodeTwoTone className='content-card__badge' twoToneColor={'black'} title='Веб-страница' />
-        )
-      }
-      offset={[-6, 6]}
+    // <Badge
+    //   count={content.contentType === ContentType.Picture
+    //     ? <PictureTwoTone className='content-card__badge' twoToneColor={'black'} title='Изображение' />
+    //     : (
+    //       content.contentType === ContentType.Video
+    //         ? <PlaySquareTwoTone className='content-card__badge' twoToneColor={'black'} title='Видео' />
+    //         : <CodeTwoTone className='content-card__badge' twoToneColor={'black'} title='Веб-страница' />
+    //     )
+    //   }
+    //   offset={[-6, 6]}
+    // >
+    <Card
+      className='content-card'
+      hoverable={isDetailed}
+      onClick={() => {
+        if (isDetailed) navigate(`/contents/${content.id}`)
+      }}
+      size='small'
     >
-      <Card
-        className='content-card'
-        hoverable={isDetailed}
-        onClick={() => { if (isDetailed) navigate(`contents/${content.id}`) }}
-        size='small'
-      >
-        <Meta
+      <div className='content-card__space'>
+        <div className='content-card__title'>
+          <div className='content-card__title__icon'>
+            {content.contentType === ContentType.Picture
+              ? <InstagramOutlined className='content-card__badge' title='Изображение' />
+              : (
+                content.contentType === ContentType.Video
+                  ? <YoutubeOutlined className='content-card__badge' title='Видео' />
+                  : <DribbbleOutlined className='content-card__badge' title='Веб-страница' />
+              )
+            }
+          </div>
+          {content.name}
+        </div>
+        <div className='content-card__body'>{content.description}</div>
+      </div>
+      {/* <Meta
           title={content.name}
-          description={content.description} />
-      </Card>
-    </Badge>
+          description={content.description} /> */}
+    </Card>
+    // </Badge>
   )
 }

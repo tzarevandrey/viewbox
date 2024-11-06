@@ -9,6 +9,7 @@ import { ViewpointsErrorCard } from './viepoints.error-card';
 import { ViewpointsCard } from './viepoints.card';
 import { ViewpointsAddCard } from './viewpoints.add-card';
 import { useEffect } from 'react';
+import { TGetViewpointDto } from './dto/get.viewpoint.dto';
 
 type TProps = {
   subpages?: Subpage[];
@@ -22,9 +23,19 @@ export const Viewpoints = ({ subpages, functionals }: TProps) => {
     // eslint-disable-next-line
   }, [])
   const {
-    data, isLoading, isError
+    data: dt, isLoading, isError
   } = useGetAllViewpointsQuery(null);
-
+  const data: TGetViewpointDto[] = [
+    {
+      id: 1,
+      name: 'панель 1',
+    },
+    {
+      id: 2,
+      name: 'панель 2',
+      description: 'эта панель с описанием'
+    },
+  ]
   if (isLoading) return (
     <Card>
       <Spin indicator={<LoadingOutlined spin />} />
@@ -43,7 +54,7 @@ export const Viewpoints = ({ subpages, functionals }: TProps) => {
         <ViewpointsCard
           key={vps.id}
           viewpoint={vps}
-          isDetailed={subpages?.includes(Subpage.ViewpointView)}
+          isDetailed={subpages?.includes(Subpage.ViewpointView) || subpages?.includes(Subpage.ViewpointEdit)}
         />
       )) : null}
       {functionals?.includes(Functional.Add) ? (
