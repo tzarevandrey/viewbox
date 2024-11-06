@@ -5,6 +5,8 @@ import { Provider } from 'react-redux';
 import store from './store';
 import { SnackbarProvider } from 'notistack';
 import { SnackbarUtilsConfigurator } from './utils/snackbar';
+import { ConfigProvider } from 'antd';
+import ru_RU from 'antd/locale';
 
 const root = ReactDOM.createRoot(
   document.getElementById('root') as HTMLElement
@@ -19,7 +21,9 @@ root.render(
       }}
     >
       <SnackbarUtilsConfigurator />
-      <App />
+      <ConfigProvider locale={ru_RU}>
+        <App />
+      </ConfigProvider>
     </SnackbarProvider>
   </Provider>
 );

@@ -134,13 +134,14 @@ export const Contents = ({ subpages, functionals }: TProps) => {
       title: 'Дата создания/изменения',
       dataIndex: 'lastUpdated',
       key: 'lastUpdated',
+      render: (dt) => `${dt}`,
       sorter: {
         compare: (a, b) => b.lastUpdated.getTime() - a.lastUpdated.getTime(),
         multiple: 4
       },
     }
   ]
-  data.map(x => console.log(x.lastUpdated))
+
   if (isLoading) return (
     <Card>
       <Spin indicator={<LoadingOutlined spin />} />
@@ -153,10 +154,11 @@ export const Contents = ({ subpages, functionals }: TProps) => {
     <Table<TGetContentDto>
       columns={columns}
       dataSource={data}
-      onRow={(item) => {
+      rowKey={item => item.id}
+      onRow={item => {
         if (!subpages?.includes(Subpage.ContentView)) return {};
         return {
-          onClick: () => { navigate(`/content/${item.id}`) }
+          onClick: () => { navigate(`/contents/${item.id}`) }
         }
       }}
     />
