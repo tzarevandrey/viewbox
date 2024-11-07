@@ -1,6 +1,5 @@
 import { Card, Flex, Spin } from 'antd';
 import { Functional } from '../../../core/enums/functional.enum';
-import { Subpage } from '../../../core/enums/subpages.enum';
 import { useAppDispatch } from '../../../hooks';
 import { setTitle } from '../../../reducers/title.slice';
 import { useGetAllViewpointsQuery } from '../../../api/viewpoints.api';
@@ -12,11 +11,10 @@ import { useEffect } from 'react';
 import { TGetViewpointDto } from './dto/get.viewpoint.dto';
 
 type TProps = {
-  subpages?: Subpage[];
   functionals?: Functional[];
 }
 
-export const Viewpoints = ({ subpages, functionals }: TProps) => {
+export const Viewpoints = ({ functionals }: TProps) => {
   const dispatch = useAppDispatch();
   useEffect(() => {
     dispatch(setTitle('Панели воспроизведения'));
@@ -54,10 +52,10 @@ export const Viewpoints = ({ subpages, functionals }: TProps) => {
         <ViewpointsCard
           key={vps.id}
           viewpoint={vps}
-          isDetailed={subpages?.includes(Subpage.ViewpointView) || subpages?.includes(Subpage.ViewpointEdit)}
+          isDetailed={functionals?.includes(Functional.Read) || functionals?.includes(Functional.Update)}
         />
       )) : null}
-      {functionals?.includes(Functional.Add) ? (
+      {functionals?.includes(Functional.Create) ? (
         <ViewpointsAddCard />
       ) : null}
     </Flex>

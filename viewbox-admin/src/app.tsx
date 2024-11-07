@@ -6,14 +6,14 @@ import { Loading } from './components/shared/loading/loading.page';
 import { Error } from './components/shared/error/error.page';
 import { ROLES_PAGES } from './core/dictionaries/roles.pages.dict';
 import { Page } from './core/enums/pages.enum';
-import { Subpage } from './core/enums/subpages.enum';
 import { Functional } from './core/enums/functional.enum';
 import { PAGES_JSX_LINKS } from './core/dictionaries/pages.jsx.links.dict';
-import { SUBPAGES_JSX_LINKS } from './core/dictionaries/subpages.jsx.links.dict';
 import { BasePage } from './components/shared/base-page/base.page';
 import { setAuth } from './reducers/user.slice';
-import { useEffect } from 'react';
+import { Fragment, useEffect } from 'react';
 import { BaseModal } from './components/shared/base-modal/base.modal';
+import { PAGES_FUNCTIONAL_JSX } from './core/dictionaries/pages.functional.jsx';
+import { FUNCTIONAL_LINKS } from './core/dictionaries/functional.links';
 
 function App() {
   const dispatch = useAppDispatch();
@@ -28,16 +28,15 @@ function App() {
     }
     // eslint-disable-next-line
   }, [isLoading, data])
-  const pages: { page: Page, subpages: Subpage[], functionals: Functional[] }[] = [];
+  const pages: { page: Page, functionals: Functional[] }[] = [];
   if (data) {
-    const temp = ROLES_PAGES.filter(x => data.roles.includes(x.role)).map(x => x.pages).flat();
-    const pt = Array.from(new Set(temp.map(x => x.page)));
-    pt.forEach(element => {
-      const t = temp.filter(x => x.page === element);
+    const userPages = ROLES_PAGES.filter(x => data.roles.includes(x.role)).map(x => x.pages).flat();
+    const userPagesIds = Array.from(new Set(userPages.map(x => x.page)));
+    userPagesIds.forEach(userPageId => {
+      const userPage = userPages.filter(x => x.page === userPageId);
       pages.push({
-        page: element,
-        subpages: Array.from(new Set(t.map(x => x.subpages || []).flat())),
-        functionals: Array.from(new Set(t.map(x => x.functionals || []).flat()))
+        page: userPageId,
+        functionals: Array.from(new Set(userPage.map(x => x.functionals || []).flat()))
       })
     });
   }
@@ -56,16 +55,26 @@ function App() {
                       const item = PAGES_JSX_LINKS.find(x => x.page === pageItem.page);
                       if (item) {
                         return (
-                          <Route path={item.link} element={<BasePage Jsx={item.Jsx} subpages={pageItem.subpages} functionals={pageItem.functionals} />} key={pageItem.page}>
-                            {pageItem.subpages.map(subpageItem => {
-                              const subItem = SUBPAGES_JSX_LINKS.find(x => x.page === +subpageItem);
-                              if (subItem) {
+                          <Fragment key={item.link}>
+                            <Route
+                              path={item.link}
+                              element={<BasePage Jsx={item.Jsx} functionals={pageItem.functionals} />}
+                            />
+                            {pageItem.functionals.map(functional => {
+                              const Jsx = PAGES_FUNCTIONAL_JSX.find(x => x.page === pageItem.page)?.functionalPages.find(x => x.functional === functional)?.Jsx;
+                              const link = FUNCTIONAL_LINKS.find(x => x.functional === functional)?.link;
+                              if (Jsx && link) {
+                                const fullLink = `${item.link}${link}/:id`;
                                 return (
-                                  <Route path={subItem.link} element={<BasePage Jsx={subItem.Jsx} functionals={pageItem.functionals} />} key={subItem.page} />
+                                  <Route
+                                    key={fullLink}
+                                    path={fullLink}
+                                    element={<BasePage Jsx={Jsx} functionals={pageItem.functionals} />}
+                                  />
                                 )
                               } else return null;
                             })}
-                          </Route>
+                          </Fragment>
                         )
                       } else return null;
                     })}

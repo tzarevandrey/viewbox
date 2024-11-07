@@ -1,18 +1,16 @@
 import { FC } from 'react';
-import { useAppSelector } from '../../../hooks'
+import { useAppSelector } from '../../../hooks';
 import { NoAuth } from '../no-auth/no-auth.page';
-import { Subpage } from '../../../core/enums/subpages.enum';
 import { Functional } from '../../../core/enums/functional.enum';
 import { Flex } from 'antd';
 import { TitleElement } from './title.element';
 
 type TProps = {
-  Jsx: FC<{ subpages?: Subpage[], functionals?: Functional[] }>;
-  subpages?: Subpage[];
+  Jsx: FC<{ functionals?: Functional[] }>;
   functionals?: Functional[];
 }
 
-export const BasePage = ({ Jsx, subpages, functionals }: TProps) => {
+export const BasePage = ({ Jsx, functionals }: TProps) => {
   const {
     expired
   } = useAppSelector(x => x.user);
@@ -25,7 +23,7 @@ export const BasePage = ({ Jsx, subpages, functionals }: TProps) => {
     return (
       <Flex vertical style={{ width: '100%', overflowY: 'auto' }}>
         <TitleElement />
-        <Jsx subpages={subpages} functionals={functionals} />
+        <Jsx functionals={functionals} />
       </Flex>
     )
   }
