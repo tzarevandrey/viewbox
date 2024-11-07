@@ -1,9 +1,8 @@
 import { Menu, MenuProps } from "antd";
 import { Page } from '../../../core/enums/pages.enum';
-import { PAGES_MENU_NAMES } from '../../../core/dictionaries/pages.menu-names.dict';
-import { PAGES_JSX_LINKS } from '../../../core/dictionaries/pages.jsx.links.dict';
 import { useNavigate } from 'react-router-dom';
 import { useEffect } from 'react';
+import { PAGES_CONFIG } from '../../../core/dictionaries/pages.config.dictionary';
 
 type TProps = {
   pages: Page[];
@@ -13,25 +12,18 @@ type MenuItem = Required<MenuProps>['items'][number];
 
 export const AppMenu = ({ pages }: TProps) => {
   const navigate = useNavigate();
-  const temp = PAGES_MENU_NAMES.filter(x => pages.includes(x.page));
-  const minNumber = Math.min(...temp.map(x => x.order))
-  const items: MenuItem[] = PAGES_MENU_NAMES.filter(x => pages.includes(x.page)).sort(x => x.order).map(x => ({ key: `${x.page}`, label: x.name }))
-  const index = PAGES_MENU_NAMES.find(x => x.order === minNumber)?.page;
+  const items = Object.entries(PAGES_CONFIG).filter(page => pages.includes(+Page[+page])).map(entry => entry[1]).sort((a, b) => a.order - b.order);
   useEffect(() => {
-    const firstLink = PAGES_JSX_LINKS.find(x => x.page === index)?.link;
-    if (firstLink) navigate(firstLink);
+    if (items.length > 0) navigate(items[0].link);
     // eslint-disable-next-line
   }, [])
   return (
     <Menu
-      defaultSelectedKeys={[`${index}`]}
+      defaultSelectedKeys={[items[0].link]}
       mode="vertical"
       theme="dark"
-      items={items}
-      onClick={(e) => {
-        const lnk = PAGES_JSX_LINKS.find(x => x.page === +e.key)?.link;
-        if (lnk) navigate(lnk);
-      }}
+      items={items.map(x => ({ key: x.link, label: x.name }))}
+      onClick={e => navigate(e.key)}
     />
   )
 }

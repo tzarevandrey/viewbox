@@ -4,16 +4,15 @@ import './app.css';
 import { AppMenu } from './components/shared/app-menu/app-menu';
 import { Loading } from './components/shared/loading/loading.page';
 import { Error } from './components/shared/error/error.page';
-import { ROLES_PAGES } from './core/dictionaries/roles.pages.dict';
-import { Page } from './core/enums/pages.enum';
-import { Functional } from './core/enums/functional.enum';
-import { PAGES_JSX_LINKS } from './core/dictionaries/pages.jsx.links.dict';
+import { ROLES_PAGES } from './core/dictionaries/roles.pages.dictionary';
 import { BasePage } from './components/shared/base-page/base.page';
 import { setAuth } from './reducers/user.slice';
 import { Fragment, useEffect } from 'react';
 import { BaseModal } from './components/shared/base-modal/base.modal';
-import { PAGES_FUNCTIONAL_JSX } from './core/dictionaries/pages.functional.jsx';
-import { FUNCTIONAL_LINKS } from './core/dictionaries/functional.links';
+import { Functional } from './core/enums/functional.enum';
+import { Page } from './core/enums/pages.enum';
+import { PAGES_CONFIG } from './core/dictionaries/pages.config.dictionary';
+import { FunctionalPageType } from './core/enums/functional-page.type.enum';
 
 function App() {
   const dispatch = useAppDispatch();
@@ -28,18 +27,18 @@ function App() {
     }
     // eslint-disable-next-line
   }, [isLoading, data])
-  const pages: { page: Page, functionals: Functional[] }[] = [];
+
+  const pages: { [key: string]: Functional[] } = {};
   if (data) {
-    const userPages = ROLES_PAGES.filter(x => data.roles.includes(x.role)).map(x => x.pages).flat();
-    const userPagesIds = Array.from(new Set(userPages.map(x => x.page)));
-    userPagesIds.forEach(userPageId => {
-      const userPage = userPages.filter(x => x.page === userPageId);
-      pages.push({
-        page: userPageId,
-        functionals: Array.from(new Set(userPage.map(x => x.functionals || []).flat()))
+    data.roles.forEach(role => {
+      Object.entries(ROLES_PAGES[role]).forEach(entry => {
+        pages[entry[0]] = [...(pages[entry[0]] || []), ...entry[1]]
       })
-    });
+    })
+    Object.entries(pages)
+      .forEach((ent) => pages[ent[0]] = Array.from(new Set(ent[1])));
   }
+
   return (
     <BrowserRouter>
       {!isLoading
@@ -47,36 +46,33 @@ function App() {
           !isError && data
             ? (
               <div className='app-container'>
-                <AppMenu pages={pages.map(x => x.page)} />
+                <AppMenu pages={Object.keys(pages).map(k => +Page[+k])} />
                 <BaseModal />
                 <div className='page-container'>
                   <Routes>
-                    {pages.map(pageItem => {
-                      const item = PAGES_JSX_LINKS.find(x => x.page === pageItem.page);
-                      if (item) {
-                        return (
-                          <Fragment key={item.link}>
-                            <Route
-                              path={item.link}
-                              element={<BasePage Jsx={item.Jsx} functionals={pageItem.functionals} />}
-                            />
-                            {pageItem.functionals.map(functional => {
-                              const Jsx = PAGES_FUNCTIONAL_JSX.find(x => x.page === pageItem.page)?.functionalPages.find(x => x.functional === functional)?.Jsx;
-                              const link = FUNCTIONAL_LINKS.find(x => x.functional === functional)?.link;
-                              if (Jsx && link) {
-                                const fullLink = `${item.link}${link}/:id`;
-                                return (
-                                  <Route
-                                    key={fullLink}
-                                    path={fullLink}
-                                    element={<BasePage Jsx={Jsx} functionals={pageItem.functionals} />}
-                                  />
-                                )
-                              } else return null;
-                            })}
-                          </Fragment>
-                        )
-                      } else return null;
+                    {Object.entries(pages).map(entry => {
+                      const pageItem = PAGES_CONFIG[+entry[0] as Page]
+                      return (
+                        <Fragment key={entry[0]}>
+                          <Route
+                            path={pageItem.link}
+                            element={<BasePage Jsx={pageItem.Jsx} functionals={entry[1]} />}
+                          />
+                          {entry[1].map(funcEntry => {
+                            const functional = Object.entries(pageItem.functionals[FunctionalPageType.Subpage])
+                              .find(x => x[0] === `${funcEntry}`);
+                            if (functional) {
+                              return (
+                                <Route
+                                  key={`${entry[0]}_${functional[0]}`}
+                                  path={functional[1].link}
+                                  element={<BasePage Jsx={functional[1].Jsx} functionals={entry[1]} />}
+                                />
+                              )
+                            } else return null;
+                          })}
+                        </Fragment>
+                      )
                     })}
                   </Routes>
                 </div>

@@ -1,7 +1,7 @@
 import { Card, Flex, Spin, Table, TableProps } from 'antd';
 import { useGetAllContentQuery } from '../../../api/content.api';
 import { Functional } from '../../../core/enums/functional.enum';
-import { Subpage } from '../../../core/enums/subpages.enum';
+// import { Subpage } from '../../../core/enums/subpages.enum';
 import { useAppDispatch } from '../../../hooks';
 import { setTitle } from '../../../reducers/title.slice';
 import { LoadingOutlined } from '@ant-design/icons';
@@ -10,16 +10,16 @@ import { TGetContentDto } from './dto/get.content.dto';
 import { ContentType } from '../../../core/enums/content.enum';
 import { useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { CardTitled } from '../../shared/card/card.titled';
+// import { CardTitled } from '../../shared/card/card.titled';
 import { ContentCard } from './content.card';
 import { ContentAddCard } from './content.add-cart';
 
 type TProps = {
-  subpages?: Subpage[];
+  // subpages?: Subpage[];
   functionals?: Functional[];
 }
 
-export const Contents = ({ subpages, functionals }: TProps) => {
+export const Contents = ({ functionals }: TProps) => {
 
   const dispatch = useAppDispatch();
   useEffect(() => {
@@ -151,7 +151,7 @@ export const Contents = ({ subpages, functionals }: TProps) => {
   )
   return (
     <Flex wrap gap='small'>
-      {data ? data.sort((a, b) => b.lastUpdated.getTime() - a.lastUpdated.getTime()).map(cont => (
+      {/* {data ? data.sort((a, b) => b.lastUpdated.getTime() - a.lastUpdated.getTime()).map(cont => (
         <ContentCard
           key={cont.id}
           content={cont}
@@ -160,7 +160,7 @@ export const Contents = ({ subpages, functionals }: TProps) => {
       )) : null}
       {functionals?.includes(Functional.Add) ? (
         <ContentAddCard />
-      ) : null}
+      ) : null} */}
     </Flex>
     // <Table<TGetContentDto>
     //   columns={columns}
