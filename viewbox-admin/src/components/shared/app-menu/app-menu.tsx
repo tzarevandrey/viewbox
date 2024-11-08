@@ -1,4 +1,4 @@
-import { Menu, MenuProps } from "antd";
+import { Menu } from "antd";
 import { Page } from '../../../core/enums/pages.enum';
 import { useNavigate } from 'react-router-dom';
 import { useEffect } from 'react';
@@ -8,21 +8,23 @@ type TProps = {
   pages: Page[];
 }
 
-type MenuItem = Required<MenuProps>['items'][number];
-
 export const AppMenu = ({ pages }: TProps) => {
   const navigate = useNavigate();
-  const items = Object.entries(PAGES_CONFIG).filter(page => pages.includes(+Page[+page])).map(entry => entry[1]).sort((a, b) => a.order - b.order);
+  const items = Object.entries(PAGES_CONFIG)
+    .filter(entry => pages
+      .includes(+entry[0]))
+    .sort((a, b) => a[1].order - b[1].order)
+    .map(entry => ({ key: entry[1].link, label: entry[1].name }));
   useEffect(() => {
-    if (items.length > 0) navigate(items[0].link);
+    if (items.length > 0) navigate(items[0].key);
     // eslint-disable-next-line
   }, [])
   return (
     <Menu
-      defaultSelectedKeys={[items[0].link]}
+      defaultSelectedKeys={[items[0].key]}
       mode="vertical"
       theme="dark"
-      items={items.map(x => ({ key: x.link, label: x.name }))}
+      items={items}
       onClick={e => navigate(e.key)}
     />
   )

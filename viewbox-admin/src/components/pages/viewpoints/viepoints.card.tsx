@@ -5,7 +5,6 @@ import { useNavigate } from 'react-router-dom';
 import { Page } from '../../../core/enums/pages.enum';
 import { Functional } from '../../../core/enums/functional.enum';
 import { PAGES_CONFIG } from '../../../core/dictionaries/pages.config.dictionary';
-import { FunctionalPageType } from '../../../core/enums/functional.type.enum';
 
 type TProps = {
   viewpoint: TGetViewpointDto;
@@ -19,8 +18,9 @@ export const ViewpointsCard = ({ viewpoint, isDetailed = false }: TProps) => {
       hoverable={isDetailed}
       onClick={() => {
         if (isDetailed) {
-          const link = PAGES_CONFIG[Page.Viewpoints].functionals[FunctionalPageType.Subpage][Functional.Read].link.replace(':id', `${viewpoint.id}`);
-          navigate(link);
+          const link = PAGES_CONFIG[Page.Viewpoints].subpages
+            .find(x => x.functionals.includes(Functional.Read))?.link;
+          if (link) navigate(link);
         }
       }}
       className='viewpoints-card'

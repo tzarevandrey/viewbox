@@ -24,6 +24,7 @@ export const PAGES_CONFIG: {
       link: string;
       Jsx: FC;
       roles: Role[];
+      functionals: Functional[];
     }[];
     functionals: {
       [key: string]: Role[];
@@ -41,11 +42,13 @@ export const PAGES_CONFIG: {
         link: '/viewpoints/new',
         Jsx: Viewpoint,
         roles: [Role.Administrator, Role.Superuser, Role.Support],
+        functionals: [Functional.Create]
       },
       {
         link: '/viewpoints/:id',
         Jsx: Viewpoint,
         roles: [Role.Administrator, Role.Superuser, Role.Support],
+        functionals: [Functional.Read, Functional.Update]
       },
     ],
     functionals: {
@@ -66,11 +69,13 @@ export const PAGES_CONFIG: {
         link: '/playlists/new',
         Jsx: Playlist,
         roles: [Role.Administrator, Role.Superuser, Role.Support],
+        functionals: [Functional.Create]
       },
       {
         link: '/playlists/:id',
         Jsx: Playlist,
         roles: [Role.Administrator, Role.Superuser, Role.Support],
+        functionals: [Functional.Read, Functional.Update]
       },
     ],
     functionals: {
@@ -91,11 +96,13 @@ export const PAGES_CONFIG: {
         link: '/content/new',
         Jsx: Content,
         roles: [Role.Administrator, Role.Superuser, Role.Support],
+        functionals: [Functional.Create]
       },
       {
         link: '/content/:id',
         Jsx: Content,
         roles: [Role.Administrator, Role.Superuser, Role.Support],
+        functionals: [Functional.Read, Functional.Update]
       },
     ],
     functionals: {
@@ -116,11 +123,13 @@ export const PAGES_CONFIG: {
         link: '/groups/new',
         Jsx: Group,
         roles: [Role.Superuser, Role.Support],
+        functionals: [Functional.Create]
       },
       {
         link: '/groups/:id',
         Jsx: Group,
         roles: [Role.Superuser, Role.Support],
+        functionals: [Functional.Read, Functional.Update]
       },
     ],
     functionals: {
@@ -141,6 +150,7 @@ export const PAGES_CONFIG: {
         link: '/journal/:id',
         Jsx: JournalDetails,
         roles: [Role.Superuser, Role.Support],
+        functionals: [Functional.Read]
       }
     ],
     functionals: {
