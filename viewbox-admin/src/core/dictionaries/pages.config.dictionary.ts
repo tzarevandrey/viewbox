@@ -1,3 +1,4 @@
+import { FC } from 'react';
 import { Content } from '../../components/pages/contents/content.page';
 import { Contents } from '../../components/pages/contents/contents.page';
 import { Group } from '../../components/pages/groups/group.page';
@@ -8,27 +9,50 @@ import { Playlist } from '../../components/pages/playlists/playlist.page';
 import { Playlists } from '../../components/pages/playlists/playlists.page';
 import { Viewpoint } from '../../components/pages/viewpoints/viewpoint.page';
 import { Viewpoints } from '../../components/pages/viewpoints/viewpoints.page';
-import { FunctionalPageType } from '../enums/functional-page.type.enum';
 import { Functional } from '../enums/functional.enum';
 import { Page } from '../enums/pages.enum';
+import { Role } from '../enums/roles.enum';
 
-export const PAGES_CONFIG = {
+export const PAGES_CONFIG: {
+  [key: string]: {
+    name: string;
+    link: string;
+    Jsx: FC;
+    order: number;
+    roles: Role[];
+    subpages: {
+      link: string;
+      Jsx: FC;
+      roles: Role[];
+    }[];
+    functionals: {
+      [key: string]: Role[];
+    }
+  }
+} = {
   [Page.Viewpoints]: {
     name: 'Панели воспроизведения',
     link: '/viewpoints',
     Jsx: Viewpoints,
     order: 10,
-    functionals: {
-      [FunctionalPageType.Subpage]: {
-        [Functional.Create]: {
-          link: '/viewpoints/new',
-          Jsx: Viewpoint,
-        },
-        [Functional.Read]: {
-          link: '/viewpoints/:id',
-          Jsx: Viewpoint,
-        },
+    roles: [Role.Administrator, Role.Superuser, Role.Support],
+    subpages: [
+      {
+        link: '/viewpoints/new',
+        Jsx: Viewpoint,
+        roles: [Role.Administrator, Role.Superuser, Role.Support],
       },
+      {
+        link: '/viewpoints/:id',
+        Jsx: Viewpoint,
+        roles: [Role.Administrator, Role.Superuser, Role.Support],
+      },
+    ],
+    functionals: {
+      [Functional.Create]: [Role.Administrator, Role.Superuser, Role.Support],
+      [Functional.Read]: [Role.Administrator, Role.Superuser, Role.Support],
+      [Functional.Update]: [Role.Administrator, Role.Superuser, Role.Support],
+      [Functional.Delete]: [Role.Administrator, Role.Superuser, Role.Support],
     }
   },
   [Page.Playlists]: {
@@ -36,17 +60,24 @@ export const PAGES_CONFIG = {
     link: '/playlists',
     Jsx: Playlists,
     order: 20,
-    functionals: {
-      [FunctionalPageType.Subpage]: {
-        [Functional.Create]: {
-          link: '/playlists/new',
-          Jsx: Playlist,
-        },
-        [Functional.Read]: {
-          link: '/playlists/:id',
-          Jsx: Playlist,
-        },
+    roles: [Role.Administrator, Role.Superuser, Role.Support],
+    subpages: [
+      {
+        link: '/playlists/new',
+        Jsx: Playlist,
+        roles: [Role.Administrator, Role.Superuser, Role.Support],
       },
+      {
+        link: '/playlists/:id',
+        Jsx: Playlist,
+        roles: [Role.Administrator, Role.Superuser, Role.Support],
+      },
+    ],
+    functionals: {
+      [Functional.Create]: [Role.Administrator, Role.Superuser, Role.Support],
+      [Functional.Read]: [Role.Administrator, Role.Superuser, Role.Support],
+      [Functional.Update]: [Role.Administrator, Role.Superuser, Role.Support],
+      [Functional.Delete]: [Role.Administrator, Role.Superuser, Role.Support],
     }
   },
   [Page.Contents]: {
@@ -54,17 +85,24 @@ export const PAGES_CONFIG = {
     link: '/content',
     Jsx: Contents,
     order: 30,
-    functionals: {
-      [FunctionalPageType.Subpage]: {
-        [Functional.Create]: {
-          link: '/content/new',
-          Jsx: Content,
-        },
-        [Functional.Read]: {
-          link: '/content/:id',
-          Jsx: Content,
-        },
+    roles: [Role.Administrator, Role.Superuser, Role.Support],
+    subpages: [
+      {
+        link: '/content/new',
+        Jsx: Content,
+        roles: [Role.Administrator, Role.Superuser, Role.Support],
       },
+      {
+        link: '/content/:id',
+        Jsx: Content,
+        roles: [Role.Administrator, Role.Superuser, Role.Support],
+      },
+    ],
+    functionals: {
+      [Functional.Create]: [Role.Administrator, Role.Superuser, Role.Support],
+      [Functional.Read]: [Role.Administrator, Role.Superuser, Role.Support],
+      [Functional.Update]: [Role.Administrator, Role.Superuser, Role.Support],
+      [Functional.Delete]: [Role.Administrator, Role.Superuser, Role.Support],
     }
   },
   [Page.Groups]: {
@@ -72,17 +110,24 @@ export const PAGES_CONFIG = {
     link: '/groups',
     Jsx: Groups,
     order: 40,
-    functionals: {
-      [FunctionalPageType.Subpage]: {
-        [Functional.Create]: {
-          link: '/groups/new',
-          Jsx: Group,
-        },
-        [Functional.Read]: {
-          link: '/groups/:id',
-          Jsx: Group,
-        },
+    roles: [Role.Superuser, Role.Support],
+    subpages: [
+      {
+        link: '/groups/new',
+        Jsx: Group,
+        roles: [Role.Superuser, Role.Support],
       },
+      {
+        link: '/groups/:id',
+        Jsx: Group,
+        roles: [Role.Superuser, Role.Support],
+      },
+    ],
+    functionals: {
+      [Functional.Create]: [Role.Superuser, Role.Support],
+      [Functional.Read]: [Role.Superuser, Role.Support],
+      [Functional.Update]: [Role.Superuser, Role.Support],
+      [Functional.Delete]: [Role.Superuser, Role.Support],
     }
   },
   [Page.Journal]: {
@@ -90,13 +135,16 @@ export const PAGES_CONFIG = {
     link: '/journal',
     Jsx: Journal,
     order: 50,
+    roles: [Role.Superuser, Role.Support],
+    subpages: [
+      {
+        link: '/journal/:id',
+        Jsx: JournalDetails,
+        roles: [Role.Superuser, Role.Support],
+      }
+    ],
     functionals: {
-      [FunctionalPageType.Subpage]: {
-        [Functional.Read]: {
-          link: '/journal/:id',
-          Jsx: JournalDetails,
-        },
-      },
+      [Functional.Read]: [Role.Superuser, Role.Support],
     }
   }
 }

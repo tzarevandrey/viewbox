@@ -4,7 +4,6 @@ import './app.css';
 import { AppMenu } from './components/shared/app-menu/app-menu';
 import { Loading } from './components/shared/loading/loading.page';
 import { Error } from './components/shared/error/error.page';
-import { ROLES_PAGES } from './core/dictionaries/roles.pages.dictionary';
 import { BasePage } from './components/shared/base-page/base.page';
 import { setAuth } from './reducers/user.slice';
 import { Fragment, useEffect } from 'react';
@@ -12,7 +11,6 @@ import { BaseModal } from './components/shared/base-modal/base.modal';
 import { Functional } from './core/enums/functional.enum';
 import { Page } from './core/enums/pages.enum';
 import { PAGES_CONFIG } from './core/dictionaries/pages.config.dictionary';
-import { FunctionalPageType } from './core/enums/functional-page.type.enum';
 
 function App() {
   const dispatch = useAppDispatch();
