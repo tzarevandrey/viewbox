@@ -7,8 +7,7 @@ import { SequelizeModule } from '@nestjs/sequelize';
 import { Viewpoint } from './viewpoints.model';
 import { AuthModule } from 'src/auth/auth.module';
 import { JournalsModule } from 'src/journals/journals.module';
-import { Journal } from 'src/journals/journals.model';
-import { JournalDetail } from 'src/journals/journals.details.model';
+import { Playlist } from 'src/playlists/playlists.model';
 
 @Module({
   controllers: [ViewpointsController],
@@ -18,8 +17,7 @@ import { JournalDetail } from 'src/journals/journals.details.model';
     PlaylistsModule,
     SequelizeModule.forFeature([
       Viewpoint,
-      Journal,
-      JournalDetail
+      Playlist
     ]),
     JournalsModule
   ]
