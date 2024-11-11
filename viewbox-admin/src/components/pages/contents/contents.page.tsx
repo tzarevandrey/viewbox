@@ -1,21 +1,19 @@
-import { Card, Flex, Spin, Table, TableProps } from 'antd';
+import { Card, Spin, Table, TableProps } from 'antd';
 import { useGetAllContentQuery } from '../../../api/content.api';
 import { Functional } from '../../../core/enums/functional.enum';
-// import { Subpage } from '../../../core/enums/subpages.enum';
 import { useAppDispatch } from '../../../hooks';
 import { setTitle } from '../../../reducers/title.slice';
 import { LoadingOutlined } from '@ant-design/icons';
 import { ContentErrorCard } from './content.error-card';
 import { TGetContentDto } from './dto/get.content.dto';
 import { ContentType } from '../../../core/enums/content.enum';
-import { useEffect } from 'react';
+import { Fragment, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-// import { CardTitled } from '../../shared/card/card.titled';
-import { ContentCard } from './content.card';
-import { ContentAddCard } from './content.add-cart';
+import { PAGES_CONFIG } from '../../../core/dictionaries/pages.config.dictionary';
+import { Page } from '../../../core/enums/pages.enum';
+import { COLORS } from '../../../core/constants/colors';
 
 type TProps = {
-  // subpages?: Subpage[];
   functionals?: Functional[];
 }
 
@@ -65,81 +63,93 @@ export const Contents = ({ functionals }: TProps) => {
     },
   ]
 
-  // const navigate = useNavigate();
+  const navigate = useNavigate();
 
   const { data: dt, isLoading, isError } = useGetAllContentQuery(null);
 
-  // const columns: TableProps<TGetContentDto>['columns'] = [
-  //   {
-  //     title: 'Вид контента',
-  //     dataIndex: 'contentType',
-  //     key: 'contentType',
-  //     sorter: {
-  //       compare: (a, b) => {
-  //         let x = 0;
-  //         let y = 0;
-  //         switch (a.contentType) {
-  //           case ContentType.Picture: x = 2;
-  //             break;
-  //           case ContentType.Video: x = 1;
-  //             break;
-  //           case ContentType.WebPage: x = 3;
-  //             break;
-  //         }
-  //         switch (b.contentType) {
-  //           case ContentType.Picture: x = 2;
-  //             break;
-  //           case ContentType.Video: x = 1;
-  //             break;
-  //           case ContentType.WebPage: x = 3;
-  //             break;
-  //         }
-  //         return x - y;
-  //       },
-  //       multiple: 3
-  //     }
-  //   },
-  //   {
-  //     title: 'Файл/Ссылка',
-  //     dataIndex: 'name',
-  //     key: 'name',
-  //     sorter: {
-  //       compare: (a, b) => {
-  //         const x = a.name.toLowerCase();
-  //         const y = b.name.toLowerCase();
-  //         if (x > y) return 1;
-  //         if (x < y) return -1;
-  //         return 0;
-  //       },
-  //       multiple: 2
-  //     }
-  //   },
-  //   {
-  //     title: 'Описание',
-  //     dataIndex: 'description',
-  //     key: 'description',
-  //     sorter: {
-  //       compare: (a, b) => {
-  //         const x = a.description ? a.description.toLowerCase() : '';
-  //         const y = b.description ? b.description.toLowerCase() : '';
-  //         if (x > y) return 1;
-  //         if (x < y) return -1;
-  //         return 0;
-  //       },
-  //       multiple: 1
-  //     }
-  //   },
-  //   {
-  //     title: 'Дата создания/изменения',
-  //     dataIndex: 'lastUpdated',
-  //     key: 'lastUpdated',
-  //     render: (dt) => `${dt}`,
-  //     sorter: {
-  //       compare: (a, b) => b.lastUpdated.getTime() - a.lastUpdated.getTime(),
-  //       multiple: 4
-  //     },
-  //   }
-  // ]
+  const columns: TableProps<TGetContentDto>['columns'] = [
+    {
+      title: 'Файл/Ссылка',
+      dataIndex: 'name',
+      key: 'name',
+      sorter: {
+        compare: (a, b) => {
+          const x = a.name.toLowerCase();
+          const y = b.name.toLowerCase();
+          if (x > y) return 1;
+          if (x < y) return -1;
+          return 0;
+        },
+      },
+      render: (_, rec) => {
+        let col = COLORS.CONTENT_WEB_PAGE;
+        switch (rec.contentType) {
+          case ContentType.Picture: col = COLORS.CONTENT_IMAGE;
+            break;
+          case ContentType.Video: col = COLORS.CONTENT_VIDEO;
+            break;
+        }
+        return (
+          <div className='content-row content-row__first-item' style={{
+            borderColor: col,
+          }
+          }>{rec.name}</div>
+        )
+      }
+    },
+    {
+      title: 'Описание',
+      dataIndex: 'description',
+      key: 'description',
+      sorter: {
+        compare: (a, b) => {
+          const x = a.description ? a.description.toLowerCase() : '';
+          const y = b.description ? b.description.toLowerCase() : '';
+          if (x > y) return 1;
+          if (x < y) return -1;
+          return 0;
+        },
+      },
+      render: (_, rec) => {
+        let col = COLORS.CONTENT_WEB_PAGE;
+        switch (rec.contentType) {
+          case ContentType.Picture: col = COLORS.CONTENT_IMAGE;
+            break;
+          case ContentType.Video: col = COLORS.CONTENT_VIDEO;
+            break;
+        }
+        return (
+          <div className='content-row content-row__middle-item' style={{
+            borderColor: col,
+          }
+          }>{rec.description}</div>
+        )
+      }
+    },
+    {
+      title: 'Дата создания/изменения',
+      dataIndex: 'lastUpdated',
+      key: 'lastUpdated',
+      sorter: {
+        compare: (a, b) => b.lastUpdated.getTime() - a.lastUpdated.getTime(),
+      },
+      render: (_, rec) => {
+        let col = COLORS.CONTENT_WEB_PAGE;
+        switch (rec.contentType) {
+          case ContentType.Picture: col = COLORS.CONTENT_IMAGE;
+            break;
+          case ContentType.Video: col = COLORS.CONTENT_VIDEO;
+            break;
+        }
+        return (
+          <div className='content-row content-row__last-item' style={{
+            borderColor: col,
+          }
+          }>{rec.lastUpdated.toLocaleString()}</div>
+        )
+      }
+    }
+  ]
 
   if (isLoading) return (
     <Card>
@@ -150,28 +160,33 @@ export const Contents = ({ functionals }: TProps) => {
     <ContentErrorCard />
   )
   return (
-    <Flex wrap gap='small'>
-      {/* {data ? data.sort((a, b) => b.lastUpdated.getTime() - a.lastUpdated.getTime()).map(cont => (
-        <ContentCard
-          key={cont.id}
-          content={cont}
-          isDetailed={subpages?.includes(Subpage.ContentView) || subpages?.includes(Subpage.ContentEdit)}
-        />
-      )) : null}
-      {functionals?.includes(Functional.Add) ? (
-        <ContentAddCard />
-      ) : null} */}
-    </Flex>
-    // <Table<TGetContentDto>
-    //   columns={columns}
-    //   dataSource={data}
-    //   rowKey={item => item.id}
-    //   onRow={item => {
-    //     if (!(subpages?.includes(Subpage.ContentView) || subpages?.includes(Subpage.ContentEdit))) return {};
-    //     return {
-    //       onClick: () => { navigate(`/contents/${item.id}`) }
-    //     }
-    //   }}
-    // />
+    <Fragment>
+      <hr />
+      <div className='contents-page__subheader'>
+        <div className='contents-page__subheader__buttons-block'>
+          buttons
+        </div>
+        <div className='contents-page__subheader__legend-block'>
+          <div style={{ borderColor: COLORS.CONTENT_WEB_PAGE }} className='legend-item'>&nbsp;-&nbsp;веб-страница</div>
+          <div style={{ borderColor: COLORS.CONTENT_VIDEO }} className='legend-item'>&nbsp;-&nbsp;видео</div>
+          <div style={{ borderColor: COLORS.CONTENT_IMAGE }} className='legend-item'>&nbsp;-&nbsp;изображение</div>
+        </div>
+      </div>
+      <Table<TGetContentDto>
+        columns={columns}
+        dataSource={data}
+        rowHoverable
+        rowKey={item => item.id}
+        onRow={item => {
+          if (!(functionals?.includes(Functional.Read) || functionals?.includes(Functional.Update))) return {};
+          return {
+            onClick: () => {
+              const link = PAGES_CONFIG[Page.Contents].subpages.find(x => x.functionals.includes(Functional.Read))?.link;
+              if (link) navigate(link.replace(':id', `${item.id}`));
+            }
+          }
+        }}
+      />
+    </Fragment>
   )
 }
