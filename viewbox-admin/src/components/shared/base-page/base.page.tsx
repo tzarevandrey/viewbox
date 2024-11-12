@@ -23,6 +23,7 @@ export const BasePage = ({ Jsx, functionals }: TProps) => {
     return (
       <Flex vertical style={{ width: '100%', overflowY: 'auto' }}>
         <TitleElement />
+        <hr className='basepage-hr' />
         <Jsx functionals={functionals} />
       </Flex>
     )

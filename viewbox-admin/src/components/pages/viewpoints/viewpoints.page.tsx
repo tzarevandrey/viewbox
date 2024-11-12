@@ -21,19 +21,9 @@ export const Viewpoints = ({ functionals }: TProps) => {
     // eslint-disable-next-line
   }, [])
   const {
-    data: dt, isLoading, isError
+    data, isLoading, isError
   } = useGetAllViewpointsQuery(null);
-  const data: TGetViewpointDto[] = [
-    {
-      id: 1,
-      name: 'панель 1',
-    },
-    {
-      id: 2,
-      name: 'панель 2',
-      description: 'эта панель с описанием'
-    },
-  ]
+  console.log(data)
   if (isLoading) return (
     <Card>
       <Spin indicator={<LoadingOutlined spin />} />
@@ -44,7 +34,7 @@ export const Viewpoints = ({ functionals }: TProps) => {
   )
   return (
     <Flex wrap gap='small'>
-      {data ? data.sort((a, b) => {
+      {data ? [...data].sort((a, b) => {
         if (a.name > b.name) return 1;
         if (a.name < b.name) return -1;
         return 0;

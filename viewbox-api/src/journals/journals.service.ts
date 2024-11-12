@@ -4,20 +4,43 @@ import { Journal } from './journals.model';
 import { JournalDetail } from './journals.details.model';
 import { REQUEST } from '@nestjs/core';
 import { User } from 'src/core/models/users.model';
+import { JournalCreateDto } from './dto/journals.create.dto';
+import { EventType } from 'src/core/enums/event-types.enum';
+import { ENTITIES_FIELDS_KEYS } from 'src/core/dictionaries/entities-fields.keys.dict';
 
 @Injectable()
 export class JournalsService {
 
-    constructor(
-        @InjectModel(Journal) private journalsRepository: typeof Journal,
-        @InjectModel(JournalDetail) private journalsDetailsRepository: typeof JournalDetail,
-        @Inject(REQUEST) private request
-    ) {}
+  constructor(
+    @InjectModel(Journal) private journalsRepository: typeof Journal,
+    @InjectModel(JournalDetail) private journalDetailRepository: typeof JournalDetail,
+    @Inject(REQUEST) private request
+  ) { }
 
-    async addRecord() {
-        // console.log('req ' + this.request.user)
-        const user = this.request.user as User;
-        // console.log(user);
+  async addRecord(dto: JournalCreateDto) {
+    const user = this.request.user as User;
+    const journal = await this.journalsRepository.create({
+      eventType: dto.eventType,
+      date: new Date(),
+      eventEntity: dto.eventEntity,
+      entityName: dto.entityName,
+      authorLogin: user.login,
+      authorName: user.name
+    });
+    switch (dto.eventType) {
+      case EventType.Create: if (dto.entity) {
+        Promise.all(Object.entries(dto.entity.dataValues).map(entry => {
+          try {
+            return this.journalDetailRepository.create({
+              journalId: journal.id,
+              prevValue: null,
+              actualValue: `${entry[1]}`,
+              entityField: ENTITIES_FIELDS_KEYS[`${dto.eventEntity}`][entry[0]]
+            })
+          } catch { }
+        }))
+      }
     }
+  }
 
 }

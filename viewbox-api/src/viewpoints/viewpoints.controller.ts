@@ -17,7 +17,8 @@ export class ViewpointsController {
 
   @Post()
   async add(@Body() dto: ViewpointCreateDto) {
-    return await this.viewpointsService.addViewpoint(dto);
+    const res = await this.viewpointsService.addViewpoint(dto);
+    return res;
   }
 
   @Get('/id')

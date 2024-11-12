@@ -161,7 +161,6 @@ export const Contents = ({ functionals }: TProps) => {
   )
   return (
     <Fragment>
-      <hr />
       <div className='contents-page__subheader'>
         <div className='contents-page__subheader__buttons-block'>
           buttons

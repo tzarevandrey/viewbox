@@ -84,7 +84,7 @@
 .contents-page__subheader {
   display: flex;
   justify-content: space-between;
-  padding: 8px;
+  padding: 0 8px 8px 0;
 }
 
 .contents-page__subheader__legend-block {
@@ -105,5 +105,9 @@
   border-color: inherit;
   border-radius: 4px;
   display: flex;
-  margin: auto 0;
+  margin: 4px 0 0 0;
+}
+
+.basepage-hr {
+  margin-bottom: 8px;
 }

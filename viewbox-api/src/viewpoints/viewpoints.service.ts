@@ -5,6 +5,8 @@ import { ViewpointCreateDto } from './dto/viewpoints.create.dto';
 import { JournalsService } from 'src/journals/journals.service';
 import { Playlist } from 'src/playlists/playlists.model';
 import { ViewpointUpdateDto } from './dto/viewpoints.update.dto';
+import { EventEntity } from 'src/core/enums/event-entities.enum';
+import { EventType } from 'src/core/enums/event-types.enum';
 
 @Injectable()
 export class ViewpointsService {
@@ -16,12 +18,17 @@ export class ViewpointsService {
 
   async addViewpoint(dto: ViewpointCreateDto) {
     const viewpoint = await this.viewpointRepository.create(dto);
+    this.journalService.addRecord({
+      eventEntity: EventEntity.Viewpoint,
+      eventType: EventType.Create,
+      entityName: viewpoint.name,
+      entity: viewpoint
+    })
     return viewpoint;
   }
 
   async getAll() {
     const viewpoints = await this.viewpointRepository.findAll();
-    await this.journalService.addRecord();
     return viewpoints;
   }
 

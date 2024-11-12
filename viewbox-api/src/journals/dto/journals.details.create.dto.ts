@@ -1,7 +1,6 @@
-import { EntityField } from "src/core/enums/event.entities-fields.enum";
+import { EntityField } from "src/core/enums/entities-fields.enum";
 
 export class JournalDetailCreateDto {
-    entityField: EntityField;
-    prevValue?: string;
-    actualValue?: string;
+  prevValue?: any;
+  actualValue?: any;
 }
