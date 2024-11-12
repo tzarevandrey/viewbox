@@ -12,7 +12,7 @@ export const viewpointsApi = api.injectEndpoints({
         url: '/viewpoints',
         method: 'get',
       }),
-      providesTags: (result) => queryTags(`${Api.Viewpoints}`, result || [])
+      providesTags: () => [{ type: `${Api.Viewpoints}`, id: 'list' }]
     }),
     addViewpoint: builder.mutation<TViewpoint, TCreateViewpointDto>({
       query: (body) => ({
@@ -30,7 +30,7 @@ export const viewpointsApi = api.injectEndpoints({
           snack.error('Ошибка при создании панели воспроизведения');
         }
       },
-      invalidatesTags: (result, error) => error ? [] : [`${Api.Viewpoints}`, `${Api.Playlists}`]
+      invalidatesTags: (result, error, args) => error ? [] : [{ type: `${Api.Viewpoints}`, id: 'list' }, { type: `${Api.Playlists}`, id: args.playlistId }]
     }),
     getViewpoint: builder.query<TViewpoint, number>({
       query: (id) => ({

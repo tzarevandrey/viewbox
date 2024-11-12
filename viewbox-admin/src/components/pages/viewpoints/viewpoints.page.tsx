@@ -8,30 +8,34 @@ import { ViewpointsErrorCard } from './viepoints.error-card';
 import { ViewpointsCard } from './viepoints.card';
 import { ViewpointsAddCard } from './viewpoints.add-card';
 import { useEffect } from 'react';
-import { TGetViewpointDto } from './dto/get.viewpoint.dto';
 
 type TProps = {
   functionals?: Functional[];
 }
 
 export const Viewpoints = ({ functionals }: TProps) => {
+
   const dispatch = useAppDispatch();
+
   useEffect(() => {
     dispatch(setTitle('Панели воспроизведения'));
     // eslint-disable-next-line
   }, [])
+
   const {
     data, isLoading, isError
   } = useGetAllViewpointsQuery(null);
-  console.log(data)
+
   if (isLoading) return (
     <Card>
       <Spin indicator={<LoadingOutlined spin />} />
     </Card>
   )
+
   if (isError) return (
     <ViewpointsErrorCard />
   )
+
   return (
     <Flex wrap gap='small'>
       {data ? [...data].sort((a, b) => {

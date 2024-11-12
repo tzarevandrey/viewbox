@@ -7,6 +7,8 @@ import { closeModal } from '../../../reducers/modal.slice';
 import { useAddViewpointMutation } from '../../../api/viewpoints.api';
 import { useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { PAGES_CONFIG } from '../../../core/dictionaries/pages.config.dictionary';
+import { Page } from '../../../core/enums/pages.enum';
 
 export const ViewpointCreate = () => {
   const dispatch = useAppDispatch();
