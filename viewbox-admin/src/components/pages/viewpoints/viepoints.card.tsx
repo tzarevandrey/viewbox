@@ -20,7 +20,7 @@ export const ViewpointsCard = ({ viewpoint, isDetailed = false }: TProps) => {
         if (isDetailed) {
           const link = PAGES_CONFIG[Page.Viewpoints].subpages
             .find(x => x.functionals.includes(Functional.Read))?.link;
-          if (link) navigate(link);
+          if (link) navigate(link.replace(':id', `${viewpoint.id}`));
         }
       }}
       className='viewpoints-card'

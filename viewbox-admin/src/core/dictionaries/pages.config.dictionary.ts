@@ -13,6 +13,7 @@ import { Functional } from '../enums/functional.enum';
 import { Page } from '../enums/pages.enum';
 import { Role } from '../enums/roles.enum';
 import { ViewpointCreate } from '../../components/pages/viewpoints/viewpoint.create.page';
+import { ViewpointEdit } from '../../components/pages/viewpoints/viewpoint.edit.page';
 
 export const PAGES_CONFIG: {
   [key: string]: {
@@ -49,7 +50,13 @@ export const PAGES_CONFIG: {
         link: '/viewpoints/:id',
         Jsx: Viewpoint,
         roles: [Role.Administrator, Role.Superuser, Role.Support],
-        functionals: [Functional.Read, Functional.Update]
+        functionals: [Functional.Read]
+      },
+      {
+        link: '/viewpoints/edit/:id',
+        Jsx: ViewpointEdit,
+        roles: [Role.Administrator, Role.Superuser, Role.Support],
+        functionals: [Functional.Update]
       },
     ],
     functionals: {

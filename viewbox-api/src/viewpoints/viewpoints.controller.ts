@@ -21,7 +21,7 @@ export class ViewpointsController {
     return res;
   }
 
-  @Get('/id')
+  @Get('/:id')
   async getOne(@Param('id') id: number) {
     return await this.viewpointsService.getOne(id);
   }
@@ -32,7 +32,7 @@ export class ViewpointsController {
     return HttpStatus.OK;
   }
 
-  @Delete('/id')
+  @Delete('/:id')
   async delete(@Param('id') id: number) {
     await this.viewpointsService.delete(id);
     return HttpStatus.OK;

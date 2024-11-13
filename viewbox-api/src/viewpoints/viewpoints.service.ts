@@ -39,7 +39,14 @@ export class ViewpointsService {
   }
 
   async update(vp: ViewpointUpdateDto) {
-    await this.viewpointRepository.update(vp, { where: { id: vp.id } });
+    const res = await this.viewpointRepository.update(vp, { where: { id: vp.id }, returning: true });
+    console.log(res[1][0])
+    this.journalService.addRecord({
+      eventEntity: EventEntity.Viewpoint,
+      eventType: EventType.Update,
+      entityName: vp.name,
+      entity: res[1][0]
+    })
     return;
   }
 

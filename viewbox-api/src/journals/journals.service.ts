@@ -40,6 +40,9 @@ export class JournalsService {
           } catch { }
         }))
       }
+        break;
+      case EventType.Update: console.log(dto.entity.dataValues, dto.entity._previousDataValues);
+        break;
     }
   }
 
