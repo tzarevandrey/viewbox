@@ -46,6 +46,11 @@ export const ViewpointEdit = ({ functionals }: TProps) => {
     <Form
       layout='vertical'
       size='small'
+      initialValues={{
+        'name': data?.name,
+        'description': data?.description || undefined,
+        'playlistId': data?.playlistId
+      }}
       onFinish={(values) => {
         updateViewpoint({ actual: { ...values, id: data?.id }, oldPlaylistId: null });
         navigate(-1);
@@ -61,13 +66,13 @@ export const ViewpointEdit = ({ functionals }: TProps) => {
           { max: 255, message: 'Не более 255 символов' }
         ]}
       >
-        <Input autoComplete='off' defaultValue={data?.name} />
+        <Input autoComplete='off' />
       </Form.Item>
       <Form.Item
         label='Описание'
         name='description'
       >
-        <TextArea rows={6} autoComplete='off' defaultValue={data?.description ?? undefined} />
+        <TextArea rows={6} autoComplete='off' />
       </Form.Item>
       <Form.Item
         label='Плейлист'
@@ -76,9 +81,8 @@ export const ViewpointEdit = ({ functionals }: TProps) => {
         <Select
           showSearch
           optionFilterProp='children'
-          defaultValue={null}
-          loading={isLoading}
-          disabled={isError}
+          loading={plLoading}
+          disabled={plError}
           notFoundContent='Плейлисты не созданы'
         >
           {plData ? [...plData].sort((a, b) => {

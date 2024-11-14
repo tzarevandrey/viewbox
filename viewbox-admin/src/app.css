@@ -38,6 +38,10 @@
   gap: 10px;
 }
 
+.buttons-block_left {
+  justify-content: start;
+}
+
 .card-only-icon {
   justify-content: center;
   align-items: center;
@@ -114,4 +118,25 @@
 
 .viewpoints-card .ant-card-meta-title {
   white-space: break-spaces;
+}
+
+.viewpoint__view {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  gap: 10px;
+  margin-bottom: 10px;
+}
+
+.viewpoint__view__label {
+  display: flex;
+  justify-content: end;
+  color: darkgray;
+}
+
+.viewpoint__view__value {
+  font-weight: 600;
+}
+
+.viewpoint__view__value_out {
+  color: darkgray;
 }

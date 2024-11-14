@@ -40,30 +40,22 @@ export const Viewpoint = ({ functionals }: TProps) => {
 
 
   return (
-    <Form
-      layout='horizontal'
-      labelCol={{ span: 6 }}
-      size='small'
-    >
-      {roles.includes(Role.Superuser) || roles.includes(Role.Support) ? (
-        <Form.Item label='Идентификатор'>
-          <Typography.Text strong>{data?.id}</Typography.Text>
-        </Form.Item>
-      ) : null}
-      <Form.Item label='Название'>
-        <Typography.Text strong>{data?.name}</Typography.Text>
-      </Form.Item>
-      <Form.Item label='Описание'>
-        <Typography.Text strong aria-multiline>{data?.description}</Typography.Text>
-      </Form.Item>
-      <Form.Item label='Список воспроизведения'>
-        {data?.playlist ? (
-          <Typography.Text strong>{data?.playlist?.name}</Typography.Text>
-        ) : (
-          <Typography.Text strong type='secondary'>не задан</Typography.Text>
-        )}
-      </Form.Item>
-      <Flex className='buttons-block'>
+    <div >
+      <div className='viewpoint__view'>
+        {roles.includes(Role.Superuser) || roles.includes(Role.Support) ? (
+          <Fragment>
+            <div className='viewpoint__view__label'>Идентификатор:</div>
+            <div className='viewpoint__view__value'>{data?.id}</div>
+          </Fragment>
+        ) : null}
+        <div className='viewpoint__view__label'>Наименование:</div>
+        <div className='viewpoint__view__value'>{data?.name}</div>
+        <div className='viewpoint__view__label'>Описание:</div>
+        <div className='viewpoint__view__value'>{data?.description}</div>
+        <div className='viewpoint__view__label'>Список воспроизведения:</div>
+        <div className={`viewpoint__view__value${data?.playlist ? '' : ' viewpoint__view__value_out'}`}>{data?.playlist?.name || 'не задан'}</div>
+      </div>
+      <Flex className='buttons-block buttons-block_left'>
         <Button
           type='default'
           htmlType='button'
@@ -81,7 +73,19 @@ export const Viewpoint = ({ functionals }: TProps) => {
             }}
           >Изменить</Button>
         ) : null}
+        {functionals?.includes(Functional.Delete) ? (
+          <Button
+            type='default'
+            htmlType='button'
+            danger
+            onClick={() => {
+              if (id) {
+
+              }
+            }}
+          >Удалить</Button>
+        ) : null}
       </Flex>
-    </Form>
+    </div>
   )
 }
