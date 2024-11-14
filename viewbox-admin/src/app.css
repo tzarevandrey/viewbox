@@ -111,3 +111,7 @@
 .basepage-hr {
   margin-bottom: 8px;
 }
+
+.viewpoints-card .ant-card-meta-title {
+  white-space: break-spaces;
+}

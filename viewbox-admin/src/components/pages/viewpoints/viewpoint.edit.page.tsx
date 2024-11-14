@@ -41,10 +41,11 @@ export const ViewpointEdit = ({ functionals }: TProps) => {
     dispatch(setTitle(`Панель воспроизведения ${data?.name}`))
     // eslint-disable-next-line
   }, [data])
-  console.log(data)
+
   return (
     <Form
       layout='vertical'
+      size='small'
       onFinish={(values) => {
         updateViewpoint({ actual: { ...values, id: data?.id }, oldPlaylistId: null });
         navigate(-1);
@@ -75,7 +76,7 @@ export const ViewpointEdit = ({ functionals }: TProps) => {
         <Select
           showSearch
           optionFilterProp='children'
-          defaultActiveFirstOption
+          defaultValue={null}
           loading={isLoading}
           disabled={isError}
           notFoundContent='Плейлисты не созданы'

@@ -1,5 +1,5 @@
 export class ViewpointCreateDto {
-    name: string;
-    description?: string;
-    playlistId?: number;
+  name: string;
+  description: string | null = null;
+  playlistId: number | null = null;
 }

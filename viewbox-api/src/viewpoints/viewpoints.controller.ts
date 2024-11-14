@@ -28,14 +28,12 @@ export class ViewpointsController {
 
   @Put()
   async update(@Body() vp: ViewpointUpdateDto) {
-    await this.viewpointsService.update(vp);
-    return HttpStatus.OK;
+    return await this.viewpointsService.update(vp);
   }
 
   @Delete('/:id')
   async delete(@Param('id') id: number) {
-    await this.viewpointsService.delete(id);
-    return HttpStatus.OK;
+    return await this.viewpointsService.delete(id);
   }
 
 }

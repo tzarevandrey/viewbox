@@ -28,8 +28,8 @@ export class JournalsService {
       authorName: user.name
     });
     switch (dto.eventType) {
-      case EventType.Create: if (dto.entity) {
-        Promise.all(Object.entries(dto.entity.dataValues).map(entry => {
+      case EventType.Create: if (dto.entityActual) {
+        Promise.all(Object.entries(dto.entityActual).map(entry => {
           try {
             return this.journalDetailRepository.create({
               journalId: journal.id,
@@ -41,7 +41,20 @@ export class JournalsService {
         }))
       }
         break;
-      case EventType.Update: console.log(dto.entity.dataValues, dto.entity._previousDataValues);
+      case EventType.Update: if (dto.entityActual && dto.entityOld) {
+        Promise.all(Object.entries(dto.entityActual).map(entry => {
+          try {
+            if ((entry[1] || null) !== (dto.entityOld[entry[0]] || null)) {
+              return this.journalDetailRepository.create({
+                journalId: journal.id,
+                prevValue: `${dto.entityOld[entry[0]] || null}`,
+                actualValue: `${entry[1] || null}`,
+                entityField: ENTITIES_FIELDS_KEYS[`${dto.eventEntity}`][entry[0]]
+              })
+            }
+          } catch { }
+        }))
+      }
         break;
     }
   }

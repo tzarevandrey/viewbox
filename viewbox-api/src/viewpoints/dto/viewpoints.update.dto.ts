@@ -1,6 +1,6 @@
 export class ViewpointUpdateDto {
   id: number;
   name: string;
-  description?: string | null;
-  playlistId?: number | null;
+  description: string | null = null;
+  playlistId: number | null = null;
 }

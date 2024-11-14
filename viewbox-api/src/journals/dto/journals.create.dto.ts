@@ -5,5 +5,6 @@ export class JournalCreateDto {
   eventType: EventType;
   eventEntity: EventEntity;
   entityName?: string | null;
-  entity: any;
+  entityActual?: any;
+  entityOld?: any;
 }

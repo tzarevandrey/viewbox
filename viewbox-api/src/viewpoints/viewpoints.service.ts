@@ -3,7 +3,6 @@ import { InjectModel } from '@nestjs/sequelize';
 import { Viewpoint } from './viewpoints.model';
 import { ViewpointCreateDto } from './dto/viewpoints.create.dto';
 import { JournalsService } from 'src/journals/journals.service';
-import { Playlist } from 'src/playlists/playlists.model';
 import { ViewpointUpdateDto } from './dto/viewpoints.update.dto';
 import { EventEntity } from 'src/core/enums/event-entities.enum';
 import { EventType } from 'src/core/enums/event-types.enum';
@@ -22,7 +21,7 @@ export class ViewpointsService {
       eventEntity: EventEntity.Viewpoint,
       eventType: EventType.Create,
       entityName: viewpoint.name,
-      entity: viewpoint
+      entityActual: viewpoint.dataValues
     })
     return viewpoint;
   }
@@ -33,26 +32,36 @@ export class ViewpointsService {
   }
 
   async getOne(id: number) {
-    const viewpoint = await this.viewpointRepository.findByPk(id, { include: [{ model: Playlist }] });
-    if (!viewpoint) throw new HttpException('Панель воспроизведения не найдена', HttpStatus.BAD_REQUEST);
+    const viewpoint = await this.viewpointRepository.findByPk(id, { include: [{ all: true }] });
+    if (!viewpoint) throw new HttpException(`Панель воспроизведения ${id} не найдена`, HttpStatus.BAD_REQUEST);
     return viewpoint;
   }
 
   async update(vp: ViewpointUpdateDto) {
-    const res = await this.viewpointRepository.update(vp, { where: { id: vp.id }, returning: true });
-    console.log(res[1][0])
+    const viewpoint = await this.viewpointRepository.findByPk(vp.id);
+    if (!viewpoint) throw new HttpException(`Панель воспроизведения ${vp.id} не найдена`, HttpStatus.BAD_REQUEST);
+    const old = { ...viewpoint.dataValues };
+    viewpoint.name = vp.name;
+    viewpoint.description = vp.description;
+    viewpoint.playlistId = vp.playlistId;
+    const actual = await viewpoint.save();
     this.journalService.addRecord({
       eventEntity: EventEntity.Viewpoint,
       eventType: EventType.Update,
       entityName: vp.name,
-      entity: res[1][0]
+      entityActual: actual.dataValues,
+      entityOld: old
     })
-    return;
+    return viewpoint;
   }
 
   async delete(id: number) {
-    await this.viewpointRepository.destroy({ where: { id: id } });
-    return;
+    try {
+      await this.viewpointRepository.destroy({ where: { id: id } });
+      return HttpStatus.OK;
+    } catch {
+      return HttpStatus.INTERNAL_SERVER_ERROR;
+    }
   }
 
 }
