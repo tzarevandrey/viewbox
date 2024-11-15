@@ -1,13 +1,13 @@
-import { Card, Flex, Spin } from 'antd';
+import { Flex } from 'antd';
 import { Functional } from '../../../core/enums/functional.enum';
 import { useAppDispatch } from '../../../hooks';
 import { setTitle } from '../../../reducers/title.slice';
 import { useGetAllViewpointsQuery } from '../../../api/viewpoints.api';
-import { LoadingOutlined } from '@ant-design/icons';
 import { ViewpointsErrorCard } from './viepoints.error-card';
 import { ViewpointsCard } from './viepoints.card';
 import { ViewpointsAddCard } from './viewpoints.add-card';
 import { useEffect } from 'react';
+import { ViewpointsLoadingCard } from './viewpoints.loading-card';
 
 type TProps = {
   functionals?: Functional[];
@@ -23,22 +23,18 @@ export const Viewpoints = ({ functionals }: TProps) => {
   }, [])
 
   const {
-    data, isLoading, isError
+    data: viewpoints,
+    isLoading: viewpointsLoading,
+    isError: viewpointsLoadingError
   } = useGetAllViewpointsQuery(null);
 
-  if (isLoading) return (
-    <Card>
-      <Spin indicator={<LoadingOutlined spin />} />
-    </Card>
-  )
+  if (viewpointsLoading) return <ViewpointsLoadingCard />
 
-  if (isError) return (
-    <ViewpointsErrorCard />
-  )
+  if (viewpointsLoadingError) return <ViewpointsErrorCard />
 
   return (
     <Flex wrap gap='small'>
-      {data ? [...data].sort((a, b) => {
+      {viewpoints ? [...viewpoints].sort((a, b) => {
         if (a.name > b.name) return 1;
         if (a.name < b.name) return -1;
         return 0;

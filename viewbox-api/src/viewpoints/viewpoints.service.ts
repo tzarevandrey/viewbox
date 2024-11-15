@@ -57,7 +57,13 @@ export class ViewpointsService {
 
   async delete(id: number) {
     try {
-      await this.viewpointRepository.destroy({ where: { id: id } });
+      const viewpoint = await this.viewpointRepository.findByPk(id);
+      await viewpoint.destroy();
+      this.journalService.addRecord({
+        eventEntity: EventEntity.Viewpoint,
+        eventType: EventType.Delete,
+        entityName: viewpoint.name
+      })
       return HttpStatus.OK;
     } catch {
       return HttpStatus.INTERNAL_SERVER_ERROR;

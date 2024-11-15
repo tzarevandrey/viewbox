@@ -15,9 +15,9 @@ export const ViewpointCreate = () => {
     // eslint-disable-next-line
   }, [])
   const {
-    data,
-    isLoading,
-    isError
+    data: playlists,
+    isLoading: playlistsLoading,
+    isError: playlistsLoadingError
   } = useGetAllPlaylistsQuery(null);
   const [addViewpoint] = useAddViewpointMutation();
   return (
@@ -54,11 +54,11 @@ export const ViewpointCreate = () => {
           showSearch
           optionFilterProp='children'
           defaultActiveFirstOption
-          loading={isLoading}
-          disabled={isError}
+          loading={playlistsLoading}
+          disabled={playlistsLoadingError}
           notFoundContent='Плейлисты не созданы'
         >
-          {data ? [...data].sort((a, b) => {
+          {playlists ? [...playlists].sort((a, b) => {
             const aName = a.name.toLowerCase();
             const bName = b.name.toLowerCase();
             if (aName > bName) return 1;

@@ -1,5 +1,7 @@
+import { TCreateContentDto } from '../components/pages/contents/dto/create.content.dto';
 import { TGetContentDto } from "../components/pages/contents/dto/get.content.dto";
 import { Api } from "../core/enums/api.enum";
+import { TContent } from '../core/types/content';
 import { api, queryTags } from "./api";
 
 export const contentApi = api.injectEndpoints({
@@ -11,7 +13,7 @@ export const contentApi = api.injectEndpoints({
       }),
       providesTags: (result) => result ? queryTags(`${Api.Contents}`, result) : []
     }),
-    addContent: builder.mutation({
+    addContent: builder.mutation<TContent, TCreateContentDto>({
       query: (body) => ({
         url: '',
         method: 'post',
@@ -26,4 +28,5 @@ export const contentApi = api.injectEndpoints({
 
 export const {
   useGetAllContentQuery,
+  useAddContentMutation,
 } = contentApi;

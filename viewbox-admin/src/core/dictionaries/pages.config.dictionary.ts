@@ -14,6 +14,7 @@ import { Page } from '../enums/pages.enum';
 import { Role } from '../enums/roles.enum';
 import { ViewpointCreate } from '../../components/pages/viewpoints/viewpoint.create.page';
 import { ViewpointEdit } from '../../components/pages/viewpoints/viewpoint.edit.page';
+import { ContentCreate } from '../../components/pages/contents/content.create.page';
 
 export const PAGES_CONFIG: {
   [key: string]: {
@@ -102,7 +103,7 @@ export const PAGES_CONFIG: {
     subpages: [
       {
         link: '/content/new',
-        Jsx: Content,
+        Jsx: ContentCreate,
         roles: [Role.Administrator, Role.Superuser, Role.Support],
         functionals: [Functional.Create]
       },

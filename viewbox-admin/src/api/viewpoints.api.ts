@@ -81,6 +81,21 @@ export const viewpointsApi = api.injectEndpoints({
         }
       },
       providesTags: (result, error) => error ? [] : [{ type: `${Api.Viewpoints}`, id: result?.id }]
+    }),
+    deleteViewpoint: builder.mutation<any, number>({
+      query: (id) => ({
+        url: `/viewpoints/${id}`,
+        method: 'delete'
+      }),
+      async onQueryStarted(_, { queryFulfilled }) {
+        try {
+          await queryFulfilled;
+          snack.success('Панель воспроизведения удалена')
+        } catch (error) {
+          snack.error('Ошибка при удалении панели воспроизведения');
+        }
+      },
+      invalidatesTags: (_, error) => error ? [] : [{ type: `${Api.Viewpoints}`, id: 'list' }]
     })
   }),
   overrideExisting: false
@@ -90,5 +105,6 @@ export const {
   useGetAllViewpointsQuery,
   useAddViewpointMutation,
   useGetViewpointQuery,
-  useUpdateViewpointMutation
+  useUpdateViewpointMutation,
+  useDeleteViewpointMutation
 } = viewpointsApi;

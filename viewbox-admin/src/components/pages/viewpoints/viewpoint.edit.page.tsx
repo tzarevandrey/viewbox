@@ -7,6 +7,8 @@ import { useEffect } from 'react';
 import { Button, Flex, Form, Input, Select } from 'antd';
 import TextArea from 'antd/es/input/TextArea';
 import { useGetAllPlaylistsQuery } from '../../../api/playlists.api';
+import { ViewpointsLoadingCard } from './viewpoints.loading-card';
+import { ViewpointsErrorCard } from './viepoints.error-card';
 
 type TProps = {
   functionals?: Functional[];
@@ -17,17 +19,17 @@ type TParams = {
 }
 
 export const ViewpointEdit = ({ functionals }: TProps) => {
-  const { id } = useParams<TParams>();
+  const { id: viewpointId } = useParams<TParams>();
 
   const navigate = useNavigate();
 
   const [updateViewpoint] = useUpdateViewpointMutation();
 
   const {
-    data,
-    isLoading,
-    isError
-  } = useGetViewpointQuery(id ? +id : 0);
+    data: viewpoint,
+    isLoading: viewpointLoading,
+    isError: viewpointLoadingError
+  } = useGetViewpointQuery(viewpointId ? +viewpointId : 0);
 
   const {
     data: plData,
@@ -38,21 +40,24 @@ export const ViewpointEdit = ({ functionals }: TProps) => {
   const dispatch = useAppDispatch();
 
   useEffect(() => {
-    dispatch(setTitle(`Панель воспроизведения ${data?.name}`))
+    dispatch(setTitle(`Панель воспроизведения ${viewpoint?.name}`))
     // eslint-disable-next-line
-  }, [data])
+  }, [viewpoint])
+
+  if (viewpointLoading) return <ViewpointsLoadingCard />
+
+  if (viewpointLoadingError) return <ViewpointsErrorCard />
 
   return (
     <Form
       layout='vertical'
-      size='small'
       initialValues={{
-        'name': data?.name,
-        'description': data?.description || undefined,
-        'playlistId': data?.playlistId
+        'name': viewpoint?.name,
+        'description': viewpoint?.description || undefined,
+        'playlistId': viewpoint?.playlistId
       }}
       onFinish={(values) => {
-        updateViewpoint({ actual: { ...values, id: data?.id }, oldPlaylistId: null });
+        updateViewpoint({ actual: { ...values, id: viewpoint?.id }, oldPlaylistId: null });
         navigate(-1);
       }}
       onReset={() => navigate(-1)}

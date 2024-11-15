@@ -1,5 +1,8 @@
+import { ContentType } from '../../../../core/enums/content.enum';
+
 export type TCreateContentDto = {
-  name: string;
+  name?: string;
   description?: string;
-  playlistId?: number;
+  contentType: ContentType;
+  file?: File;
 }

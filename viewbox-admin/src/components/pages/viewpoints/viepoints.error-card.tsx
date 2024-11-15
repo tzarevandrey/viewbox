@@ -1,10 +1,12 @@
 import { CloseCircleOutlined } from '@ant-design/icons';
-import { Card } from 'antd';
+import { Card, Popover } from 'antd';
 
 export const ViewpointsErrorCard = () => {
   return (
-    <Card className='viewpoints-card viewpoints-card_error'>
-      <CloseCircleOutlined className='viewpoint-card__icon_big item_error' />
-    </Card>
+    <Popover content={'При загрузке произошла ошибка'}>
+      <Card className='viewpoints-card viewpoints-card_error'>
+        <CloseCircleOutlined className='viewpoint-card__icon_big item_error' />
+      </Card>
+    </Popover>
   )
 }
