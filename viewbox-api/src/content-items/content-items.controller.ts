@@ -23,7 +23,7 @@ export class ContentItemsController {
     }
 
     @UseInterceptors(FileInterceptor('file'))
-    @Post('add')
+    @Post()
     async addContent(@Body() dto: ContentItemCreateDto, @UploadedFile() file?: Express.Multer.File) {        
         return await this.contentService.addContent(dto, file);
     }

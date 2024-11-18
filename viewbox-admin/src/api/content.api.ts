@@ -15,9 +15,14 @@ export const contentApi = api.injectEndpoints({
     }),
     addContent: builder.mutation<TContent, TCreateContentDto>({
       query: (body) => ({
-        url: '',
+        url: '/content',
         method: 'post',
-        body
+        body,
+        formData: true,
+        headers: {
+          "Content-Type": "multipart/form-data",
+          "Accept": "*/*"
+        }
       }),
       invalidatesTags: (result, error) => error ? [] : [`${Api.Contents}`]
     }),

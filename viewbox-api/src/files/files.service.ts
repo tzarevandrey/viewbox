@@ -19,8 +19,9 @@ export class FilesService {
 
             await fs.writeFile(path.join(filePath, fileName), file.buffer);
             return fileName;
-        } catch {
-            throw new HttpException('Произошла ошибка при сохранении файла', HttpStatus.INTERNAL_SERVER_ERROR);
+        } catch(e) {
+            console.log(e)
+            throw new HttpException(e, HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
 
