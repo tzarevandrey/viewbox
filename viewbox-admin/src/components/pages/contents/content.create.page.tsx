@@ -1,14 +1,15 @@
-import { Button, Flex, Form, FormInstance, Input, Select } from 'antd';
+import { Button, Flex, Form, FormInstance, Input, Select, Upload } from 'antd';
 import { useAppDispatch } from '../../../hooks';
 import { setTitle } from '../../../reducers/title.slice';
 import { useAddContentMutation } from '../../../api/content.api';
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { ContentType } from '../../../core/enums/content.enum';
 import { TCreateContentDto } from './dto/create.content.dto';
 import TextArea from 'antd/es/input/TextArea';
 
 export const ContentCreate = () => {
+
   const dispatch = useAppDispatch();
   const navigate = useNavigate();
 
@@ -16,14 +17,20 @@ export const ContentCreate = () => {
     dispatch(setTitle('Новый контент'));
     // eslint-disable-next-line
   }, [])
+
   const [addContent] = useAddContentMutation();
+
+  const [file, setFile] = useState<any[]>([]);
+
   return (
     <Form
       layout='vertical'
       encType='multipart/form-data'
       onFinish={(values) => {
-        console.log(values)
-        addContent(values);
+        const formData = new FormData();
+        Object.entries(values).forEach(entry => { if (entry[1]) formData.append(entry[0], `${entry[1]}`) })
+        if (file[0]) formData.set('file', file[0].originFileObj)
+        addContent(formData);
         navigate(-1);
       }}
       onReset={() => navigate(-1)}
@@ -50,26 +57,83 @@ export const ContentCreate = () => {
       </Form.Item>
       <Form.Item
         noStyle
-        shouldUpdate={(prevValues, currentValues) => prevValues.contentType !== currentValues.contentType}
+        shouldUpdate={(prevValues, currentValues) => {
+          if (prevValues.contentType !== currentValues.contentType) setFile([]);
+          return (prevValues.contentType !== currentValues.contentType)
+        }}
       >
-        {({ getFieldValue, setFieldValue }: FormInstance<TCreateContentDto>) => {
-          // setFieldValue('file', '');
+        {({ getFieldValue }: FormInstance<TCreateContentDto>) => {
           const contType = getFieldValue('contentType') || ContentType.WebPage;
           switch (contType) {
             case ContentType.Picture: return (
-              <Form.Item name='file'>
-                <Input type='file' accept='image/png, image/jpeg, image/jpg, image/bmp' />
+              <Form.Item
+                name='file'
+                rules={[
+                  () => ({
+                    validator() {
+                      if (file.length === 0) return Promise.reject('Необходим файл изображения');
+                      return Promise.resolve();
+                    }
+                  })
+                ]}
+              >
+                <Upload
+                  accept='.png, .jpg, .jpeg, .bmp'
+                  fileList={file}
+                  showUploadList={{
+                    showDownloadIcon: false,
+                    showRemoveIcon: false,
+                  }}
+                  maxCount={1}
+                  onChange={({ fileList }) => {
+                    setFile(fileList)
+                  }}
+                  beforeUpload={() => {
+                    return false;
+                  }}
+                >
+                  <Button>Загрузить</Button>
+                </Upload>
               </Form.Item>
             )
             case ContentType.Video: return (
-              <Form.Item name='file'>
-                <Input type='file' accept='video/mp4, video/mpeg, video/mov' />
+              <Form.Item
+                name='file'
+                rules={[
+                  () => ({
+                    validator() {
+                      if (file.length === 0) return Promise.reject('Необходим видео-файл');
+                      return Promise.resolve();
+                    }
+                  })
+                ]}
+              >
+                <Upload
+                  accept='.mp4, .mpeg, .mov'
+                  fileList={file}
+                  showUploadList={{
+                    showDownloadIcon: false,
+                    showRemoveIcon: false,
+                  }}
+                  maxCount={1}
+                  onChange={({ fileList }) => {
+                    setFile(fileList)
+                  }}
+                  beforeUpload={() => {
+                    return false;
+                  }}
+                >
+                  <Button>Загрузить</Button>
+                </Upload>
               </Form.Item>
             )
             case ContentType.WebPage: return (
               <Form.Item
                 name='name'
                 label='Ссылка'
+                rules={[
+                  { required: true, message: 'Необходима ссылка' }
+                ]}
               >
                 <Input type='text' autoComplete='off' />
               </Form.Item>

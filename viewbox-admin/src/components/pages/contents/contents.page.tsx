@@ -12,6 +12,7 @@ import { useNavigate } from 'react-router-dom';
 import { PAGES_CONFIG } from '../../../core/dictionaries/pages.config.dictionary';
 import { Page } from '../../../core/enums/pages.enum';
 import { COLORS } from '../../../core/constants/colors';
+import moment from 'moment';
 
 type TProps = {
   functionals?: Functional[];
@@ -49,17 +50,20 @@ export const Contents = ({ functionals }: TProps) => {
       },
       render: (_, content) => {
         let color = COLORS.CONTENT_WEB_PAGE;
+        let name = content.name;
         switch (content.contentType) {
           case ContentType.Picture: color = COLORS.CONTENT_IMAGE;
+            name = content.imageItem?.originalName ?? name;
             break;
           case ContentType.Video: color = COLORS.CONTENT_VIDEO;
+            name = content.videoItem?.originalName ?? name;
             break;
         }
         return (
           <div className='content-row content-row__first-item' style={{
             borderColor: color,
           }
-          }>{content.name}</div>
+          }>{name}</div>
         )
       }
     },
@@ -111,7 +115,7 @@ export const Contents = ({ functionals }: TProps) => {
           <div className='content-row content-row__last-item' style={{
             borderColor: color,
           }
-          }>{content.lastUpdated.toLocaleString()}</div>
+          }>{moment(content.lastUpdated).format('DD.MM.yyyy HH:mm')}</div>
         )
       }
     }

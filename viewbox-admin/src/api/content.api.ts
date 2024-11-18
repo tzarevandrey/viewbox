@@ -1,8 +1,8 @@
-import { TCreateContentDto } from '../components/pages/contents/dto/create.content.dto';
 import { TGetContentDto } from "../components/pages/contents/dto/get.content.dto";
 import { Api } from "../core/enums/api.enum";
 import { TContent } from '../core/types/content';
-import { api, queryTags } from "./api";
+import { snack } from '../utils/snackbar';
+import { api } from "./api";
 
 export const contentApi = api.injectEndpoints({
   endpoints: (builder) => ({
@@ -11,20 +11,26 @@ export const contentApi = api.injectEndpoints({
         url: '/content',
         method: 'get'
       }),
-      providesTags: (result) => result ? queryTags(`${Api.Contents}`, result) : []
+      providesTags: (result) => result ? [{ type: `${Api.Contents}`, id: 'list' }] : []
     }),
-    addContent: builder.mutation<TContent, TCreateContentDto>({
-      query: (body) => ({
-        url: '/content',
-        method: 'post',
-        body,
-        formData: true,
-        headers: {
-          "Content-Type": "multipart/form-data",
-          "Accept": "*/*"
+    addContent: builder.mutation<TContent, FormData>({
+      query: (body) => {
+        return {
+          url: '/content',
+          method: 'post',
+          body,
+          formData: true
         }
-      }),
-      invalidatesTags: (result, error) => error ? [] : [`${Api.Contents}`]
+      },
+      async onQueryStarted(_, { queryFulfilled }) {
+        try {
+          await queryFulfilled;
+          snack.success('Контент добавлен')
+        } catch (error) {
+          snack.error('Ошибка при добавлении контента');
+        }
+      },
+      invalidatesTags: (result, error) => error ? [] : [{ type: `${Api.Contents}`, id: 'list' }]
     }),
 
   }),

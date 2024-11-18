@@ -4,5 +4,4 @@ export class ContentItemCreateDto {
   contentType: ContentType;
   description?: string;
   name?: string;
-  file?: File;
 }

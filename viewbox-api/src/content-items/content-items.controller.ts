@@ -8,24 +8,23 @@ import { JwtAuthGuard } from 'src/auth/jwt.auth.guard';
 @Controller('content')
 export class ContentItemsController {
 
-    constructor(
-        private contentService: ContentItemsService,
-    ) {}
+  constructor(
+    private contentService: ContentItemsService,
+  ) { }
 
-    @Get()
-    async getAll() {
-        return await this.contentService.getAll();
-    }
+  @Get()
+  async getAll() {
+    return await this.contentService.getAll();
+  }
 
-    @Get('test')
-    async getTest(@Req() req: Request) {
-        return req['user'];
-    }
+  @Get('test')
+  async getTest(@Req() req: Request) {
+    return req['user'];
+  }
 
-    @UseInterceptors(FileInterceptor('file'))
-    @Post()
-    async addContent(@Body() dto: ContentItemCreateDto, @UploadedFile() file?: Express.Multer.File) {        
-        return await this.contentService.addContent(dto, file);
-    }
-
+  @UseInterceptors(FileInterceptor('file'))
+  @Post()
+  async addContent(@Body() dto: ContentItemCreateDto, @UploadedFile() file?: any) {
+    return await this.contentService.addContent(dto, file);
+  }
 }

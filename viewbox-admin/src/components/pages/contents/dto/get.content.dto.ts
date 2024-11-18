@@ -6,4 +6,14 @@ export type TGetContentDto = {
   description?: string;
   name: string;
   lastUpdated: Date;
+  imageItem?: TImageItem;
+  videoItem?: TVideoItem;
+}
+
+export type TImageItem = {
+  originalName: string;
+}
+
+export type TVideoItem = {
+  originalName: string;
 }

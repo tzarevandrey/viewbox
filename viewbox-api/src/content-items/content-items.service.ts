@@ -36,7 +36,7 @@ export class ContentItemsService {
     if ([ContentType.Picture, ContentType.Video].includes(Number(dto.contentType))) {
       name = await this.filesService.saveFile(file);
     }
-    const content = await this.contentRepository.create({ contentType: dto.contentType, name: dto.name, description: dto.description, lastUpdated: new Date() });
+    const content = await this.contentRepository.create({ contentType: dto.contentType, name, description: dto.description, lastUpdated: new Date() });
     switch (Number(dto.contentType)) {
       case ContentType.Picture:
         await this.iamgeRepository.create({
