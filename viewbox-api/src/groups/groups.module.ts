@@ -5,6 +5,7 @@ import { SequelizeModule } from '@nestjs/sequelize';
 import { Group } from './groups.model';
 import { GroupRole } from './groups.roles.model';
 import { JwtModule } from '@nestjs/jwt';
+import { JournalsModule } from 'src/journals/journals.module';
 
 @Module({
   controllers: [GroupsController],
@@ -14,7 +15,8 @@ import { JwtModule } from '@nestjs/jwt';
       Group,
       GroupRole
     ]),
-    JwtModule
+    JwtModule,
+    JournalsModule
   ]
 })
-export class GroupsModule {}
+export class GroupsModule { }

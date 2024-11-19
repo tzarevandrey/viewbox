@@ -119,7 +119,8 @@
   white-space: break-spaces;
 }
 
-.viewpoint__view {
+.viewpoint__view,
+.content__view {
   display: grid;
   grid-template-columns: auto 1fr;
   gap: 10px;
@@ -127,21 +128,31 @@
   margin-bottom: 20px;
 }
 
-.viewpoint__view__label {
+.viewpoint__view__label,
+.content__view__label {
   display: flex;
   justify-content: end;
   color: darkgray;
 }
 
-.viewpoint__view__value {
+.viewpoint__view__value,
+.content__view__value {
   font-weight: 600;
 }
 
-.viewpoint__view__value_out {
+.content__view__value__list {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+
+.viewpoint__view__value_out,
+.content__view__value_out {
   color: darkgray;
 }
 
-.viewpoint__view__value_clickable {
+.viewpoint__view__value_clickable,
+.content__view__value_clickable {
   cursor: pointer;
 }
 

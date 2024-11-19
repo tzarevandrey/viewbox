@@ -52,7 +52,7 @@ export class ViewpointsService {
       entityActual: actual.dataValues,
       entityOld: old
     })
-    return viewpoint;
+    return actual;
   }
 
   async delete(id: number) {

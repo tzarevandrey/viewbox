@@ -132,7 +132,8 @@ export const ContentCreate = () => {
                 name='name'
                 label='Ссылка'
                 rules={[
-                  { required: true, message: 'Необходима ссылка' }
+                  { required: true, message: 'Обязательное значение' },
+                  { type: 'url', message: 'Значение должно быть ссылкой' }
                 ]}
               >
                 <Input type='text' autoComplete='off' />

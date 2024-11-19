@@ -15,6 +15,7 @@ import { Role } from '../enums/roles.enum';
 import { ViewpointCreate } from '../../components/pages/viewpoints/viewpoint.create.page';
 import { ViewpointEdit } from '../../components/pages/viewpoints/viewpoint.edit.page';
 import { ContentCreate } from '../../components/pages/contents/content.create.page';
+import { ContentEdit } from '../../components/pages/contents/content.edit.page';
 
 export const PAGES_CONFIG: {
   [key: string]: {
@@ -111,7 +112,13 @@ export const PAGES_CONFIG: {
         link: '/content/:id',
         Jsx: Content,
         roles: [Role.Administrator, Role.Superuser, Role.Support],
-        functionals: [Functional.Read, Functional.Update]
+        functionals: [Functional.Read]
+      },
+      {
+        link: '/content/edit/:id',
+        Jsx: ContentEdit,
+        roles: [Role.Administrator, Role.Superuser, Role.Support],
+        functionals: [Functional.Update]
       },
     ],
     functionals: {

@@ -1,10 +1,9 @@
-import { Button, Card, Spin, Table, TableProps } from 'antd';
+import { Button, Table, TableProps } from 'antd';
 import { useGetAllContentQuery } from '../../../api/content.api';
 import { Functional } from '../../../core/enums/functional.enum';
 import { useAppDispatch } from '../../../hooks';
 import { setTitle } from '../../../reducers/title.slice';
-import { LoadingOutlined } from '@ant-design/icons';
-import { ContentErrorCard } from './content.error-card';
+import { ContentErrorPage } from './content.error.page';
 import { TGetContentDto } from './dto/get.content.dto';
 import { ContentType } from '../../../core/enums/content.enum';
 import { Fragment, useEffect } from 'react';
@@ -13,6 +12,7 @@ import { PAGES_CONFIG } from '../../../core/dictionaries/pages.config.dictionary
 import { Page } from '../../../core/enums/pages.enum';
 import { COLORS } from '../../../core/constants/colors';
 import moment from 'moment';
+import { ContentLoadingPage } from './content.loading.page';
 
 type TProps = {
   functionals?: Functional[];
@@ -41,8 +41,22 @@ export const Contents = ({ functionals }: TProps) => {
       key: 'name',
       sorter: {
         compare: (a, b) => {
-          const x = a.name.toLowerCase();
-          const y = b.name.toLowerCase();
+          let x = a.name;
+          switch (a.contentType) {
+            case ContentType.Picture: x = a.imageItem?.originalName || a.name;
+              break;
+            case ContentType.Video: x = a.videoItem?.originalName || a.name;
+              break;
+          }
+          let y = b.name;
+          switch (b.contentType) {
+            case ContentType.Picture: y = b.imageItem?.originalName || b.name;
+              break;
+            case ContentType.Video: y = b.videoItem?.originalName || b.name;
+              break;
+          }
+          x = x.toLowerCase();
+          y = y.toLowerCase();
           if (x > y) return 1;
           if (x < y) return -1;
           return 0;
@@ -101,7 +115,7 @@ export const Contents = ({ functionals }: TProps) => {
       dataIndex: 'lastUpdated',
       key: 'lastUpdated',
       sorter: {
-        compare: (a, b) => b.lastUpdated.getTime() - a.lastUpdated.getTime(),
+        compare: (a, b) => (new Date(b.lastUpdated).getTime() - new Date(a.lastUpdated).getTime()),
       },
       render: (_, content) => {
         let color = COLORS.CONTENT_WEB_PAGE;
@@ -121,14 +135,8 @@ export const Contents = ({ functionals }: TProps) => {
     }
   ]
 
-  if (contentsLoading) return (
-    <Card>
-      <Spin indicator={<LoadingOutlined spin />} />
-    </Card>
-  )
-  if (contentsLoadingError) return (
-    <ContentErrorCard />
-  )
+  if (contentsLoading) return <ContentLoadingPage />
+  if (contentsLoadingError) return <ContentErrorPage />
   return (
     <Fragment>
       <div className='contents-page__subheader'>
@@ -150,7 +158,7 @@ export const Contents = ({ functionals }: TProps) => {
       </div>
       <Table<TGetContentDto>
         columns={columns}
-        dataSource={contents}
+        dataSource={[...contents ?? []].sort((a, b) => new Date(b.lastUpdated).getTime() - new Date(a.lastUpdated).getTime())}
         rowHoverable
         rowKey={item => item.id}
         onRow={item => {

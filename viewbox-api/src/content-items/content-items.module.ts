@@ -8,6 +8,7 @@ import { VideoItem } from './video-items.model';
 import { WebpageItem } from './webpage-items.model';
 import { JwtModule } from '@nestjs/jwt';
 import { FilesModule } from 'src/files/files.module';
+import { JournalsModule } from 'src/journals/journals.module';
 
 @Module({
   providers: [ContentItemsService],
@@ -21,6 +22,7 @@ import { FilesModule } from 'src/files/files.module';
     ]),
     JwtModule,
     FilesModule,
+    JournalsModule
   ]
 })
-export class ContentItemsModule {}
+export class ContentItemsModule { }
