@@ -7,31 +7,31 @@ import { PlaylistItem } from './playlists.items.model';
 @Injectable()
 export class PlaylistsService {
 
-    constructor(
-        @InjectModel(Playlist) private playlistsRepository: typeof Playlist,
-        @InjectModel(PlaylistItem) private playlistsItemsRepository: typeof PlaylistItem,
-    ) {}
+  constructor(
+    @InjectModel(Playlist) private playlistsRepository: typeof Playlist,
+    @InjectModel(PlaylistItem) private playlistsItemsRepository: typeof PlaylistItem,
+  ) { }
 
-    async getOne(id: number) {
-        const playlist = await this.playlistsRepository.findByPk(id);
-        return playlist;
-    }
+  async getOne(id: number) {
+    const playlist = await this.playlistsRepository.findByPk(id, { include: [{ all: true }] });
+    return playlist;
+  }
 
-    async addPlaylist(dto: PlaylistCreateDto) {
-        const playlist = await this.playlistsRepository.create({ name: dto.name, description: dto.description });
-        if (dto.items?.length > 0) {            
-            await playlist.$set('items', [...dto.items]);//неверно
-        }
-        return playlist;
+  async add(dto: PlaylistCreateDto) {
+    const playlist = await this.playlistsRepository.create({ name: dto.name, description: dto.description });
+    if (dto.items?.length > 0) {
+      await playlist.$set('items', [...dto.items]);//неверно
     }
+    return playlist;
+  }
 
-    async getAll() {
-        // return [
-        //     {id: 3, name: 'third-plist', description: 'Третий тестовый плейлист'},
-        //     {id: 2, name: 'second-plist', description: 'Второй тестовый плейлист'},
-        //     {id: 1, name: 'first-plist', description: 'Первый тестовый плейлист'}
-        // ]
-        return await this.playlistsRepository.findAll();
-    }
+  async getAll() {
+    // return [
+    //     {id: 3, name: 'third-plist', description: 'Третий тестовый плейлист'},
+    //     {id: 2, name: 'second-plist', description: 'Второй тестовый плейлист'},
+    //     {id: 1, name: 'first-plist', description: 'Первый тестовый плейлист'}
+    // ]
+    return await this.playlistsRepository.findAll();
+  }
 
 }

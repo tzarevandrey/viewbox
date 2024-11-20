@@ -5,6 +5,7 @@ import { SequelizeModule } from '@nestjs/sequelize';
 import { Playlist } from './playlists.model';
 import { PlaylistItem } from './playlists.items.model';
 import { JwtModule } from '@nestjs/jwt';
+import { JournalsModule } from 'src/journals/journals.module';
 
 @Module({
   providers: [PlaylistsService],
@@ -15,7 +16,8 @@ import { JwtModule } from '@nestjs/jwt';
       Playlist,
       PlaylistItem
     ]),
-    JwtModule
+    JwtModule,
+    JournalsModule
   ]
 })
-export class PlaylistsModule {}
+export class PlaylistsModule { }

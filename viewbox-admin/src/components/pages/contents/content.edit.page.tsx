@@ -53,7 +53,7 @@ export const ContentEdit = ({ functionals }: TProps) => {
   useEffect(() => {
     dispatch(setTitle('Элемент контента'))
     // eslint-disable-next-line
-  }, [content])
+  }, [])
 
   if (contentLoading) return <ContentLoadingPage />
 
@@ -64,7 +64,7 @@ export const ContentEdit = ({ functionals }: TProps) => {
       initialValues={{
         'contentType': content?.contentType,
         'name': content?.name,
-        'description': content?.description || undefined
+        'description': content?.description ?? undefined
       }}
       onFinish={(values) => {
         updateContent({ name: content?.name, ...values, id: content?.id });

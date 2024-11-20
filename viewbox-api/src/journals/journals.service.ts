@@ -1,4 +1,4 @@
-import { ExecutionContext, Inject, Injectable } from '@nestjs/common';
+import { Inject, Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/sequelize';
 import { Journal } from './journals.model';
 import { JournalDetail } from './journals.details.model';
@@ -44,14 +44,50 @@ export class JournalsService {
       case EventType.Update: if (dto.entityActual && dto.entityOld) {
         Promise.all(Object.entries(dto.entityActual).map(entry => {
           try {
-            if ((entry[1] || null) !== (dto.entityOld[entry[0]] || null)) {
+            if ((entry[1] ?? null) !== (dto.entityOld[entry[0]] ?? null)) {
               return this.journalDetailRepository.create({
                 journalId: journal.id,
-                prevValue: `${dto.entityOld[entry[0]] || null}`,
-                actualValue: `${entry[1] || null}`,
+                prevValue: `${dto.entityOld[entry[0]] ?? null}`,
+                actualValue: `${entry[1] ?? null}`,
                 entityField: ENTITIES_FIELDS_KEYS[`${dto.eventEntity}`][entry[0]]
               })
             }
+          } catch { }
+        }))
+      }
+        break;
+      case EventType.Delete: if (dto.entityOld) {
+        Promise.all(Object.entries(dto.entityOld).map(entry => {
+          try {
+            return this.journalDetailRepository.create({
+              journalId: journal.id,
+              prevValue: `${entry[1] ?? null}`,
+              entityField: ENTITIES_FIELDS_KEYS[`${dto.eventEntity}`][entry[0]]
+            })
+          } catch { }
+        }))
+      }
+        break;
+      case EventType.Link: if (dto.entityActual) {
+        Promise.all(Object.entries(dto.entityOld).map(entry => {
+          try {
+            return this.journalDetailRepository.create({
+              journalId: journal.id,
+              actualValue: `${entry[1] ?? null}`,
+              entityField: ENTITIES_FIELDS_KEYS[`${dto.eventEntity}`][entry[0]]
+            })
+          } catch { }
+        }))
+      }
+        break;
+      case EventType.Unlink: if (dto.entityOld) {
+        Promise.all(Object.entries(dto.entityOld).map(entry => {
+          try {
+            return this.journalDetailRepository.create({
+              journalId: journal.id,
+              prevValue: `${entry[1] ?? null}`,
+              entityField: ENTITIES_FIELDS_KEYS[`${dto.eventEntity}`][entry[0]]
+            })
           } catch { }
         }))
       }

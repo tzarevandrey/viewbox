@@ -16,6 +16,8 @@ import { ViewpointCreate } from '../../components/pages/viewpoints/viewpoint.cre
 import { ViewpointEdit } from '../../components/pages/viewpoints/viewpoint.edit.page';
 import { ContentCreate } from '../../components/pages/contents/content.create.page';
 import { ContentEdit } from '../../components/pages/contents/content.edit.page';
+import { GroupCreate } from '../../components/pages/groups/groups.create.page';
+import { GroupEdit } from '../../components/pages/groups/group.edit.page';
 
 export const PAGES_CONFIG: {
   [key: string]: {
@@ -137,7 +139,7 @@ export const PAGES_CONFIG: {
     subpages: [
       {
         link: '/groups/new',
-        Jsx: Group,
+        Jsx: GroupCreate,
         roles: [Role.Superuser, Role.Support],
         functionals: [Functional.Create]
       },
@@ -145,7 +147,13 @@ export const PAGES_CONFIG: {
         link: '/groups/:id',
         Jsx: Group,
         roles: [Role.Superuser, Role.Support],
-        functionals: [Functional.Read, Functional.Update]
+        functionals: [Functional.Read]
+      },
+      {
+        link: '/groups/edit/:id',
+        Jsx: GroupEdit,
+        roles: [Role.Superuser, Role.Support],
+        functionals: [Functional.Update]
       },
     ],
     functionals: {

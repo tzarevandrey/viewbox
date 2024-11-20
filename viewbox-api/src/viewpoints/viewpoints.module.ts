@@ -8,6 +8,7 @@ import { Viewpoint } from './viewpoints.model';
 import { AuthModule } from 'src/auth/auth.module';
 import { JournalsModule } from 'src/journals/journals.module';
 import { Playlist } from 'src/playlists/playlists.model';
+import { JwtModule } from '@nestjs/jwt';
 
 @Module({
   controllers: [ViewpointsController],
@@ -19,6 +20,7 @@ import { Playlist } from 'src/playlists/playlists.model';
       Viewpoint,
       Playlist
     ]),
+    JwtModule,
     JournalsModule
   ]
 })

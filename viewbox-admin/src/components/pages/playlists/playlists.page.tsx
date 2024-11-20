@@ -1,16 +1,28 @@
+import { useEffect } from 'react';
 import { Functional } from '../../../core/enums/functional.enum';
-// import { Subpage } from '../../../core/enums/subpages.enum';
 import { useAppDispatch } from '../../../hooks';
 import { setTitle } from '../../../reducers/title.slice';
+import { useNavigate } from 'react-router-dom';
+import { useGetAllPlaylistsQuery } from '../../../api/playlists.api';
 
 type TProps = {
-  // subpages?: Subpage[];
   functionals?: Functional[];
 }
 
 export const Playlists = ({ functionals }: TProps) => {
   const dispatch = useAppDispatch();
-  dispatch(setTitle('Списки воспроизведения'));
+  useEffect(() => {
+    dispatch(setTitle('Списки воспроизведения'))
+    // eslint-disable-next-line
+  }, [])
+
+  const navigate = useNavigate();
+
+  const {
+    data: playlists,
+    isLoading: playlistsLoading,
+    isError: playlistsLoadingError
+  } = useGetAllPlaylistsQuery(null);
   return (
     <></>
   )

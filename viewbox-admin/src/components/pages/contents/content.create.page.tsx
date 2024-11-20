@@ -101,7 +101,7 @@ export const ContentCreate = () => {
                 name='file'
                 rules={[
                   () => ({
-                    validator() {
+                    validator: async () => {
                       if (file.length === 0) return Promise.reject('Необходим видео-файл');
                       return Promise.resolve();
                     }

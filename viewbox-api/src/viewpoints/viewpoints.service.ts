@@ -21,7 +21,7 @@ export class ViewpointsService {
       eventEntity: EventEntity.Viewpoint,
       eventType: EventType.Create,
       entityName: viewpoint.name,
-      entityActual: viewpoint.dataValues
+      entityActual: { ...viewpoint.dataValues }
     })
     return viewpoint;
   }
@@ -49,8 +49,8 @@ export class ViewpointsService {
       eventEntity: EventEntity.Viewpoint,
       eventType: EventType.Update,
       entityName: vp.name,
-      entityActual: actual.dataValues,
-      entityOld: old
+      entityActual: { ...actual.dataValues },
+      entityOld: { ...old }
     })
     return actual;
   }
@@ -58,11 +58,14 @@ export class ViewpointsService {
   async delete(id: number) {
     try {
       const viewpoint = await this.viewpointRepository.findByPk(id);
+      if (!viewpoint) return HttpStatus.BAD_REQUEST;
+      const old = { ...viewpoint.dataValues }
       await viewpoint.destroy();
       this.journalService.addRecord({
         eventEntity: EventEntity.Viewpoint,
         eventType: EventType.Delete,
-        entityName: viewpoint.name
+        entityName: old.name,
+        entityOld: { ...old }
       })
       return HttpStatus.OK;
     } catch {

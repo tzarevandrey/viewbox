@@ -77,7 +77,7 @@ export class ContentItemsService {
           eventEntity: EventEntity.ContentItem,
           eventType: EventType.Create,
           entityName: content.name,
-          entityActual: content.dataValues
+          entityActual: { ...content.dataValues }
         });
         break;
     }
@@ -87,7 +87,9 @@ export class ContentItemsService {
   async deleteContent(id: number) {
     try {
       const content = await this.contentRepository.findByPk(id, { include: [{ model: ImageItem }, { model: VideoItem }, { model: WebpageItem }] });
-      let name = content.name;
+      if (!content) return HttpStatus.BAD_REQUEST;
+      const old = { ...content.dataValues }
+      let name = old.name;
       switch (content.contentType) {
         case ContentType.Picture:
           await this.filesService.deleteFile(content.name);
@@ -107,8 +109,10 @@ export class ContentItemsService {
       this.journalService.addRecord({
         eventEntity: EventEntity.ContentItem,
         eventType: EventType.Delete,
-        entityName: name
+        entityName: name,
+        entityOld: { ...old }
       })
+      return HttpStatus.OK;
     } catch {
       return HttpStatus.INTERNAL_SERVER_ERROR;
     }
@@ -133,8 +137,8 @@ export class ContentItemsService {
       eventEntity: EventEntity.ContentItem,
       eventType: EventType.Update,
       entityName: name,
-      entityActual: actual.dataValues,
-      entityOld: old
+      entityActual: { ...actual.dataValues },
+      entityOld: { ...old }
     })
     return actual;
   }
