@@ -3,6 +3,7 @@ import { InjectModel } from '@nestjs/sequelize';
 import { Playlist } from './playlists.model';
 import { PlaylistCreateDto } from './dto/playlists.create.dto';
 import { PlaylistItem } from './playlists.items.model';
+import { PlaylistUpdateDto } from './dto/playlists.update.dto';
 
 @Injectable()
 export class PlaylistsService {
@@ -32,6 +33,14 @@ export class PlaylistsService {
     //     {id: 1, name: 'first-plist', description: 'Первый тестовый плейлист'}
     // ]
     return await this.playlistsRepository.findAll();
+  }
+
+  async update(dto: PlaylistUpdateDto) {
+
+  }
+
+  async delete(id: number) {
+
   }
 
 }

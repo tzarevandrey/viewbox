@@ -7,13 +7,9 @@ import { JournalDetails } from '../../components/pages/journal/journal-details.p
 import { Journal } from '../../components/pages/journal/journal.page';
 import { Playlist } from '../../components/pages/playlists/playlist.page';
 import { Playlists } from '../../components/pages/playlists/playlists.page';
-import { Viewpoint } from '../../components/pages/viewpoints/viewpoint.page';
-import { Viewpoints } from '../../components/pages/viewpoints/viewpoints.page';
 import { Functional } from '../enums/functional.enum';
 import { Page } from '../enums/pages.enum';
 import { Role } from '../enums/roles.enum';
-import { ViewpointCreate } from '../../components/pages/viewpoints/viewpoint.create.page';
-import { ViewpointEdit } from '../../components/pages/viewpoints/viewpoint.edit.page';
 import { ContentCreate } from '../../components/pages/contents/content.create.page';
 import { ContentEdit } from '../../components/pages/contents/content.edit.page';
 import { GroupCreate } from '../../components/pages/groups/groups.create.page';
@@ -37,39 +33,6 @@ export const PAGES_CONFIG: {
     }
   }
 } = {
-  [Page.Viewpoints]: {
-    name: 'Панели воспроизведения',
-    link: '/viewpoints',
-    Jsx: Viewpoints,
-    order: 10,
-    roles: [Role.Administrator, Role.Superuser, Role.Support],
-    subpages: [
-      {
-        link: '/viewpoints/new',
-        Jsx: ViewpointCreate,
-        roles: [Role.Administrator, Role.Superuser, Role.Support],
-        functionals: [Functional.Create]
-      },
-      {
-        link: '/viewpoints/:id',
-        Jsx: Viewpoint,
-        roles: [Role.Administrator, Role.Superuser, Role.Support],
-        functionals: [Functional.Read]
-      },
-      {
-        link: '/viewpoints/edit/:id',
-        Jsx: ViewpointEdit,
-        roles: [Role.Administrator, Role.Superuser, Role.Support],
-        functionals: [Functional.Update]
-      },
-    ],
-    functionals: {
-      [Functional.Create]: [Role.Administrator, Role.Superuser, Role.Support],
-      [Functional.Read]: [Role.Administrator, Role.Superuser, Role.Support],
-      [Functional.Update]: [Role.Administrator, Role.Superuser, Role.Support],
-      [Functional.Delete]: [Role.Administrator, Role.Superuser, Role.Support],
-    }
-  },
   [Page.Playlists]: {
     name: 'Списки воспроизведения',
     link: '/playlists',

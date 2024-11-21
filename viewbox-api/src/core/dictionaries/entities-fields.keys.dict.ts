@@ -6,13 +6,6 @@ export const ENTITIES_FIELDS_KEYS: {
     [key: string]: EntityField
   }
 } = {
-  [EventEntity.Viewpoint]: {
-    'id': EntityField.ViewpointId,
-    'name': EntityField.ViewpointName,
-    'description': EntityField.ViewpointDescription,
-    'playlistId': EntityField.ViewpointPlaylistId,
-    'deletedAt': EntityField.ViewpointDeletedAt,
-  },
   [EventEntity.Playlist]: {
     'id': EntityField.PlaylistId,
     'name': EntityField.PlaylistName,

@@ -75,7 +75,6 @@ export const playlistsApi = api.injectEndpoints({
         if (!result) return [];
         const res = [{ type: `${Api.Playlists}`, id: 'list' }, { type: `${Api.Playlists}`, id: result.id }];
         result.items.forEach(item => res.push({ type: `${Api.Contents}`, id: item.contentItem.id }));
-        result.viewpoints.forEach(viewpoint => res.push({ type: `${Api.Viewpoints}`, id: viewpoint.id }));
         return res;
       }
     }),

@@ -2,8 +2,6 @@ import { Module } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
 import { SequelizeModule } from '@nestjs/sequelize';
 import { AuthModule } from './auth/auth.module';
-import { ViewpointsModule } from './viewpoints/viewpoints.module';
-import { Viewpoint } from './viewpoints/viewpoints.model';
 import { PlaylistsModule } from './playlists/playlists.module';
 import { ContentItemsModule } from './content-items/content-items.module';
 import { JournalsModule } from './journals/journals.module';
@@ -22,7 +20,7 @@ import * as path from 'path';
 import { Group } from './groups/groups.model';
 import { GroupRole } from './groups/groups.roles.model';
 
-@Module({  
+@Module({
   controllers: [],
   providers: [],
   imports: [
@@ -37,7 +35,6 @@ import { GroupRole } from './groups/groups.roles.model';
       password: process.env.POSTGRES_PASSWORD,
       database: process.env.POSTGRES_DB,
       models: [
-        Viewpoint,
         ContentItem,
         ImageItem,
         VideoItem,
@@ -55,7 +52,6 @@ import { GroupRole } from './groups/groups.roles.model';
       rootPath: path.resolve(__dirname, process.env.FILES_STORAGE || 'files_storage')
     }),
     AuthModule,
-    ViewpointsModule,
     PlaylistsModule,
     ContentItemsModule,
     JournalsModule,
@@ -63,4 +59,4 @@ import { GroupRole } from './groups/groups.roles.model';
     GroupsModule,
   ],
 })
-export class AppModule {}
+export class AppModule { }
