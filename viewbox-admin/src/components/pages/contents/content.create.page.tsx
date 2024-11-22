@@ -26,12 +26,14 @@ export const ContentCreate = () => {
     <Form
       layout='vertical'
       encType='multipart/form-data'
-      onFinish={(values) => {
+      onFinish={async (values) => {
         const formData = new FormData();
         Object.entries(values).forEach(entry => { if (entry[1]) formData.append(entry[0], `${entry[1]}`) })
         if (file[0]) formData.set('file', file[0].originFileObj)
-        addContent(formData);
-        navigate(-1);
+        try {
+          await addContent(formData).unwrap();
+          navigate(-1);
+        } catch { }
       }}
       onReset={() => navigate(-1)}
     >

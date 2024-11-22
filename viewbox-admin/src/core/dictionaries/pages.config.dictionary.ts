@@ -14,6 +14,8 @@ import { ContentCreate } from '../../components/pages/contents/content.create.pa
 import { ContentEdit } from '../../components/pages/contents/content.edit.page';
 import { GroupCreate } from '../../components/pages/groups/groups.create.page';
 import { GroupEdit } from '../../components/pages/groups/group.edit.page';
+import { PlaylistCreate } from '../../components/pages/playlists/playlist.create.page';
+import { PlaylistEdit } from '../../components/pages/playlists/playlist.edit.page';
 
 export const PAGES_CONFIG: {
   [key: string]: {
@@ -42,7 +44,7 @@ export const PAGES_CONFIG: {
     subpages: [
       {
         link: '/playlists/new',
-        Jsx: Playlist,
+        Jsx: PlaylistCreate,
         roles: [Role.Administrator, Role.Superuser, Role.Support],
         functionals: [Functional.Create]
       },
@@ -50,7 +52,13 @@ export const PAGES_CONFIG: {
         link: '/playlists/:id',
         Jsx: Playlist,
         roles: [Role.Administrator, Role.Superuser, Role.Support],
-        functionals: [Functional.Read, Functional.Update]
+        functionals: [Functional.Read]
+      },
+      {
+        link: '/playlists/edit/:id',
+        Jsx: PlaylistEdit,
+        roles: [Role.Administrator, Role.Superuser, Role.Support],
+        functionals: [Functional.Update]
       },
     ],
     functionals: {

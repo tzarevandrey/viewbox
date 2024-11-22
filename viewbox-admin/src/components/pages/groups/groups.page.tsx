@@ -87,7 +87,7 @@ export const Groups = ({ functionals }: TProps) => {
                 <div
                   key={`${group.id}_${role.role}`}
                   className='groups-row__role'
-                  style={{ backgroundColor: color }}
+                  style={{ borderColor: color }}
                   title={title}
                 ></div>
               )
@@ -133,9 +133,9 @@ export const Groups = ({ functionals }: TProps) => {
           ) : null}
         </div>
         <div className='groups-page__subheader__legend-block'>
-          <div style={{ backgroundColor: COLORS.ROLE_ADMINISTRATOR }} className='groups-legend-item'>&nbsp;-&nbsp;администраторы</div>
-          <div style={{ backgroundColor: COLORS.ROLE_VIEWPOINT }} className='groups-legend-item'>&nbsp;-&nbsp;воспроизведение</div>
-          <div style={{ backgroundColor: COLORS.ROLE_SUPPORT }} className='groups-legend-item'>&nbsp;-&nbsp;сопровождение</div>
+          <div style={{ borderColor: COLORS.ROLE_ADMINISTRATOR }} className='groups-legend-item'>&nbsp;-&nbsp;администраторы</div>
+          <div style={{ borderColor: COLORS.ROLE_VIEWPOINT }} className='groups-legend-item'>&nbsp;-&nbsp;воспроизведение</div>
+          <div style={{ borderColor: COLORS.ROLE_SUPPORT }} className='groups-legend-item'>&nbsp;-&nbsp;сопровождение</div>
         </div>
       </div>
       <Table<TGetGroupDto>

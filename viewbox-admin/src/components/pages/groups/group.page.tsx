@@ -47,7 +47,7 @@ export const Group = ({ functionals }: TProps) => {
   return (
     <div >
       <div className='group__view'>
-        <div className='group__view__label'>Идентификатор группы:</div>
+        <div className='group__view__label'>Идентификатор:</div>
         <div className='group__view__value'>{group?.id}</div>
         <div className='group__view__label'>Имя группы:</div>
         <div className='group__view__value'>{group?.name}</div>

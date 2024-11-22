@@ -53,9 +53,11 @@ export const GroupEdit = ({ functionals }: TProps) => {
         'description': group?.description ?? undefined,
         'roles': group?.roles.map(x => x.role)
       }}
-      onFinish={(values) => {
-        updateGroup({ ...values, id: group?.id });
-        navigate(-1);
+      onFinish={async (values) => {
+        try {
+          await updateGroup({ ...values, id: group?.id }).unwrap();
+          navigate(-1);
+        } catch { }
       }}
       onReset={() => navigate(-1)}
     >

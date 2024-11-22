@@ -66,9 +66,11 @@ export const ContentEdit = ({ functionals }: TProps) => {
         'name': content?.name,
         'description': content?.description ?? undefined
       }}
-      onFinish={(values) => {
-        updateContent({ name: content?.name, ...values, id: content?.id });
-        navigate(-1);
+      onFinish={async (values) => {
+        try {
+          await updateContent({ name: content?.name, ...values, id: content?.id }).unwrap();
+          navigate(-1);
+        } catch { }
       }}
       onReset={() => navigate(-1)}
     >

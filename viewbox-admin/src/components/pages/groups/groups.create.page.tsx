@@ -31,9 +31,11 @@ export const GroupCreate = ({ functionals }: TProps) => {
   return (
     <Form
       layout='vertical'
-      onFinish={(values) => {
-        addGroup(values);
-        navigate(-1);
+      onFinish={async (values) => {
+        try {
+          await addGroup(values).unwrap();
+          navigate(-1);
+        } catch { }
       }}
       onReset={() => navigate(-1)}
     >

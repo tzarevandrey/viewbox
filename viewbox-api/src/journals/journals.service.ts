@@ -69,7 +69,7 @@ export class JournalsService {
       }
         break;
       case EventType.Link: if (dto.entityActual) {
-        Promise.all(Object.entries(dto.entityOld).map(entry => {
+        Promise.all(Object.entries(dto.entityActual).map(entry => {
           try {
             return this.journalDetailRepository.create({
               journalId: journal.id,

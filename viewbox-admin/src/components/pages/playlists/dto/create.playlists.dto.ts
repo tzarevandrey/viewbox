@@ -1,7 +1,6 @@
 import { ContentType } from '../../../../core/enums/content.enum';
 
 export type TCreatePlaylistDto = {
-  id: number;
   name: string;
   description: string | null;
   items: TCreatePlaylistItemDto[];

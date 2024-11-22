@@ -2,7 +2,6 @@ import { PayloadAction, createSlice } from '@reduxjs/toolkit';
 import { TCreatePlaylistItemDto } from '../components/pages/playlists/dto/create.playlists.dto';
 import { TContent } from '../core/types/content';
 import { ContentType } from '../core/enums/content.enum';
-import { TPlaylist } from '../core/types/playlist';
 import { TPlaylistItem } from '../core/types/playlist-item';
 
 type TState = {

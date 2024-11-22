@@ -71,6 +71,7 @@ export const PlaylistItemsTable = ({ items, functionals }: TProps) => {
     },
     {
       title: 'Период использования',
+
       children: [
         {
           title: 'Начало',

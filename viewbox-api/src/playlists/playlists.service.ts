@@ -27,12 +27,7 @@ export class PlaylistsService {
   }
 
   async getAll() {
-    // return [
-    //     {id: 3, name: 'third-plist', description: 'Третий тестовый плейлист'},
-    //     {id: 2, name: 'second-plist', description: 'Второй тестовый плейлист'},
-    //     {id: 1, name: 'first-plist', description: 'Первый тестовый плейлист'}
-    // ]
-    return await this.playlistsRepository.findAll();
+    return await this.playlistsRepository.findAll({ include: { all: true } });
   }
 
   async update(dto: PlaylistUpdateDto) {

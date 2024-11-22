@@ -1,16 +1,16 @@
 import { useNavigate } from 'react-router-dom';
 import { Functional } from '../../../core/enums/functional.enum';
-import { useAppDispatch } from '../../../hooks';
+import { useAppDispatch, useAppSelector } from '../../../hooks';
 import { setTitle } from '../../../reducers/title.slice';
-import { useEffect, useRef, useState } from 'react';
+import { Fragment, useEffect } from 'react';
 import { useAddPlaylistMutation } from '../../../api/playlists.api';
-import { Form, Input, Table } from 'antd';
-import { TCreatePlaylistItemDto } from './dto/create.playlists.dto';
+import { Button, Flex, Form, Input } from 'antd';
 import TextArea from 'antd/es/input/TextArea';
-import Column from 'antd/es/table/Column';
-import { TContent } from '../../../core/types/content';
-import { ContentType } from '../../../core/enums/content.enum';
 import { PlaylistItemEditTable } from './playlist-item.edit.table';
+import { clearItems } from '../../../reducers/playlist.slice';
+import moment from 'moment';
+import { snack } from '../../../utils/snackbar';
+import { COLORS } from '../../../core/constants/colors';
 
 type TProps = {
   functionals?: Functional[];
@@ -23,55 +23,68 @@ export const PlaylistCreate = ({ functionals }: TProps) => {
 
   useEffect(() => {
     dispatch(setTitle('Новый список воспроизведения'));
+    dispatch(clearItems());
     // eslint-disable-next-line
   }, [])
 
-  const myRef = useRef();
-
   const [addPlaylist] = useAddPlaylistMutation();
+
+  const { items } = useAppSelector(x => x.playlist);
+
   return (
-    <Form
-      layout='vertical'
-      onFinish={(values) => {
-        addPlaylist(values);
-        navigate(-1);
-      }}
-      onReset={() => navigate(-1)}
-    >
-      <Form.Item
-        label='Имя'
-        name='name'
-        rules={[
-          { required: true, message: 'Обязательное значение' }
-        ]}
+    <Fragment>
+      <div className='playlist-page__subheader'>
+        <div className='playlist-page__subheader__legend-block'>
+          <div style={{ borderColor: COLORS.CONTENT_WEB_PAGE }} className='legend-item'>&nbsp;-&nbsp;веб-страница</div>
+          <div style={{ borderColor: COLORS.CONTENT_VIDEO }} className='legend-item'>&nbsp;-&nbsp;видео</div>
+          <div style={{ borderColor: COLORS.CONTENT_IMAGE }} className='legend-item'>&nbsp;-&nbsp;изображение</div>
+        </div>
+      </div>
+      <Form
+        layout='vertical'
+        onFinish={async (values) => {
+          if (items.find(x => x.startDate !== null && x.expireDate !== null && moment(x.startDate).isAfter(moment(x.expireDate)))) {
+            snack.error('Некорректный период');
+          } else {
+            try {
+              await addPlaylist({ ...values, items }).unwrap();
+              navigate(-1);
+            } catch { }
+          }
+        }}
+        onReset={() => navigate(-1)}
       >
-        <Input autoComplete='off' />
-      </Form.Item>
-      <Form.Item
-        label='Описание'
-        name='description'
-      >
-        <TextArea rows={6} autoComplete='off' />
-      </Form.Item>
-      <Form.Item
-        noStyle
-        label='Элементы списка'
-      >
-        <PlaylistItemEditTable ref={myRef} />
-        {/* <Table<TCreatePlaylistItemDto>
-          size='small'
-          dataSource={[...items].sort((a, b) => a.position - b.position)}
+        <Form.Item
+          label='Имя'
+          name='name'
+          rules={[
+            { required: true, message: 'Обязательное значение' }
+          ]}
         >
-          <Column
-            title='Элемент'
-            dataIndex='contentItemId'
-            key='contentItemId'
-            render={(_, item) => (
-              <div></div>
-            )}
-          />
-        </Table> */}
-      </Form.Item>
-    </Form>
+          <Input autoComplete='off' />
+        </Form.Item>
+        <Form.Item
+          label='Описание'
+          name='description'
+        >
+          <TextArea rows={6} autoComplete='off' />
+        </Form.Item>
+        <Form.Item
+          label='Элементы списка'
+        >
+          <PlaylistItemEditTable items={items} />
+        </Form.Item>
+        <Flex className='buttons-block'>
+          <Button
+            type='default'
+            htmlType='reset'
+          >Отмена</Button>
+          <Button
+            type='primary'
+            htmlType='submit'
+          >Сохранить</Button>
+        </Flex>
+      </Form>
+    </Fragment>
   )
 }
