@@ -11,8 +11,8 @@ import { useNavigate } from 'react-router-dom';
 import { PAGES_CONFIG } from '../../../core/dictionaries/pages.config.dictionary';
 import { Page } from '../../../core/enums/pages.enum';
 import { COLORS } from '../../../core/constants/colors';
-import moment from 'moment';
 import { ContentLoadingPage } from './content.loading.page';
+import dayjs from 'dayjs';
 
 type TProps = {
   functionals?: Functional[];
@@ -129,7 +129,7 @@ export const Contents = ({ functionals }: TProps) => {
           <div className='content-row content-row__last-item' style={{
             borderColor: color,
           }
-          }>{moment(content.lastUpdated).format('DD.MM.yyyy HH:mm')}</div>
+          }>{dayjs(content.lastUpdated).format('DD.MM.yyyy HH:mm')}</div>
         )
       }
     }

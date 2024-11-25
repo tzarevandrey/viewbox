@@ -1,8 +1,9 @@
 import { PayloadAction, createSlice } from '@reduxjs/toolkit';
 import { TCreatePlaylistItemDto } from '../components/pages/playlists/dto/create.playlists.dto';
-import { TContent } from '../core/types/content';
 import { ContentType } from '../core/enums/content.enum';
 import { TPlaylistItem } from '../core/types/playlist-item';
+import { TGetContentDto } from '../components/pages/contents/dto/get.content.dto';
+import { NUMBERS } from '../core/constants/numbers';
 
 type TState = {
   items: TCreatePlaylistItemDto[];
@@ -23,7 +24,7 @@ export const playlistSlice = createSlice({
       state.items = state.items.filter(x => x.position !== action.payload)
         .map(x => x.position > action.payload ? { ...x, position: action.payload - 1 } : x);
     },
-    addItem: (state, action: PayloadAction<TContent>) => {
+    addItem: (state, action: PayloadAction<TGetContentDto>) => {
       const position = state.items.length + 1;
       let contentName = action.payload.name;
       switch (action.payload.contentType) {
@@ -35,7 +36,7 @@ export const playlistSlice = createSlice({
       state.items = [...state.items, {
         contentItemId: action.payload.id,
         position,
-        duration: action.payload.contentType === ContentType.Video ? null : 10,
+        duration: action.payload.contentType === ContentType.Video ? null : NUMBERS.DEFAULT_DURATION,
         contentName,
         startDate: null,
         expireDate: null,

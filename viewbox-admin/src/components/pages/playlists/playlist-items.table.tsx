@@ -2,11 +2,11 @@ import { Table, TableProps } from 'antd';
 import { TPlaylistItem } from '../../../core/types/playlist-item'
 import { ContentType } from '../../../core/enums/content.enum';
 import { COLORS } from '../../../core/constants/colors';
-import moment from 'moment';
 import { Functional } from '../../../core/enums/functional.enum';
 import { PAGES_CONFIG } from '../../../core/dictionaries/pages.config.dictionary';
 import { Page } from '../../../core/enums/pages.enum';
 import { useNavigate } from 'react-router-dom';
+import dayjs from 'dayjs';
 
 type TProps = {
   items: TPlaylistItem[];
@@ -42,9 +42,9 @@ export const PlaylistItemsTable = ({ items, functionals }: TProps) => {
         break;
     }
     let extClassName = '';
-    if (item.expireDate !== null && moment(item.expireDate).isBefore(currentDate)) {
+    if (item.expireDate !== null && dayjs(item.expireDate).isBefore(currentDate)) {
       extClassName = 'playlist__view__value_expired'
-    } else if (item.startDate !== null && moment(item.startDate).isAfter(currentDate)) {
+    } else if (item.startDate !== null && dayjs(item.startDate).isAfter(currentDate)) {
       extClassName = 'playlist__view__value_planned'
     }
     return {
@@ -83,7 +83,7 @@ export const PlaylistItemsTable = ({ items, functionals }: TProps) => {
               style={{ borderColor: item.color }}
             >
               {item.startDate
-                ? moment(item.startDate).format('DD.MM.yyyy HH:mm')
+                ? dayjs(item.startDate).format('DD.MM.yyyy HH:mm')
                 : ''
               }
             </div>
@@ -98,7 +98,7 @@ export const PlaylistItemsTable = ({ items, functionals }: TProps) => {
               style={{ borderColor: item.color }}
             >
               {item.expireDate
-                ? moment(item.expireDate).format('DD.MM.yyyy HH:mm')
+                ? dayjs(item.expireDate).format('DD.MM.yyyy HH:mm')
                 : ''
               }
             </div>

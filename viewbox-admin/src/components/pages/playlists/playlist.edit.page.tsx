@@ -7,13 +7,13 @@ import { useNavigate, useParams } from 'react-router-dom';
 import { useEffect } from 'react';
 import { Button, Flex, Form, Input } from 'antd';
 import { snack } from '../../../utils/snackbar';
-import moment from 'moment';
 import TextArea from 'antd/es/input/TextArea';
 import { PlaylistItemEditTable } from './playlist-item.edit.table';
 import { useGetPlaylistQuery, useUpdatePlaylistMutation } from '../../../api/playlists.api';
 import { fillItems } from '../../../reducers/playlist.slice';
 import { PlaylistsLoadingPage } from './playlists.loading.page';
 import { PlaylistsErrorPage } from './playlists.error.page';
+import dayjs from 'dayjs';
 
 type TProps = {
   functionals?: Functional[];
@@ -61,7 +61,7 @@ export const PlaylistEdit = ({ functionals }: TProps) => {
       <Form
         layout='vertical'
         onFinish={async (values) => {
-          if (items.find(x => x.startDate !== null && x.expireDate !== null && moment(x.startDate).isAfter(moment(x.expireDate)))) {
+          if (items.find(x => x.startDate !== null && x.expireDate !== null && dayjs(x.startDate).isAfter(dayjs(x.expireDate)))) {
             snack.error('Некорректный период');
           } else {
             try {

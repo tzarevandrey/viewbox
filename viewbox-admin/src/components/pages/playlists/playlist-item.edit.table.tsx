@@ -4,9 +4,11 @@ import { useAppDispatch } from '../../../hooks';
 import { Button, DatePicker, Flex, Input, Select, Table, TableProps } from 'antd';
 import { useGetAllContentQuery } from '../../../api/content.api';
 import { COLORS } from '../../../core/constants/colors';
-import { downItem, removeItem, upItem, updateItem } from '../../../reducers/playlist.slice';
-import moment from 'moment';
-import { CaretDownOutlined, CaretUpOutlined, CloseOutlined } from '@ant-design/icons';
+import { addItem, downItem, removeItem, upItem, updateItem } from '../../../reducers/playlist.slice';
+import { CaretDownOutlined, CaretUpOutlined, CloseOutlined, PlusOutlined } from '@ant-design/icons';
+import { closeModal, openModal } from '../../../reducers/modal.slice';
+import { PlaylistItemAddModal } from './playlist-item.add.modal';
+import { NUMBERS } from '../../../core/constants/numbers';
 
 type TTableData = {
   contentItemId: number;
@@ -25,6 +27,19 @@ type TProps = {
 
 export const PlaylistItemEditTable = ({ items }: TProps) => {
 
+  const tableItems = [...items].sort((a, b) => a.position - b.position).map(x => {
+    let color = '';
+    switch (x.contentType) {
+      case ContentType.Picture: color = COLORS.CONTENT_IMAGE;
+        break;
+      case ContentType.Video: color = COLORS.CONTENT_VIDEO;
+        break;
+      case ContentType.WebPage: color = COLORS.CONTENT_WEB_PAGE;
+        break;
+    }
+    return { ...x, color };
+  });
+
   const dispatch = useAppDispatch();
 
   const {
@@ -37,6 +52,12 @@ export const PlaylistItemEditTable = ({ items }: TProps) => {
 
   const columns: TableProps<TTableData>['columns'] = [
     {
+      title: '',
+      dataIndex: 'contentType',
+      key: 'contentType',
+      render: (_, item) => <div className='playlist-item__content-marker' style={{ borderColor: item.color }}></div>
+    },
+    {
       title: 'Имя',
       dataIndex: 'contentName',
       key: 'contentName',
@@ -44,7 +65,6 @@ export const PlaylistItemEditTable = ({ items }: TProps) => {
         <Select
           showSearch
           className='content__edit__value first-value'
-          style={{ borderColor: item.color }}
           value={item.contentItemId}
           loading={contentLoading}
           disabled={contentLoadingError}
@@ -61,9 +81,9 @@ export const PlaylistItemEditTable = ({ items }: TProps) => {
               dispatch(updateItem({
                 contentItemId: e,
                 position: item.position,
-                duration: null,
-                startDate: null,
-                expireDate: null,
+                duration: item.contentType === ContentType.Video ? null : item.duration ?? NUMBERS.DEFAULT_DURATION,
+                startDate: item.startDate,
+                expireDate: item.expireDate,
                 contentName: itemName,
                 contentType: temp.contentType
               }));
@@ -101,12 +121,12 @@ export const PlaylistItemEditTable = ({ items }: TProps) => {
           render: (_, item) => {
             return (
               <DatePicker
-                style={{ borderColor: item.color }}
                 className='content__edit__value middle-value'
                 format={dateFormat}
-                defaultValue={item.startDate ? moment(item.startDate).format(dateFormat) : null}
+                showTime
+                value={item.startDate}
                 onChange={(e) => {
-                  dispatch(updateItem({ ...item, startDate: new Date(e) }))
+                  dispatch(updateItem({ ...item, startDate: e }))
                 }}
               />
             )
@@ -119,12 +139,12 @@ export const PlaylistItemEditTable = ({ items }: TProps) => {
           render: (_, item) => {
             return (
               <DatePicker
-                style={{ borderColor: item.color }}
                 className='content__edit__value middle-value'
                 format={dateFormat}
-                defaultValue={item.expireDate ? moment(item.expireDate).format(dateFormat) : null}
+                showTime
+                value={item.expireDate}
                 onChange={(e) => {
-                  dispatch(updateItem({ ...item, expireDate: new Date(e) }))
+                  dispatch(updateItem({ ...item, expireDate: e }))
                 }}
               />
             )
@@ -139,7 +159,6 @@ export const PlaylistItemEditTable = ({ items }: TProps) => {
       render: (_, item) => {
         return (
           <Input
-            style={{ borderColor: item.color }}
             className='content__edit__value middle-value' type='number' value={item.duration ?? 0}
             onChange={(e) => {
               const val = e.target.value === '0' ? null : +e.target.value;
@@ -151,11 +170,16 @@ export const PlaylistItemEditTable = ({ items }: TProps) => {
     },
     {
       key: 'buttons',
-      title: <Button></Button>,
+      title: <Button icon={<PlusOutlined />} onClick={() =>
+        dispatch(openModal(() => <PlaylistItemAddModal items={content} handler={(id) => {
+          dispatch(closeModal());
+          const item = content?.find(x => x.id === id);
+          if (item) dispatch(addItem(item));
+        }} />))} />,
       render: (_, item) => {
         return (
-          <Flex vertical>
-            <Flex>
+          <Flex align='center' gap={10}>
+            <Flex vertical gap={5}>
               <Button onClick={() => {
                 dispatch(upItem(item.position));
               }} icon={<CaretUpOutlined />}></Button>
@@ -177,18 +201,7 @@ export const PlaylistItemEditTable = ({ items }: TProps) => {
       size='small'
       columns={columns}
       rowHoverable
-      dataSource={items.map(x => {
-        let color = '';
-        switch (x.contentType) {
-          case ContentType.Picture: color = COLORS.CONTENT_IMAGE;
-            break;
-          case ContentType.Video: color = COLORS.CONTENT_VIDEO;
-            break;
-          case ContentType.WebPage: color = COLORS.CONTENT_WEB_PAGE;
-            break;
-        }
-        return { ...x, color };
-      })}
+      dataSource={tableItems}
       rowKey={item => item.position}
     />
   )

@@ -186,3 +186,13 @@
   display: flex;
   gap: 5px;
 }
+
+.playlist-item__content-marker {
+  width: 20px;
+  height: 20px;
+  border-width: 3px;
+  border-style: solid;
+  display: flex;
+  box-sizing: border-box;
+  border-radius: 4px;
+}

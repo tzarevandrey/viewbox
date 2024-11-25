@@ -2,8 +2,17 @@ import { BelongsTo, Column, DataType, ForeignKey, Model, Table } from "sequelize
 import { Playlist } from "./playlists.model";
 import { ContentItem } from "src/content-items/content-items.model";
 
+interface PlaylistItemCreationAttr {
+  playlistId: number;
+  contentItenId: number;
+  position: number;
+  duration: number | null;
+  startDate: Date | null;
+  expireDate: Date | null;
+}
+
 @Table({ tableName: 'playlists_items', createdAt: false, updatedAt: false, deletedAt: false })
-export class PlaylistItem extends Model<PlaylistItem> {
+export class PlaylistItem extends Model<PlaylistItem, PlaylistItemCreationAttr> {
 
   @Column({ type: DataType.INTEGER, allowNull: false, primaryKey: true })
   @ForeignKey(() => Playlist)
@@ -19,7 +28,7 @@ export class PlaylistItem extends Model<PlaylistItem> {
   @BelongsTo(() => Playlist, 'playlistId')
   playlist: Playlist;
 
-  @Column({ type: DataType.SMALLINT, allowNull: false })
+  @Column({ type: DataType.SMALLINT, allowNull: false, primaryKey: true })
   position: number;
 
   @Column({ type: DataType.INTEGER, allowNull: true })

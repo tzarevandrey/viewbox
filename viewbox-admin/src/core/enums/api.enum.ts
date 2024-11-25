@@ -3,4 +3,5 @@ export enum Api {
   Playlists = 2,
   Contents = 3,
   Groups = 4,
+  JournalDetails = 5,
 }

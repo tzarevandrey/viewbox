@@ -7,6 +7,8 @@ import { User } from 'src/core/models/users.model';
 import { JournalCreateDto } from './dto/journals.create.dto';
 import { EventType } from 'src/core/enums/event-types.enum';
 import { ENTITIES_FIELDS_KEYS } from 'src/core/dictionaries/entities-fields.keys.dict';
+import { JournalPageGetDto } from './dto/journals.get.page.dto';
+import { Op, WhereAttributeHashValue, WhereOptions } from 'sequelize';
 
 @Injectable()
 export class JournalsService {
@@ -93,6 +95,25 @@ export class JournalsService {
       }
         break;
     }
+  }
+
+  async getPage(dto: JournalPageGetDto) {
+
+    const whereOpt: WhereOptions<Journal> = [];
+    if (dto.fromDate !== null || dto.toDate !== null) {
+      whereOpt.push({ date: [] });
+      if (dto.fromDate !== null) {
+        whereOpt[0]['date'].push({ [Op.gte]: dto.fromDate });
+      }
+      if (dto.toDate !== null) {
+        dto.toDate.setDate(dto.toDate.getDate() + 1)
+        whereOpt[0]['date'].push({ [Op.lt]: dto.toDate });
+      }
+    }
+
+    const result = await this.journalsRepository.findAndCountAll({
+      where: [...whereOpt]
+    })
   }
 
 }
