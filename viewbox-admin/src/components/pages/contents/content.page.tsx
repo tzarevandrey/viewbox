@@ -13,6 +13,7 @@ import { PAGES_CONFIG } from '../../../core/dictionaries/pages.config.dictionary
 import { Page } from '../../../core/enums/pages.enum';
 import { openModal } from '../../../reducers/modal.slice';
 import { DeleteModal } from '../../shared/delete-modal/delete.modal';
+import { snack } from '../../../utils/snackbar';
 
 type TProps = {
   functionals?: Functional[];
@@ -53,7 +54,7 @@ export const Content = ({ functionals }: TProps) => {
           <Fragment>
             <div className='content__view__label'>Идентификатор контента:</div>
             <div className='content__view__value'>{content?.id}</div>
-            <div className='content__view__label'>Идентификатор элемента:</div>
+            <div className='content__view__label'>Идентификатор отображаемого элемента:</div>
             <div className='content__view__value'>{content?.contentType === ContentType.Picture ? content.imageItem?.id : (
               content?.contentType === ContentType.Video ? content.videoItem?.id : content?.webpageItem?.id)}</div>
           </Fragment>
@@ -74,7 +75,7 @@ export const Content = ({ functionals }: TProps) => {
             {content?.playlists?.map(playlist => (
               <div
                 key={playlist.id}
-                className='content__view__value_clickable'
+                className='value_clickable'
                 onClick={() => {
                   const link = PAGES_CONFIG[Page.Playlists].subpages.find(x => x.functionals.includes(Functional.Read))?.link;
                   if (link) navigate(link.replace(':id', `${playlist.id}`));
@@ -129,12 +130,7 @@ export const Content = ({ functionals }: TProps) => {
                   />
                 ))
               } else {
-                <Alert
-                  closable
-                  type='error'
-                  banner
-                  message='Контент используется, удаление невозможно'
-                />
+                snack.error('Контент используется, удаление невозможно');
               }
             }}
           >Удалить</Button>

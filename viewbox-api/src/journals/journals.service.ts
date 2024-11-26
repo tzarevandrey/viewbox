@@ -8,7 +8,7 @@ import { JournalCreateDto } from './dto/journals.create.dto';
 import { EventType } from 'src/core/enums/event-types.enum';
 import { ENTITIES_FIELDS_KEYS } from 'src/core/dictionaries/entities-fields.keys.dict';
 import { JournalPageGetDto } from './dto/journals.get.page.dto';
-import { Op, WhereAttributeHashValue, WhereOptions } from 'sequelize';
+import { Op, WhereOptions } from 'sequelize';
 
 @Injectable()
 export class JournalsService {
@@ -33,11 +33,12 @@ export class JournalsService {
       case EventType.Create: if (dto.entityActual) {
         Promise.all(Object.entries(dto.entityActual).map(entry => {
           try {
-            return this.journalDetailRepository.create({
+            const entityField = ENTITIES_FIELDS_KEYS[`${dto.eventEntity}`][entry[0]];
+            if (entityField) return this.journalDetailRepository.create({
               journalId: journal.id,
               prevValue: null,
               actualValue: `${entry[1]}`,
-              entityField: ENTITIES_FIELDS_KEYS[`${dto.eventEntity}`][entry[0]]
+              entityField
             })
           } catch { }
         }))
@@ -46,14 +47,13 @@ export class JournalsService {
       case EventType.Update: if (dto.entityActual && dto.entityOld) {
         Promise.all(Object.entries(dto.entityActual).map(entry => {
           try {
-            if ((entry[1] ?? null) !== (dto.entityOld[entry[0]] ?? null)) {
-              return this.journalDetailRepository.create({
-                journalId: journal.id,
-                prevValue: `${dto.entityOld[entry[0]] ?? null}`,
-                actualValue: `${entry[1] ?? null}`,
-                entityField: ENTITIES_FIELDS_KEYS[`${dto.eventEntity}`][entry[0]]
-              })
-            }
+            const entityField = ENTITIES_FIELDS_KEYS[`${dto.eventEntity}`][entry[0]];
+            if (entityField) return this.journalDetailRepository.create({
+              journalId: journal.id,
+              prevValue: `${dto.entityOld[entry[0]] ?? null}`,
+              actualValue: `${entry[1] ?? null}`,
+              entityField
+            })
           } catch { }
         }))
       }
@@ -61,10 +61,11 @@ export class JournalsService {
       case EventType.Delete: if (dto.entityOld) {
         Promise.all(Object.entries(dto.entityOld).map(entry => {
           try {
-            return this.journalDetailRepository.create({
+            const entityField = ENTITIES_FIELDS_KEYS[`${dto.eventEntity}`][entry[0]];
+            if (entityField) return this.journalDetailRepository.create({
               journalId: journal.id,
               prevValue: `${entry[1] ?? null}`,
-              entityField: ENTITIES_FIELDS_KEYS[`${dto.eventEntity}`][entry[0]]
+              entityField
             })
           } catch { }
         }))
@@ -73,10 +74,11 @@ export class JournalsService {
       case EventType.Link: if (dto.entityActual) {
         Promise.all(Object.entries(dto.entityActual).map(entry => {
           try {
-            return this.journalDetailRepository.create({
+            const entityField = ENTITIES_FIELDS_KEYS[`${dto.eventEntity}`][entry[0]];
+            if (entityField) return this.journalDetailRepository.create({
               journalId: journal.id,
               actualValue: `${entry[1] ?? null}`,
-              entityField: ENTITIES_FIELDS_KEYS[`${dto.eventEntity}`][entry[0]]
+              entityField
             })
           } catch { }
         }))
@@ -85,10 +87,11 @@ export class JournalsService {
       case EventType.Unlink: if (dto.entityOld) {
         Promise.all(Object.entries(dto.entityOld).map(entry => {
           try {
-            return this.journalDetailRepository.create({
+            const entityField = ENTITIES_FIELDS_KEYS[`${dto.eventEntity}`][entry[0]];
+            if (entityField) return this.journalDetailRepository.create({
               journalId: journal.id,
               prevValue: `${entry[1] ?? null}`,
-              entityField: ENTITIES_FIELDS_KEYS[`${dto.eventEntity}`][entry[0]]
+              entityField
             })
           } catch { }
         }))
@@ -101,19 +104,28 @@ export class JournalsService {
 
     const whereOpt: WhereOptions<Journal> = [];
     if (dto.fromDate !== null || dto.toDate !== null) {
-      whereOpt.push({ date: [] });
+      const res = [];
       if (dto.fromDate !== null) {
-        whereOpt[0]['date'].push({ [Op.gte]: dto.fromDate });
+        res.push({ [Op.gte]: new Date(dto.fromDate) });
+
       }
       if (dto.toDate !== null) {
-        dto.toDate.setDate(dto.toDate.getDate() + 1)
-        whereOpt[0]['date'].push({ [Op.lt]: dto.toDate });
+        let tempDate = new Date(dto.toDate);
+        tempDate.setHours(tempDate.getHours() + 24);
+        res.push({ [Op.lt]: tempDate });
       }
+      whereOpt.push({ date: { [Op.and]: res } });
     }
 
     const result = await this.journalsRepository.findAndCountAll({
-      where: [...whereOpt]
-    })
+      where: [...whereOpt], order: [['date', 'DESC']], limit: dto.size, offset: (dto.page - 1) * dto.size
+    });
+
+    return { total: result.count, data: result.rows }
+  }
+
+  async getDetails(id: number) {
+    return await this.journalDetailRepository.findAll({ where: { journalId: id } });
   }
 
 }

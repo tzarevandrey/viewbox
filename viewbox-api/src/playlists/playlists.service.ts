@@ -7,6 +7,9 @@ import { PlaylistUpdateDto } from './dto/playlists.update.dto';
 import { JournalsService } from 'src/journals/journals.service';
 import { EventEntity } from 'src/core/enums/event-entities.enum';
 import { EventType } from 'src/core/enums/event-types.enum';
+import { ContentItem } from 'src/content-items/content-items.model';
+import { ImageItem } from 'src/content-items/image-items.model';
+import { VideoItem } from 'src/content-items/video-items.model';
 
 @Injectable()
 export class PlaylistsService {
@@ -18,7 +21,7 @@ export class PlaylistsService {
   ) { }
 
   async getOne(id: number) {
-    const playlist = await this.playlistsRepository.findByPk(id, { include: [{ all: true }] });
+    const playlist = await this.playlistsRepository.findByPk(id, { include: [{ model: PlaylistItem, include: [{ model: ContentItem, include: [{ model: ImageItem }, { model: VideoItem }] }] }] });
     return playlist;
   }
 
@@ -42,16 +45,16 @@ export class PlaylistsService {
         entityActual: { ...playlistItem.dataValues }
       });
     }
-    return await playlist.reload({ include: { all: true } });
+    return await this.playlistsRepository.findByPk(playlist.id, { include: [{ model: PlaylistItem, include: [{ model: ContentItem, include: [{ model: ImageItem }, { model: VideoItem }] }] }] });
   }
 
   async getAll() {
-    return await this.playlistsRepository.findAll({ include: { all: true } });
+    return await this.playlistsRepository.findAll({ include: [{ model: PlaylistItem, include: [{ model: ContentItem, include: [{ model: ImageItem }, { model: VideoItem }] }] }] });
   }
 
   async update(dto: PlaylistUpdateDto) {
-    const playlist = await this.playlistsRepository.findByPk(dto.id, { include: [{ model: PlaylistItem }] });
-    if (!playlist) return HttpStatus.BAD_REQUEST;
+    const playlist = await this.playlistsRepository.findByPk(dto.id, { include: [{ model: PlaylistItem, include: [{ model: ContentItem, include: [{ model: ImageItem }, { model: VideoItem }] }] }] });
+    if (playlist === undefined) return HttpStatus.BAD_REQUEST;
     const old = { ...playlist.dataValues };
     if (playlist.name !== dto.name || playlist.description !== dto.description) {
       playlist.name = dto.name;
@@ -65,7 +68,7 @@ export class PlaylistsService {
         entityOld: { ...old }
       });
     }
-    const actual = await playlist.reload({ include: [{ model: PlaylistItem }] });
+    const actual = await this.playlistsRepository.findByPk(playlist.id, { include: [{ model: PlaylistItem, include: [{ model: ContentItem, include: [{ model: ImageItem }, { model: VideoItem }] }] }] });
     const deletedItems = actual.items.filter(x => !dto.items.map(y => y.contentItemId).includes(x.contentItemId));
     for (const item of deletedItems) {
       const delItem = { ...item.dataValues };
@@ -108,7 +111,7 @@ export class PlaylistsService {
         });
       }
     }
-    return await actual.reload({ include: [{ all: true }] });
+    return await this.playlistsRepository.findByPk(playlist.id, { include: [{ model: PlaylistItem, include: [{ model: ContentItem, include: [{ model: ImageItem }, { model: VideoItem }] }] }] });
   }
 
   async delete(id: number) {

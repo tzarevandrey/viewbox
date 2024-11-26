@@ -120,7 +120,7 @@ export class ContentItemsService {
 
   async updateContent(cont: ContentUpdateDto) {
     const content = await this.contentRepository.findByPk(cont.id, { include: [{ model: ImageItem }, { model: VideoItem }] });
-    if (!content) throw new HttpException(`Контент ${cont.id} не найден`, HttpStatus.BAD_REQUEST);
+    if (content === undefined) throw new HttpException(`Контент ${cont.id} не найден`, HttpStatus.BAD_REQUEST);
     const old = { ...content.dataValues };
     content.name = cont.name;
     content.description = cont.description;

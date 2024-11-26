@@ -10,7 +10,6 @@ import { PlaylistItemEditTable } from './playlist-item.edit.table';
 import { clearItems } from '../../../reducers/playlist.slice';
 import { snack } from '../../../utils/snackbar';
 import { COLORS } from '../../../core/constants/colors';
-import dayjs from 'dayjs';
 
 type TProps = {
   functionals?: Functional[];
@@ -43,7 +42,7 @@ export const PlaylistCreate = ({ functionals }: TProps) => {
       <Form
         layout='vertical'
         onFinish={async (values) => {
-          if (items.find(x => x.startDate !== null && x.expireDate !== null && dayjs(x.startDate).isAfter(dayjs(x.expireDate)))) {
+          if (items.find(x => x.startDate !== null && x.expireDate !== null && new Date(x.startDate).getTime() > new Date(x.expireDate).getTime())) {
             snack.error('Некорректный период');
           } else {
             try {

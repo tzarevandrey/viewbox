@@ -3,7 +3,6 @@ import { Content } from '../../components/pages/contents/content.page';
 import { Contents } from '../../components/pages/contents/contents.page';
 import { Group } from '../../components/pages/groups/group.page';
 import { Groups } from '../../components/pages/groups/groups.page';
-import { JournalDetails } from '../../components/pages/journal/journal-details.page';
 import { Journal } from '../../components/pages/journal/journal.page';
 import { Playlist } from '../../components/pages/playlists/playlist.page';
 import { Playlists } from '../../components/pages/playlists/playlists.page';
@@ -140,14 +139,7 @@ export const PAGES_CONFIG: {
     Jsx: Journal,
     order: 50,
     roles: [Role.Superuser, Role.Support],
-    subpages: [
-      {
-        link: '/journal/:id',
-        Jsx: JournalDetails,
-        roles: [Role.Superuser, Role.Support],
-        functionals: [Functional.Read]
-      }
-    ],
+    subpages: [],
     functionals: {
       [Functional.Read]: [Role.Superuser, Role.Support],
     }

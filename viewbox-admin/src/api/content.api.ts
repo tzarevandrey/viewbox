@@ -52,7 +52,7 @@ export const contentApi = api.injectEndpoints({
           snack.error('Ошибка при добавлении контента');
         }
       },
-      invalidatesTags: (_, error) => error ? [] : [{ type: `${Api.Contents}`, id: 'list' }]
+      invalidatesTags: (_, error) => error ? [] : [{ type: `${Api.Contents}`, id: 'list' }, { type: `${Api.Journal}` }]
     }),
     deleteContent: builder.mutation<any, number>({
       query: (id) => ({
@@ -67,7 +67,7 @@ export const contentApi = api.injectEndpoints({
           snack.error('Ошибка при удалении контента');
         }
       },
-      invalidatesTags: (_, error) => error ? [] : [{ type: `${Api.Contents}`, id: 'list' }]
+      invalidatesTags: (_, error) => error ? [] : [{ type: `${Api.Contents}`, id: 'list' }, { type: `${Api.Journal}` }]
     }),
     updateContent: builder.mutation<TContent, TEditContentDto>({
       query: (body) => ({
@@ -83,7 +83,7 @@ export const contentApi = api.injectEndpoints({
           snack.error('Ошибка при изменении контента');
         }
       },
-      invalidatesTags: (result) => result ? [{ type: `${Api.Contents}`, id: 'list' }, { type: `${Api.Contents}`, id: result.id }] : []
+      invalidatesTags: (result) => result ? [{ type: `${Api.Contents}`, id: 'list' }, { type: `${Api.Contents}`, id: result.id }, { type: `${Api.Journal}` }] : []
     })
   }),
   overrideExisting: false

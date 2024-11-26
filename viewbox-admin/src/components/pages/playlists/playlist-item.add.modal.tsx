@@ -1,7 +1,9 @@
-import { Select } from 'antd';
+import { Button, Popover, Select } from 'antd';
 import { ContentType } from '../../../core/enums/content.enum';
 import { COLORS } from '../../../core/constants/colors';
 import { TGetContentDto } from '../contents/dto/get.content.dto';
+import { useAppDispatch } from '../../../hooks';
+import { closeModal } from '../../../reducers/modal.slice';
 
 type TProps = {
   items?: TGetContentDto[];
@@ -10,8 +12,10 @@ type TProps = {
 
 export const PlaylistItemAddModal = ({ items = [], handler }: TProps) => {
 
+  const dispatch = useAppDispatch();
+
   return (
-    <div>
+    <div className='playlist_add-item_modal'>
       <Select
         showSearch
         className='content__edit__value'
@@ -52,11 +56,18 @@ export const PlaylistItemAddModal = ({ items = [], handler }: TProps) => {
             <Select.Option
               key={item.id}
               value={item.id}
-              style={{ borderColor }}
-            >{name}</Select.Option>
+            >
+              <div className='content__select-row' title={name}>
+                <div className='content__select-label' style={{ borderColor }}></div>
+                <div className='content__select-options'>{name}</div>
+              </div>
+            </Select.Option>
           )
         })}
       </Select>
+      <div className='content__select-row'>
+        <Button type='default' onClick={() => dispatch(closeModal())}>Отмена</Button>
+      </div>
     </div>
   )
 }

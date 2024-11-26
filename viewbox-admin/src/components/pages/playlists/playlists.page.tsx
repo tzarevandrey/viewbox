@@ -99,7 +99,8 @@ export const Playlists = ({ functionals }: TProps) => {
             onClick: () => {
               const link = PAGES_CONFIG[Page.Playlists].subpages.find(x => x.functionals.includes(Functional.Read))?.link;
               if (link) navigate(link.replace(':id', `${item.id}`));
-            }
+            },
+            style: { cursor: 'pointer' }
           }
         }}
       />

@@ -130,7 +130,9 @@
 }
 
 .content__view,
-.group__view {
+.group__view,
+.playlist__view,
+.journal-details__main {
   display: grid;
   grid-template-columns: auto 1fr;
   gap: 10px;
@@ -139,33 +141,42 @@
 }
 
 .content__view__label,
-.group__view__label {
+.group__view__label,
+.playlist__view__label,
+.journal-detail__main__label {
   display: flex;
   justify-content: end;
   color: darkgray;
 }
 
 .content__view__value,
-.group__view__value {
+.group__view__value,
+.playlist__view__value,
+.journal-detail__main__value {
   font-weight: 600;
 }
 
 .content__view__value__list,
-.group__view__value__list {
+.group__view__value__list,
+.playlist__view__value__list {
   display: flex;
   flex-direction: column;
   gap: 5px;
 }
 
 .content__view__value_out,
-.group__view__value_out {
+.group__view__value_out,
+.playlist__view__value_out {
   color: darkgray;
 }
 
-.content__view__value_clickable,
-.group__view__value_clickable,
-.playlist__view__value_clickable {
+.value_clickable {
   cursor: pointer;
+  text-decoration: underline;
+}
+
+.value_clickable:hover {
+  color: #6CACE4;
 }
 
 .contents-page__subheader__buttons-block,
@@ -188,11 +199,101 @@
 }
 
 .playlist-item__content-marker {
-  width: 20px;
-  height: 20px;
+  width: 16px;
+  height: 16px;
   border-width: 3px;
   border-style: solid;
   display: flex;
   box-sizing: border-box;
   border-radius: 4px;
+}
+
+.journal__view {
+  display: flex;
+  flex-direction: column;
+}
+
+.journal__view__pagination-block {
+  margin-top: 10px;
+}
+
+.journal__view__filter-block {
+  display: flex;
+  gap: 10px;
+}
+
+.journal__entity-name {
+  font-weight: 600;
+}
+
+.playlist_add-item_modal {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.content__select-row {
+  display: flex;
+  gap: 5px;
+  align-items: center;
+  min-width: 300px;
+  justify-content: end;
+}
+
+.content__select-label {
+  width: 14px;
+  height: 14px;
+  min-width: 14px;
+  border-width: 3px;
+  border-style: solid;
+  display: flex;
+  box-sizing: border-box;
+  border-radius: 4px;
+}
+
+.content__select-options {
+  display: flex;
+  min-width: 300px;
+}
+
+.playlist__view__value_expired {
+  color: darkgray;
+}
+
+.playlist__view__value_planned {
+  color: goldenrod;
+}
+
+.journal-details {
+  display: flex;
+  flex-direction: column;
+}
+
+.journal-detail__main__value__default {
+  font-weight: 400;
+}
+
+.journal-details__header {
+  display: flex;
+  flex: 1;
+  justify-content: center;
+  font-size: large;
+  font-weight: 600;
+  margin-bottom: 5px;
+}
+
+.loading-page {
+  display: flex;
+  flex: 1;
+  position: relative;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background-color: rgba(0, 0, 0, 0.3);
+}
+
+.bigger-icon {
+  margin: auto;
+  font-size: 130px;
 }

@@ -13,7 +13,6 @@ import { useGetPlaylistQuery, useUpdatePlaylistMutation } from '../../../api/pla
 import { fillItems } from '../../../reducers/playlist.slice';
 import { PlaylistsLoadingPage } from './playlists.loading.page';
 import { PlaylistsErrorPage } from './playlists.error.page';
-import dayjs from 'dayjs';
 
 type TProps = {
   functionals?: Functional[];
@@ -59,13 +58,14 @@ export const PlaylistEdit = ({ functionals }: TProps) => {
         </div>
       </div>
       <Form
+        initialValues={playlist}
         layout='vertical'
         onFinish={async (values) => {
-          if (items.find(x => x.startDate !== null && x.expireDate !== null && dayjs(x.startDate).isAfter(dayjs(x.expireDate)))) {
+          if (items.find(x => x.startDate !== null && x.expireDate !== null && new Date(x.startDate).getTime() > new Date(x.expireDate).getTime())) {
             snack.error('Некорректный период');
           } else {
             try {
-              await updatePlaylist({ ...values, items }).unwrap();
+              await updatePlaylist({ ...values, items, id: playlist?.id }).unwrap();
               navigate(-1);
             } catch { }
           }

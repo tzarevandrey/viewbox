@@ -39,7 +39,11 @@ export const Playlist = ({ functionals }: TProps) => {
   } = useGetPlaylistQuery(playlistId ? +playlistId : 0)
 
   useEffect(() => {
-    dispatch(setTitle(`Список воспроизведения ${playlist?.name}`));
+    let name = '';
+    if (playlist) {
+      name = `«${playlist.name}»`
+    }
+    dispatch(setTitle(`Список воспроизведения ${name}`));
     // eslint-disable-next-line
   }, [playlist])
 

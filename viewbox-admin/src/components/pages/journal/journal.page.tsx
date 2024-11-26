@@ -12,6 +12,10 @@ import moment from 'moment';
 import { EVENT_ENTITY_NAMES } from '../../../core/dictionaries/event-entities.dictionary';
 import { EVENT_TYPE_NAMES } from '../../../core/dictionaries/event-types.dictionary';
 import { NUMBERS } from '../../../core/constants/numbers';
+import { openModal } from '../../../reducers/modal.slice';
+import { JournalDetails } from './journal-details.modal';
+import { EventType } from '../../../core/enums/event-types.enum';
+import { COLORS } from '../../../core/constants/colors';
 
 type TProps = {
   functionals?: Functional[];
@@ -21,9 +25,9 @@ export const Journal = ({ functionals }: TProps) => {
 
   const dispatch = useAppDispatch();
 
-  const dateFormat = 'DD-MM-YYYY HH:mm';
+  const dateFormat = 'DD.MM.YYYY HH:mm';
 
-  const dateFormatToRangePicker = 'DD-MM-YYYY';
+  const dateFormatToRangePicker = 'DD.MM.YYYY';
 
   const { RangePicker } = DatePicker;
 
@@ -61,7 +65,7 @@ export const Journal = ({ functionals }: TProps) => {
       render: (_, item) => {
         return (
           <div>
-            <div>{item.entityName}</div>
+            <div className='journal__entity-name'>{item.entityName}</div>
             <div>{EVENT_ENTITY_NAMES[item.eventEntity]}</div>
           </div>
         )
@@ -90,37 +94,64 @@ export const Journal = ({ functionals }: TProps) => {
   ]
 
   return (
-    <Fragment>
+    <div className='journal__view'>
       <Form
+        size='small'
         initialValues={{ 'dateRange': [filter.fromDate, filter.toDate] }}
-        layout='vertical'
-        onFinish={(values) => { setFilter({ ...filter, page: 1, fromDate: values.dateRange[0], toDate: values.dateRange[1] }) }}
+        onFinish={(values) => { console.log(values); setFilter({ ...filter, page: 1, fromDate: values.dateRange[0], toDate: values.dateRange[1] }) }}
       >
-        <Form.Item
-          label='Период'
-          name='dateRange'
-        >
-          <RangePicker format={dateFormatToRangePicker} />
+        <div className='journal__view__filter-block'>
+          <Form.Item
+            label='Период'
+            name='dateRange'
+
+          >
+            <RangePicker format={dateFormatToRangePicker} />
+
+          </Form.Item>
           <Button
-            type='primary'
+            type='default'
             htmlType='submit'
           >
             Выбрать
           </Button>
-        </Form.Item>
+        </div>
       </Form>
       <Table<TJournal>
         columns={columns}
-        dataSource={[...(journal?.data ?? [])].sort((a, b) => b.date.getTime() - a.date.getTime())}
+        dataSource={[...(journal?.data ?? [])].sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime())}
         rowHoverable
         rowKey={item => item.id}
         pagination={false}
+        size='small'
+        onRow={(rowItem) => {
+          let color = '';
+          switch (rowItem.eventType) {
+            case EventType.Create: color = COLORS.EVENT_CREATE;
+              break;
+            case EventType.Update: color = COLORS.EVENT_UPDATE;
+              break;
+            case EventType.Delete: color = COLORS.EVENT_DELETE;
+              break;
+            case EventType.Link: color = COLORS.EVENT_LINK;
+              break;
+            case EventType.Unlink: color = COLORS.EVENT_UNLINK;
+              break;
+          }
+          return {
+            style: { cursor: 'pointer', color },
+            onClick: () => { dispatch(openModal(() => <JournalDetails journal={rowItem} color={color} />)) }
+          }
+        }}
       />
-      <Pagination
-        defaultPageSize={filter.page}
-        total={10}
-        onChange={(e) => { setFilter({ ...filter, page: e }) }}
-      />
-    </Fragment>
+      <div className='journal__view__pagination-block'>
+        <Pagination
+          size='small'
+          defaultPageSize={filter.page}
+          total={journal ? Math.ceil(journal.total / NUMBERS.DEFAULT_TABLE_ROWS) : 1}
+          onChange={(e) => { setFilter({ ...filter, page: e }) }}
+        />
+      </div>
+    </div>
   )
 }

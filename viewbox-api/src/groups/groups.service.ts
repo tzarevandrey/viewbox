@@ -49,7 +49,7 @@ export class GroupsService {
 
   async update(dto: GroupUpdateDto) {
     const group = await this.groupsRepository.findByPk(dto.id, { include: [{ model: GroupRole }] });
-    if (!group) throw new HttpException(`Группа ${dto.id} не найдена`, HttpStatus.BAD_REQUEST);
+    if (group === undefined) throw new HttpException(`Группа ${dto.id} не найдена`, HttpStatus.BAD_REQUEST);
     const old = { ...group.dataValues };
     if (group.name !== dto.name || (group.description ?? null) !== (dto.description ?? null)) {
       group.name = dto.name;

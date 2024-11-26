@@ -1,7 +1,7 @@
 import { TCreatePlaylistItemDto } from './dto/create.playlists.dto';
 import { ContentType } from '../../../core/enums/content.enum';
 import { useAppDispatch } from '../../../hooks';
-import { Button, DatePicker, Flex, Input, Select, Table, TableProps } from 'antd';
+import { Button, DatePicker, Flex, Input, Popover, Select, Table, TableProps } from 'antd';
 import { useGetAllContentQuery } from '../../../api/content.api';
 import { COLORS } from '../../../core/constants/colors';
 import { addItem, downItem, removeItem, upItem, updateItem } from '../../../reducers/playlist.slice';
@@ -9,6 +9,7 @@ import { CaretDownOutlined, CaretUpOutlined, CloseOutlined, PlusOutlined } from 
 import { closeModal, openModal } from '../../../reducers/modal.slice';
 import { PlaylistItemAddModal } from './playlist-item.add.modal';
 import { NUMBERS } from '../../../core/constants/numbers';
+import moment from 'moment';
 
 type TTableData = {
   contentItemId: number;
@@ -48,15 +49,9 @@ export const PlaylistItemEditTable = ({ items }: TProps) => {
     isError: contentLoadingError
   } = useGetAllContentQuery(null);
 
-  const dateFormat = 'DD-MM-YYYY HH:mm';
+  const dateFormat = 'DD.MM.YYYY HH:mm';
 
   const columns: TableProps<TTableData>['columns'] = [
-    {
-      title: '',
-      dataIndex: 'contentType',
-      key: 'contentType',
-      render: (_, item) => <div className='playlist-item__content-marker' style={{ borderColor: item.color }}></div>
-    },
     {
       title: 'Имя',
       dataIndex: 'contentName',
@@ -105,7 +100,10 @@ export const PlaylistItemEditTable = ({ items }: TProps) => {
             }
             return (
               <Select.Option key={cnt.id} value={cnt.id}>
-                <div style={{ borderColor: optBorderColor }} className='content__select-options'>{optName}</div>
+                <div className='content__select-row' title={optName}>
+                  <div className='content__select-label' style={{ borderColor: optBorderColor }}></div>
+                  <div className='content__select-options'>{optName}</div>
+                </div>
               </Select.Option>
             )
           })}
@@ -124,9 +122,9 @@ export const PlaylistItemEditTable = ({ items }: TProps) => {
                 className='content__edit__value middle-value'
                 format={dateFormat}
                 showTime
-                value={item.startDate}
+                value={item.startDate ? moment(item.startDate) : null}
                 onChange={(e) => {
-                  dispatch(updateItem({ ...item, startDate: e }))
+                  dispatch(updateItem({ ...item, startDate: e ? e.toDate() : null }))
                 }}
               />
             )
@@ -142,9 +140,9 @@ export const PlaylistItemEditTable = ({ items }: TProps) => {
                 className='content__edit__value middle-value'
                 format={dateFormat}
                 showTime
-                value={item.expireDate}
+                value={item.expireDate ? moment(item.expireDate) : null}
                 onChange={(e) => {
-                  dispatch(updateItem({ ...item, expireDate: e }))
+                  dispatch(updateItem({ ...item, expireDate: e ? e.toDate() : null }))
                 }}
               />
             )

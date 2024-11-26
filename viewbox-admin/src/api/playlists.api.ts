@@ -52,7 +52,7 @@ export const playlistsApi = api.injectEndpoints({
       },
       invalidatesTags: (result) => {
         if (!result) return [];
-        const res = [{ type: `${Api.Playlists}`, id: 'list' }, { type: `${Api.Playlists}`, id: result.id }];
+        const res = [{ type: `${Api.Playlists}`, id: 'list' }, { type: `${Api.Playlists}`, id: result.id }, { type: `${Api.Journal}` }];
         result.items.forEach(item => res.push({ type: `${Api.Contents}`, id: item.contentItem.id }));
         return res;
       }
@@ -73,7 +73,7 @@ export const playlistsApi = api.injectEndpoints({
       },
       invalidatesTags: (result) => {
         if (!result) return [];
-        const res = [{ type: `${Api.Playlists}`, id: 'list' }, { type: `${Api.Playlists}`, id: result.id }];
+        const res = [{ type: `${Api.Playlists}`, id: 'list' }, { type: `${Api.Playlists}`, id: result.id }, { type: `${Api.Journal}` }];
         result.items.forEach(item => res.push({ type: `${Api.Contents}`, id: item.contentItem.id }));
         return res;
       }
@@ -91,7 +91,7 @@ export const playlistsApi = api.injectEndpoints({
           snack.error('Ошибка при удалении списка воспроизведения');
         }
       },
-      invalidatesTags: (_, error) => !error ? [{ type: `${Api.Playlists}`, id: 'list' }, `${Api.Contents}`] : []
+      invalidatesTags: (_, error) => !error ? [{ type: `${Api.Playlists}`, id: 'list' }, { type: `${Api.Contents}` }, { type: `${Api.Journal}` }] : []
     })
   }),
   overrideExisting: false

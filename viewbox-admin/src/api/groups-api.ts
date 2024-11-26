@@ -52,7 +52,7 @@ export const groupsApi = api.injectEndpoints({
           snack.error('Ошибка при добавлении группы');
         }
       },
-      invalidatesTags: (_, error) => error ? [] : [{ type: `${Api.Groups}`, id: 'list' }]
+      invalidatesTags: (_, error) => error ? [] : [{ type: `${Api.Groups}`, id: 'list' }, { type: `${Api.Journal}` }]
     }),
     deleteGroup: builder.mutation<any, number>({
       query: (id) => ({
@@ -67,7 +67,7 @@ export const groupsApi = api.injectEndpoints({
           snack.error('Ошибка при удалении группы');
         }
       },
-      invalidatesTags: (_, error) => error ? [] : [{ type: `${Api.Groups}`, id: 'list' }]
+      invalidatesTags: (_, error) => error ? [] : [{ type: `${Api.Groups}`, id: 'list' }, { type: `${Api.Journal}` }]
     }),
     updateGroup: builder.mutation<TGroup, TEditGroupDto>({
       query: (body) => ({
@@ -83,7 +83,7 @@ export const groupsApi = api.injectEndpoints({
           snack.error('Ошибка при изменении группы');
         }
       },
-      invalidatesTags: (result) => result ? [{ type: `${Api.Groups}`, id: 'list' }, { type: `${Api.Groups}`, id: result.id }] : []
+      invalidatesTags: (result) => result ? [{ type: `${Api.Groups}`, id: 'list' }, { type: `${Api.Groups}`, id: result.id }, { type: `${Api.Journal}` }] : []
     })
   }),
   overrideExisting: false
