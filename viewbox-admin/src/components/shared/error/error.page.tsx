@@ -1,5 +1,9 @@
-export const Error = () => {
-    return (
-        <div>ERROR</div>
-    )
+type TProps = {
+  message?: string;
+}
+
+export const Error = ({ message = '' }: TProps) => {
+  return (
+    <div>ERROR</div>
+  )
 }

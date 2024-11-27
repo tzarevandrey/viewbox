@@ -10,7 +10,8 @@ export class FilesService {
     try {
       file.originalname = Buffer.from(file.originalname, 'latin1').toString('utf8');
       const fileName = uuid.v4() + path.extname(file.originalname);
-      const filePath = path.resolve(__dirname, '..', process.env.FILES_STORAGE || 'files_storage');
+      //const filePath = path.resolve(__dirname, '..', process.env.FILES_STORAGE || 'files_storage');
+      const filePath = path.resolve('D:/', process.env.FILES_STORAGE || 'files_storage');
 
       try {
         await fs.stat(filePath);
@@ -26,7 +27,7 @@ export class FilesService {
   }
 
   async deleteFile(name: string) {
-    const filePath = path.resolve(__dirname, '..', process.env.FILES_STORAGE || 'files_storage');
+    const filePath = path.resolve('D://', '..', process.env.FILES_STORAGE || 'files_storage');
     try {
       await fs.rm(path.join(filePath, name));
     } catch {

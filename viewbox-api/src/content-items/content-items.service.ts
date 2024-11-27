@@ -50,35 +50,41 @@ export class ContentItemsService {
           originalName: file.originalname,
           contentItemId: content.id
         });
-        this.journalService.addRecord({
-          eventEntity: EventEntity.ContentItem,
-          eventType: EventType.Create,
-          entityName: file.originalname,
-          entityActual: { ...content.dataValues, originalName: file.originalname }
-        });
+        try {
+          this.journalService.addRecord({
+            eventEntity: EventEntity.ContentItem,
+            eventType: EventType.Create,
+            entityName: file.originalname,
+            entityActual: { ...content.dataValues, originalName: file.originalname }
+          });
+        } catch { }
         break;
       case ContentType.Video:
         await this.videoRepository.create({
           originalName: file.originalname,
           contentItemId: content.id
         });
-        this.journalService.addRecord({
-          eventEntity: EventEntity.ContentItem,
-          eventType: EventType.Create,
-          entityName: file.originalname,
-          entityActual: { ...content.dataValues, originalName: file.originalname }
-        });
+        try {
+          this.journalService.addRecord({
+            eventEntity: EventEntity.ContentItem,
+            eventType: EventType.Create,
+            entityName: file.originalname,
+            entityActual: { ...content.dataValues, originalName: file.originalname }
+          });
+        } catch { }
         break;
       case ContentType.WebPage:
         await this.webpageRepository.create({
           contentItemId: content.id
         });
-        this.journalService.addRecord({
-          eventEntity: EventEntity.ContentItem,
-          eventType: EventType.Create,
-          entityName: content.name,
-          entityActual: { ...content.dataValues }
-        });
+        try {
+          this.journalService.addRecord({
+            eventEntity: EventEntity.ContentItem,
+            eventType: EventType.Create,
+            entityName: content.name,
+            entityActual: { ...content.dataValues }
+          });
+        } catch { }
         break;
     }
     return content;
@@ -106,12 +112,14 @@ export class ContentItemsService {
           break;
       }
       await content.destroy();
-      this.journalService.addRecord({
-        eventEntity: EventEntity.ContentItem,
-        eventType: EventType.Delete,
-        entityName: name,
-        entityOld: { ...old }
-      })
+      try {
+        this.journalService.addRecord({
+          eventEntity: EventEntity.ContentItem,
+          eventType: EventType.Delete,
+          entityName: name,
+          entityOld: { ...old }
+        })
+      } catch { }
       return HttpStatus.OK;
     } catch {
       return HttpStatus.INTERNAL_SERVER_ERROR;
@@ -133,13 +141,15 @@ export class ContentItemsService {
       case ContentType.Video: name = content.videoItem.originalName;
         break;
     }
-    this.journalService.addRecord({
-      eventEntity: EventEntity.ContentItem,
-      eventType: EventType.Update,
-      entityName: name,
-      entityActual: { ...actual.dataValues },
-      entityOld: { ...old }
-    })
+    try {
+      this.journalService.addRecord({
+        eventEntity: EventEntity.ContentItem,
+        eventType: EventType.Update,
+        entityName: name,
+        entityActual: { ...actual.dataValues },
+        entityOld: { ...old }
+      })
+    } catch { }
     return actual;
   }
 

@@ -27,23 +27,27 @@ export class PlaylistsService {
 
   async add(dto: PlaylistCreateDto) {
     const playlist = await this.playlistsRepository.create({ name: dto.name, description: dto.description });
-    this.journalService.addRecord({
-      eventEntity: EventEntity.Playlist,
-      eventType: EventType.Create,
-      entityName: playlist.name,
-      entityActual: { ...playlist.dataValues }
-    });
+    try {
+      this.journalService.addRecord({
+        eventEntity: EventEntity.Playlist,
+        eventType: EventType.Create,
+        entityName: playlist.name,
+        entityActual: { ...playlist.dataValues }
+      });
+    } catch { }
     for (const plItem of dto.items) {
       const playlistItem = await this.playlistsItemsRepository.create({
         ...plItem,
         playlistId: playlist.id
       });
-      this.journalService.addRecord({
-        eventEntity: EventEntity.PlaylistItem,
-        eventType: EventType.Link,
-        entityName: playlist.name,
-        entityActual: { ...playlistItem.dataValues }
-      });
+      try {
+        this.journalService.addRecord({
+          eventEntity: EventEntity.PlaylistItem,
+          eventType: EventType.Link,
+          entityName: playlist.name,
+          entityActual: { ...playlistItem.dataValues }
+        });
+      } catch { }
     }
     return await this.playlistsRepository.findByPk(playlist.id, { include: [{ model: PlaylistItem, include: [{ model: ContentItem, include: [{ model: ImageItem }, { model: VideoItem }] }] }] });
   }
@@ -60,25 +64,29 @@ export class PlaylistsService {
       playlist.name = dto.name;
       playlist.description = dto.description ?? null;
       const actual = await playlist.save();
-      this.journalService.addRecord({
-        eventEntity: EventEntity.Playlist,
-        eventType: EventType.Update,
-        entityName: playlist.name,
-        entityActual: { ...actual.dataValues },
-        entityOld: { ...old }
-      });
+      try {
+        this.journalService.addRecord({
+          eventEntity: EventEntity.Playlist,
+          eventType: EventType.Update,
+          entityName: playlist.name,
+          entityActual: { ...actual.dataValues },
+          entityOld: { ...old }
+        });
+      } catch { }
     }
     const actual = await this.playlistsRepository.findByPk(playlist.id, { include: [{ model: PlaylistItem, include: [{ model: ContentItem, include: [{ model: ImageItem }, { model: VideoItem }] }] }] });
     const deletedItems = actual.items.filter(x => !dto.items.map(y => y.contentItemId).includes(x.contentItemId));
     for (const item of deletedItems) {
       const delItem = { ...item.dataValues };
       await item.destroy();
-      this.journalService.addRecord({
-        eventEntity: EventEntity.PlaylistItem,
-        eventType: EventType.Unlink,
-        entityName: actual.name,
-        entityOld: { ...delItem }
-      })
+      try {
+        this.journalService.addRecord({
+          eventEntity: EventEntity.PlaylistItem,
+          eventType: EventType.Unlink,
+          entityName: actual.name,
+          entityOld: { ...delItem }
+        })
+      } catch { }
     }
     for (const item of dto.items) {
       const aItem = actual.items.find(x => x.position === item.position);
@@ -90,25 +98,29 @@ export class PlaylistsService {
           aItem.position = item.position;
           aItem.startDate = item.startDate;
           const actualItem = await aItem.save();
-          this.journalService.addRecord({
-            eventEntity: EventEntity.PlaylistItem,
-            eventType: EventType.Update,
-            entityName: actual.name,
-            entityActual: { ...actualItem.dataValues },
-            entityOld: { ...oldItem }
-          });
+          try {
+            this.journalService.addRecord({
+              eventEntity: EventEntity.PlaylistItem,
+              eventType: EventType.Update,
+              entityName: actual.name,
+              entityActual: { ...actualItem.dataValues },
+              entityOld: { ...oldItem }
+            });
+          } catch { }
         }
       } else {
         const actualItem = await this.playlistsItemsRepository.create({
           ...item,
           playlistId: actual.id
         });
-        this.journalService.addRecord({
-          eventEntity: EventEntity.Playlist,
-          eventType: EventType.Link,
-          entityName: actual.name,
-          entityActual: { ...actualItem.dataValues }
-        });
+        try {
+          this.journalService.addRecord({
+            eventEntity: EventEntity.Playlist,
+            eventType: EventType.Link,
+            entityName: actual.name,
+            entityActual: { ...actualItem.dataValues }
+          });
+        } catch { }
       }
     }
     return await this.playlistsRepository.findByPk(playlist.id, { include: [{ model: PlaylistItem, include: [{ model: ContentItem, include: [{ model: ImageItem }, { model: VideoItem }] }] }] });
@@ -116,16 +128,21 @@ export class PlaylistsService {
 
   async delete(id: number) {
     try {
-      const playlist = await this.playlistsRepository.findByPk(id);
+      const playlist = await this.playlistsRepository.findByPk(id, { include: [{ model: PlaylistItem }] });
       if (!playlist) return HttpStatus.BAD_REQUEST;
       const old = { ...playlist.dataValues };
+      for (const item of playlist.items) {
+        await item.destroy();
+      }
       await playlist.destroy();
-      this.journalService.addRecord({
-        eventEntity: EventEntity.Playlist,
-        eventType: EventType.Delete,
-        entityName: old.name,
-        entityOld: { ...old }
-      });
+      try {
+        this.journalService.addRecord({
+          eventEntity: EventEntity.Playlist,
+          eventType: EventType.Delete,
+          entityName: old.name,
+          entityOld: { ...old }
+        });
+      } catch { }
       return HttpStatus.OK;
     } catch {
       return HttpStatus.INTERNAL_SERVER_ERROR;

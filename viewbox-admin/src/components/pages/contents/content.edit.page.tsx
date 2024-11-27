@@ -51,13 +51,24 @@ export const ContentEdit = ({ functionals }: TProps) => {
   const dispatch = useAppDispatch();
 
   useEffect(() => {
-    dispatch(setTitle('Элемент контента'))
+    let name = '';
+    try {
+      switch (content?.contentType) {
+        case ContentType.Picture: name = `«${content.imageItem?.originalName}»` ?? name;
+          break;
+        case ContentType.Video: name = `«${content.videoItem?.originalName}»` ?? name;
+          break;
+        case ContentType.WebPage: name = `«${content.name}»` ?? name;
+          break;
+      }
+    } catch { }
+    dispatch(setTitle(`Элемент контента ${name}`))
     // eslint-disable-next-line
-  }, [])
+  }, [content])
 
   if (contentLoading) return <ContentLoadingPage />
-
   if (contentLoadingError) return <ContentErrorPage />
+
   return (
     <Form
       layout='vertical'

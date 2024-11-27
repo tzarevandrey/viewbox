@@ -19,20 +19,24 @@ export class GroupsService {
 
   async add(dto: GroupCreateDto) {
     const group = await this.groupsRepository.create(dto);
-    this.journalService.addRecord({
-      eventEntity: EventEntity.Group,
-      eventType: EventType.Create,
-      entityName: group.name,
-      entityActual: { ...group.dataValues }
-    });
+    try {
+      this.journalService.addRecord({
+        eventEntity: EventEntity.Group,
+        eventType: EventType.Create,
+        entityName: group.name,
+        entityActual: { ...group.dataValues }
+      });
+    } catch { }
     for (const role of dto.roles) {
       const groupRole = await this.groupsRolesRepository.create({ groupId: group.id, role });
-      this.journalService.addRecord({
-        eventEntity: EventEntity.GroupRole,
-        eventType: EventType.Link,
-        entityName: group.name,
-        entityActual: { ...groupRole.dataValues }
-      });
+      try {
+        this.journalService.addRecord({
+          eventEntity: EventEntity.GroupRole,
+          eventType: EventType.Link,
+          entityName: group.name,
+          entityActual: { ...groupRole.dataValues }
+        });
+      } catch { }
     }
     return await group.reload({ include: [{ model: GroupRole }] });
   }
@@ -55,35 +59,41 @@ export class GroupsService {
       group.name = dto.name;
       group.description = dto.description ?? null;
       const actual = await group.save();
-      this.journalService.addRecord({
-        eventEntity: EventEntity.Group,
-        eventType: EventType.Update,
-        entityName: group.name,
-        entityActual: { ...actual.dataValues },
-        entityOld: { ...old }
-      })
+      try {
+        this.journalService.addRecord({
+          eventEntity: EventEntity.Group,
+          eventType: EventType.Update,
+          entityName: group.name,
+          entityActual: { ...actual.dataValues },
+          entityOld: { ...old }
+        })
+      } catch { }
     };
     const actual = await group.reload({ include: [{ model: GroupRole }] });
     const deletedRoles = actual.roles.filter(x => !dto.roles.includes(x.role));
     for (const role of deletedRoles) {
       const oldRole = { ...role };
       await role.destroy();
-      this.journalService.addRecord({
-        eventEntity: EventEntity.GroupRole,
-        eventType: EventType.Unlink,
-        entityName: actual.name,
-        entityOld: { ...oldRole }
-      })
+      try {
+        this.journalService.addRecord({
+          eventEntity: EventEntity.GroupRole,
+          eventType: EventType.Unlink,
+          entityName: actual.name,
+          entityOld: { ...oldRole }
+        })
+      } catch { }
     }
     const addedRoles = dto.roles.filter(x => !actual.roles.map(y => y.role).includes(x));
     for (const role of addedRoles) {
       const newRole = await this.groupsRolesRepository.create({ groupId: actual.id, role });
-      this.journalService.addRecord({
-        eventEntity: EventEntity.GroupRole,
-        eventType: EventType.Link,
-        entityName: actual.name,
-        entityActual: { ...newRole }
-      })
+      try {
+        this.journalService.addRecord({
+          eventEntity: EventEntity.GroupRole,
+          eventType: EventType.Link,
+          entityName: actual.name,
+          entityActual: { ...newRole }
+        })
+      } catch { }
     }
     return await actual.reload({ include: [{ model: GroupRole }] });
   }
@@ -94,12 +104,14 @@ export class GroupsService {
       if (!group) return HttpStatus.BAD_REQUEST;
       const old = { ...group.dataValues };
       await group.destroy();
-      this.journalService.addRecord({
-        eventEntity: EventEntity.Group,
-        eventType: EventType.Delete,
-        entityName: old.name,
-        entityOld: { ...old }
-      })
+      try {
+        this.journalService.addRecord({
+          eventEntity: EventEntity.Group,
+          eventType: EventType.Delete,
+          entityName: old.name,
+          entityOld: { ...old }
+        })
+      } catch { }
       return HttpStatus.OK;
     } catch {
       return HttpStatus.INTERNAL_SERVER_ERROR;

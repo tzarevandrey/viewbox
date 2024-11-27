@@ -63,6 +63,10 @@
   border-right: none;
 }
 
+.content-row__first-item {
+  padding-left: 3px;
+}
+
 .content-row__middle-item::before {
   inset: 3px 0 3px 0;
   border-right: none;
@@ -147,6 +151,7 @@
   display: flex;
   justify-content: end;
   color: darkgray;
+  text-align: end;
 }
 
 .content__view__value,
@@ -173,10 +178,12 @@
 .value_clickable {
   cursor: pointer;
   text-decoration: underline;
+  color: #000000;
 }
 
 .value_clickable:hover {
   color: #6CACE4;
+  text-decoration: underline;
 }
 
 .contents-page__subheader__buttons-block,
@@ -206,6 +213,7 @@
   display: flex;
   box-sizing: border-box;
   border-radius: 4px;
+  margin: auto;
 }
 
 .journal__view {
@@ -237,7 +245,6 @@
   gap: 5px;
   align-items: center;
   min-width: 300px;
-  justify-content: end;
 }
 
 .content__select-label {
@@ -290,10 +297,11 @@
   bottom: 0;
   left: 0;
   right: 0;
-  background-color: rgba(0, 0, 0, 0.3);
+  opacity: 0;
+  cursor: wait;
 }
 
-.bigger-icon {
-  margin: auto;
-  font-size: 130px;
+.content__view__preview {
+  max-width: 400px;
+  min-width: 400px;
 }

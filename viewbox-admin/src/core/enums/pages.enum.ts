@@ -3,4 +3,5 @@ export enum Page {
   Playlists = 2,
   Contents = 3,
   Groups = 4,
+  Manual = 5,
 }

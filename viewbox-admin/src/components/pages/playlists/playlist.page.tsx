@@ -57,6 +57,8 @@ export const Playlist = ({ functionals }: TProps) => {
           <div style={{ borderColor: COLORS.CONTENT_WEB_PAGE }} className='legend-item'>&nbsp;-&nbsp;веб-страница</div>
           <div style={{ borderColor: COLORS.CONTENT_VIDEO }} className='legend-item'>&nbsp;-&nbsp;видео</div>
           <div style={{ borderColor: COLORS.CONTENT_IMAGE }} className='legend-item'>&nbsp;-&nbsp;изображение</div>
+          <div className='playlist__view__value_planned'>показ запланирован</div>
+          <div className='playlist__view__value_expired'>период показа истёк</div>
         </div>
       </div>
       <div className='playlist__view'>

@@ -89,6 +89,8 @@ export const Playlists = ({ functionals }: TProps) => {
         </div>
       </div>
       <Table<TGetPlaylistDto>
+        bordered
+        size='small'
         columns={columns}
         dataSource={playlists}
         rowHoverable

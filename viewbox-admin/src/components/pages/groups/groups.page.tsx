@@ -139,6 +139,8 @@ export const Groups = ({ functionals }: TProps) => {
         </div>
       </div>
       <Table<TGetGroupDto>
+        bordered
+        size='small'
         columns={columns}
         dataSource={groups}
         rowHoverable

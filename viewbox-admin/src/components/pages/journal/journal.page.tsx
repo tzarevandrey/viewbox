@@ -1,4 +1,4 @@
-import { Fragment, useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Functional } from '../../../core/enums/functional.enum';
 import { useAppDispatch } from '../../../hooks';
 import { setTitle } from '../../../reducers/title.slice';
@@ -118,6 +118,7 @@ export const Journal = ({ functionals }: TProps) => {
         </div>
       </Form>
       <Table<TJournal>
+        bordered
         columns={columns}
         dataSource={[...(journal?.data ?? [])].sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime())}
         rowHoverable

@@ -128,6 +128,8 @@ export const PlaylistItemsTable = ({ items, functionals }: TProps) => {
 
   return (
     <Table<TTableData>
+      bordered
+      size='small'
       columns={columns}
       dataSource={tableItems}
       rowHoverable

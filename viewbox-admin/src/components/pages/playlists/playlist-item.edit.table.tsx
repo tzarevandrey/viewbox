@@ -1,7 +1,7 @@
 import { TCreatePlaylistItemDto } from './dto/create.playlists.dto';
 import { ContentType } from '../../../core/enums/content.enum';
 import { useAppDispatch } from '../../../hooks';
-import { Button, DatePicker, Flex, Input, Popover, Select, Table, TableProps } from 'antd';
+import { Button, DatePicker, Flex, Input, Select, Table, TableProps } from 'antd';
 import { useGetAllContentQuery } from '../../../api/content.api';
 import { COLORS } from '../../../core/constants/colors';
 import { addItem, downItem, removeItem, upItem, updateItem } from '../../../reducers/playlist.slice';
@@ -158,6 +158,7 @@ export const PlaylistItemEditTable = ({ items }: TProps) => {
         return (
           <Input
             className='content__edit__value middle-value' type='number' value={item.duration ?? 0}
+            disabled={item.contentType === ContentType.Video}
             onChange={(e) => {
               const val = e.target.value === '0' ? null : +e.target.value;
               dispatch(updateItem({ ...item, duration: val }));
@@ -196,6 +197,7 @@ export const PlaylistItemEditTable = ({ items }: TProps) => {
 
   return (
     <Table<TTableData>
+      bordered
       size='small'
       columns={columns}
       rowHoverable

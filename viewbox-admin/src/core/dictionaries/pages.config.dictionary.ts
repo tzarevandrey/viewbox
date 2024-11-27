@@ -15,6 +15,7 @@ import { GroupCreate } from '../../components/pages/groups/groups.create.page';
 import { GroupEdit } from '../../components/pages/groups/group.edit.page';
 import { PlaylistCreate } from '../../components/pages/playlists/playlist.create.page';
 import { PlaylistEdit } from '../../components/pages/playlists/playlist.edit.page';
+import { Manual } from '../../components/pages/manual/manual.page';
 
 export const PAGES_CONFIG: {
   [key: string]: {
@@ -142,6 +143,17 @@ export const PAGES_CONFIG: {
     subpages: [],
     functionals: {
       [Functional.Read]: [Role.Superuser, Role.Support],
+    }
+  },
+  [Page.Manual]: {
+    name: 'Руководство пользователя',
+    link: '/manual',
+    Jsx: Manual,
+    order: 60,
+    roles: [Role.Administrator, Role.Superuser, Role.Support],
+    subpages: [],
+    functionals: {
+      [Functional.Read]: [Role.Administrator, Role.Superuser, Role.Support]
     }
   }
 }

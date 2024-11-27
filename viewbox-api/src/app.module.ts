@@ -49,7 +49,7 @@ import { GroupRole } from './groups/groups.roles.model';
       autoLoadModels: true
     }),
     ServeStaticModule.forRoot({
-      rootPath: path.resolve(__dirname, process.env.FILES_STORAGE || 'files_storage')
+      rootPath: path.resolve('D://', process.env.FILES_STORAGE || 'files_storage')
     }),
     AuthModule,
     PlaylistsModule,

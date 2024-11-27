@@ -155,6 +155,8 @@ export const Contents = ({ functionals }: TProps) => {
         </div>
       </div>
       <Table<TGetContentDto>
+        bordered
+        size='small'
         columns={columns}
         dataSource={[...contents ?? []].sort((a, b) => new Date(b.lastUpdated).getTime() - new Date(a.lastUpdated).getTime())}
         rowHoverable

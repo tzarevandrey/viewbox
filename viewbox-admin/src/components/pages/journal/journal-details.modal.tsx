@@ -78,6 +78,7 @@ export const JournalDetails = ({ journal, color }: TProps) => {
         <div className='journal-detail__main__value'>{journal.authorName}</div>
       </div>
       <Table<TJournalDetails>
+        bordered
         size='small'
         columns={columns}
         rowKey={item => item.entityField}
