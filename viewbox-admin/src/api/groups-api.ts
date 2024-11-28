@@ -1,6 +1,3 @@
-import { TCreateGroupDto } from '../components/pages/groups/dto/create.groups.dto';
-import { TEditGroupDto } from '../components/pages/groups/dto/edit.groups.dto';
-import { TGetGroupDto } from '../components/pages/groups/dto/get.groups.dto';
 import { Api } from '../core/enums/api.enum';
 import { TGroup } from '../core/types/groups';
 import { snack } from '../utils/snackbar';
@@ -8,7 +5,7 @@ import { api } from './api';
 
 export const groupsApi = api.injectEndpoints({
   endpoints: (builder) => ({
-    getAllGroups: builder.query<TGetGroupDto[], any>({
+    getAllGroups: builder.query<TGroup[], any>({
       query: () => ({
         url: '/groups',
         method: 'get'
@@ -36,7 +33,7 @@ export const groupsApi = api.injectEndpoints({
       },
       providesTags: (result) => result ? [{ type: `${Api.Groups}`, id: result.id }] : []
     }),
-    addGroup: builder.mutation<TGroup, TCreateGroupDto>({
+    addGroup: builder.mutation<TGroup, TGroup>({
       query: (body) => {
         return {
           url: '/groups',
@@ -69,7 +66,7 @@ export const groupsApi = api.injectEndpoints({
       },
       invalidatesTags: (_, error) => error ? [] : [{ type: `${Api.Groups}`, id: 'list' }, { type: `${Api.Journal}` }]
     }),
-    updateGroup: builder.mutation<TGroup, TEditGroupDto>({
+    updateGroup: builder.mutation<TGroup, TGroup>({
       query: (body) => ({
         url: '/groups',
         method: 'put',

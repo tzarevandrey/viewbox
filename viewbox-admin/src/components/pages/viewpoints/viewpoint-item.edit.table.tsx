@@ -2,65 +2,87 @@ import { ContentType } from '../../../core/enums/content.enum';
 import { useAppDispatch } from '../../../hooks';
 import { Button, DatePicker, Flex, Input, Select, Table, TableProps } from 'antd';
 import { useGetAllContentQuery } from '../../../api/content.api';
+import { COLORS } from '../../../core/constants/colors';
 import { addItem, downItem, removeItem, upItem, updateItem } from '../../../reducers/playlist.slice';
 import { CaretDownOutlined, CaretUpOutlined, CloseOutlined, PlusOutlined } from '@ant-design/icons';
 import { closeModal, openModal } from '../../../reducers/modal.slice';
-import { PlaylistItemAddModal } from './playlist-item.add.modal';
 import { NUMBERS } from '../../../core/constants/numbers';
 import moment from 'moment';
-import { TPlaylistItem } from '../../../core/types/playlist-item';
-import { getContentColor, getContentName } from '../../../utils/func';
+import { TCreateViewpointItemDto } from './dto/create.viewpoints.dto';
+import { useGetAllPlaylistsQuery } from '../../../api/playlists.api';
 
-type TProps = {
-  items: TPlaylistItem[];
+type TTableData = {
+  playlistId: number;
+  startDate: Date | null;
+  expireDate: Date | null;
+  playlistName: string;
+  isDefault: boolean;
 }
 
-export const PlaylistItemEditTable = ({ items }: TProps) => {
+type TProps = {
+  items: TCreateViewpointItemDto[];
+}
 
-  const tableItems = [...items].sort((a, b) => a.position - b.position).map(x => {
-    return { ...x, color: getContentColor(x.contentItem) };
+export const ViewpointItemEditTable = ({ items }: TProps) => {
+
+  const tableItems = [...items].map(x => {
+    return { ...x, playlistId: x.playlist.id, playlistName: x.playlist.name };
   });
 
   const dispatch = useAppDispatch();
 
   const {
-    data: content,
-    isLoading: contentLoading,
-    isError: contentLoadingError
-  } = useGetAllContentQuery(null);
+    data: playlists,
+    isLoading: playlistsLoading,
+    isError: playlistsLoadingError
+  } = useGetAllPlaylistsQuery(null);
 
   const dateFormat = 'DD.MM.YYYY HH:mm';
 
-  const columns: TableProps<TPlaylistItem>['columns'] = [
+  const columns: TableProps<TTableData>['columns'] = [
     {
       title: 'Имя',
-      dataIndex: 'contentName',
-      key: 'contentName',
+      dataIndex: 'playlistName',
+      key: 'playlistName',
       render: (_, item) =>
         <Select
           showSearch
-          className='content__edit__value first-value'
-          value={item.contentItem}
-          loading={contentLoading}
-          disabled={contentLoadingError}
-
+          className='playlist__edit__value'
+          value={item.playlistId}
+          loading={playlistsLoading}
+          disabled={playlistsLoadingError}
           onChange={(e) => {
-            dispatch(updateItem({
-              contentItem: e,
-              position: item.position,
-              duration: e.contentType === ContentType.Video ? null : item.duration ?? NUMBERS.DEFAULT_DURATION,
-              startDate: item.startDate,
-              expireDate: item.expireDate
-            }));
+            const temp = playlists?.find(x => x.id === e);
+            if (temp) {
+              dispatch(updateItem({
+                contentItemId: e,
+                position: item.position,
+                duration: item.contentType === ContentType.Video ? null : item.duration ?? NUMBERS.DEFAULT_DURATION,
+                startDate: item.startDate,
+                expireDate: item.expireDate,
+                contentName: itemName,
+                contentType: temp.contentType
+              }));
+            }
           }}
         >
           {[...(content ?? [])].sort((a, b) => a.contentType - b.contentType).map(cnt => {
-            const optName = getContentName(cnt);
-            const borderColor = getContentColor(cnt);
+            let optName = cnt.name;
+            let optBorderColor = '';
+            switch (cnt.contentType) {
+              case ContentType.Picture: optName = cnt.imageItem?.originalName ?? optName;
+                optBorderColor = COLORS.CONTENT_IMAGE;
+                break;
+              case ContentType.Video: optName = cnt.videoItem?.originalName ?? optName;
+                optBorderColor = COLORS.CONTENT_VIDEO;
+                break;
+              case ContentType.WebPage: optBorderColor = COLORS.CONTENT_WEB_PAGE;
+                break;
+            }
             return (
               <Select.Option key={cnt.id} value={cnt.id}>
                 <div className='content__select-row' title={optName}>
-                  <div className='content__select-label' style={{ borderColor }}></div>
+                  <div className='content__select-label' style={{ borderColor: optBorderColor }}></div>
                   <div className='content__select-options'>{optName}</div>
                 </div>
               </Select.Option>
@@ -117,7 +139,7 @@ export const PlaylistItemEditTable = ({ items }: TProps) => {
         return (
           <Input
             className='content__edit__value middle-value' type='number' value={item.duration ?? 0}
-            disabled={item.contentItem.contentType === ContentType.Video}
+            disabled={item.contentType === ContentType.Video}
             onChange={(e) => {
               const val = e.target.value === '0' ? null : +e.target.value;
               dispatch(updateItem({ ...item, duration: val }));
@@ -155,7 +177,7 @@ export const PlaylistItemEditTable = ({ items }: TProps) => {
   ]
 
   return (
-    <Table<TPlaylistItem>
+    <Table<TTableData>
       bordered
       size='small'
       columns={columns}

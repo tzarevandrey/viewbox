@@ -2,11 +2,11 @@ import { ContentType } from '../enums/content.enum';
 import { TPlaylist } from './playlist';
 
 export type TContent = {
-  id: number;
+  id?: number;
   name: string;
   contentType: ContentType;
-  description: string | null;
-  lastUpdated: Date;
+  description?: string | null;
+  lastUpdated?: Date;
   imageItem?: {
     id: number;
     originalName: string;

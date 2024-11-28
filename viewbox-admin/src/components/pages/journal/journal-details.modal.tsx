@@ -7,8 +7,8 @@ import { EVENT_TYPE_NAMES } from '../../../core/dictionaries/event-types.diction
 import { Button, Table, TableProps } from 'antd';
 import { TJournalDetails } from '../../../core/types/journal-details';
 import { ENTITY_FIELDS_NAMES } from '../../../core/dictionaries/entity-fields.dictionary';
-import { JournalDetailsError } from './journal-details.error.page';
 import { closeModal } from '../../../reducers/modal.slice';
+import { Error } from '../../shared/error/error.page';
 
 type TProps = {
   journal: TJournal;
@@ -58,7 +58,7 @@ export const JournalDetails = ({ journal, color }: TProps) => {
     }
   ]
 
-  if (detailsLoadingError) return <JournalDetailsError />
+  if (detailsLoadingError) return <Error />
 
   return (
     <div className='journal-details'>

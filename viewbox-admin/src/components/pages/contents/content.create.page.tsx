@@ -5,8 +5,8 @@ import { useAddContentMutation } from '../../../api/content.api';
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { ContentType } from '../../../core/enums/content.enum';
-import { TCreateContentDto } from './dto/create.content.dto';
 import TextArea from 'antd/es/input/TextArea';
+import { TContent } from '../../../core/types/content';
 
 export const ContentCreate = () => {
 
@@ -64,7 +64,7 @@ export const ContentCreate = () => {
           return (prevValues.contentType !== currentValues.contentType)
         }}
       >
-        {({ getFieldValue }: FormInstance<TCreateContentDto>) => {
+        {({ getFieldValue }: FormInstance<TContent>) => {
           const contType = getFieldValue('contentType') || ContentType.WebPage;
           switch (contType) {
             case ContentType.Picture: return (

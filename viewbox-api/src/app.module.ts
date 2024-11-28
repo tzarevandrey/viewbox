@@ -19,6 +19,9 @@ import { GroupsModule } from './groups/groups.module';
 import * as path from 'path';
 import { Group } from './groups/groups.model';
 import { GroupRole } from './groups/groups.roles.model';
+import { ViewpointsModule } from './viewpoints/viewpoints.module';
+import { Viewpoint } from './viewpoints/viewpoints.model';
+import { ViewpointItem } from './viewpoints/viewpoints.items.model';
 
 @Module({
   controllers: [],
@@ -45,6 +48,8 @@ import { GroupRole } from './groups/groups.roles.model';
         PlaylistItem,
         Group,
         GroupRole,
+        Viewpoint,
+        ViewpointItem
       ],
       autoLoadModels: true
     }),
@@ -57,6 +62,7 @@ import { GroupRole } from './groups/groups.roles.model';
     JournalsModule,
     FilesModule,
     GroupsModule,
+    ViewpointsModule,
   ],
 })
 export class AppModule { }

@@ -8,7 +8,6 @@ import { Playlist } from '../../components/pages/playlists/playlist.page';
 import { Playlists } from '../../components/pages/playlists/playlists.page';
 import { Functional } from '../enums/functional.enum';
 import { Page } from '../enums/pages.enum';
-import { Role } from '../enums/roles.enum';
 import { ContentCreate } from '../../components/pages/contents/content.create.page';
 import { ContentEdit } from '../../components/pages/contents/content.edit.page';
 import { GroupCreate } from '../../components/pages/groups/groups.create.page';
@@ -16,144 +15,108 @@ import { GroupEdit } from '../../components/pages/groups/group.edit.page';
 import { PlaylistCreate } from '../../components/pages/playlists/playlist.create.page';
 import { PlaylistEdit } from '../../components/pages/playlists/playlist.edit.page';
 import { Manual } from '../../components/pages/manual/manual.page';
+import { Viewpoints } from '../../components/pages/viewpoints/viewpoints.page';
+import { ViewpointCreate } from '../../components/pages/viewpoints/viewpoint.create.page';
+import { Viewpoint } from '../../components/pages/viewpoints/viewpoint.page';
+import { ViewpointEdit } from '../../components/pages/viewpoints/viewpoint.edit.page';
 
 export const PAGES_CONFIG: {
   [key: string]: {
-    name: string;
+    mainMenuName: string;
     link: string;
     Jsx: FC;
     order: number;
-    roles: Role[];
-    subpages: {
-      link: string;
-      Jsx: FC;
-      roles: Role[];
-      functionals: Functional[];
-    }[];
-    functionals: {
-      [key: string]: Role[];
-    }
+    functionals?: {
+      [key: string]: {
+        link: string;
+        Jsx: FC;
+      };
+    }[]
   }
 } = {
   [Page.Playlists]: {
-    name: 'Списки воспроизведения',
+    mainMenuName: 'Списки воспроизведения',
     link: '/playlists',
     Jsx: Playlists,
     order: 20,
-    roles: [Role.Administrator, Role.Superuser, Role.Support],
-    subpages: [
+    functionals: [
       {
-        link: '/playlists/new',
-        Jsx: PlaylistCreate,
-        roles: [Role.Administrator, Role.Superuser, Role.Support],
-        functionals: [Functional.Create]
+        [Functional.Create]: { link: '/playlists/new', Jsx: PlaylistCreate }
       },
       {
-        link: '/playlists/:id',
-        Jsx: Playlist,
-        roles: [Role.Administrator, Role.Superuser, Role.Support],
-        functionals: [Functional.Read]
+        [Functional.Read]: { link: '/playlists/:id', Jsx: Playlist }
       },
       {
-        link: '/playlists/edit/:id',
-        Jsx: PlaylistEdit,
-        roles: [Role.Administrator, Role.Superuser, Role.Support],
-        functionals: [Functional.Update]
-      },
-    ],
-    functionals: {
-      [Functional.Create]: [Role.Administrator, Role.Superuser, Role.Support],
-      [Functional.Read]: [Role.Administrator, Role.Superuser, Role.Support],
-      [Functional.Update]: [Role.Administrator, Role.Superuser, Role.Support],
-      [Functional.Delete]: [Role.Administrator, Role.Superuser, Role.Support],
-    }
+        [Functional.Update]: { link: '/playlists/edit/:id', Jsx: PlaylistEdit }
+      }
+    ]
   },
   [Page.Contents]: {
-    name: 'Контент',
+    mainMenuName: 'Контент',
     link: '/content',
     Jsx: Contents,
     order: 30,
-    roles: [Role.Administrator, Role.Superuser, Role.Support],
-    subpages: [
+    functionals: [
       {
-        link: '/content/new',
-        Jsx: ContentCreate,
-        roles: [Role.Administrator, Role.Superuser, Role.Support],
-        functionals: [Functional.Create]
+        [Functional.Create]: { link: '/content/new', Jsx: ContentCreate }
       },
       {
-        link: '/content/:id',
-        Jsx: Content,
-        roles: [Role.Administrator, Role.Superuser, Role.Support],
-        functionals: [Functional.Read]
+        [Functional.Read]: { link: '/content/:id', Jsx: Content }
       },
       {
-        link: '/content/edit/:id',
-        Jsx: ContentEdit,
-        roles: [Role.Administrator, Role.Superuser, Role.Support],
-        functionals: [Functional.Update]
-      },
-    ],
-    functionals: {
-      [Functional.Create]: [Role.Administrator, Role.Superuser, Role.Support],
-      [Functional.Read]: [Role.Administrator, Role.Superuser, Role.Support],
-      [Functional.Update]: [Role.Administrator, Role.Superuser, Role.Support],
-      [Functional.Delete]: [Role.Administrator, Role.Superuser, Role.Support],
-    }
+        [Functional.Update]: { link: '/content/edit/:id', Jsx: ContentEdit }
+      }
+    ]
   },
   [Page.Groups]: {
-    name: 'Группы доступа',
+    mainMenuName: 'Группы доступа',
     link: '/groups',
     Jsx: Groups,
     order: 40,
-    roles: [Role.Superuser, Role.Support],
-    subpages: [
+    functionals: [
       {
-        link: '/groups/new',
-        Jsx: GroupCreate,
-        roles: [Role.Superuser, Role.Support],
-        functionals: [Functional.Create]
+        [Functional.Create]: { link: '/groups/new', Jsx: GroupCreate }
       },
       {
-        link: '/groups/:id',
-        Jsx: Group,
-        roles: [Role.Superuser, Role.Support],
-        functionals: [Functional.Read]
+        [Functional.Read]: { link: '/groups/:id', Jsx: Group }
       },
       {
-        link: '/groups/edit/:id',
-        Jsx: GroupEdit,
-        roles: [Role.Superuser, Role.Support],
-        functionals: [Functional.Update]
-      },
-    ],
-    functionals: {
-      [Functional.Create]: [Role.Superuser, Role.Support],
-      [Functional.Read]: [Role.Superuser, Role.Support],
-      [Functional.Update]: [Role.Superuser, Role.Support],
-      [Functional.Delete]: [Role.Superuser, Role.Support],
-    }
+        [Functional.Update]: { link: '/groups/edit/:id', Jsx: GroupEdit }
+      }
+    ]
   },
   [Page.Journal]: {
-    name: 'Журнал событий',
+    mainMenuName: 'Журнал событий',
     link: '/journal',
     Jsx: Journal,
     order: 50,
-    roles: [Role.Superuser, Role.Support],
-    subpages: [],
-    functionals: {
-      [Functional.Read]: [Role.Superuser, Role.Support],
-    }
+    functionals: [
+      {
+        [Functional.Read]: { link: '/journal/:id', Jsx: Group }
+      }
+    ]
   },
   [Page.Manual]: {
-    name: 'Руководство пользователя',
+    mainMenuName: 'Руководство пользователя',
     link: '/manual',
     Jsx: Manual,
-    order: 60,
-    roles: [Role.Administrator, Role.Superuser, Role.Support],
-    subpages: [],
-    functionals: {
-      [Functional.Read]: [Role.Administrator, Role.Superuser, Role.Support]
-    }
-  }
+    order: 60
+  },
+  [Page.Viewpoints]: {
+    mainMenuName: 'Панели воспроизведения',
+    link: '/viwpoints',
+    Jsx: Viewpoints,
+    order: 10,
+    functionals: [
+      {
+        [Functional.Create]: { link: '/viwpoints/new', Jsx: ViewpointCreate }
+      },
+      {
+        [Functional.Read]: { link: '/viwpoints/:id', Jsx: Viewpoint }
+      },
+      {
+        [Functional.Update]: { link: '/viwpoints/edit/:id', Jsx: ViewpointEdit }
+      }
+    ]
+  },
 }

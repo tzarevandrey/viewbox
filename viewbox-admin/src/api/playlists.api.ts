@@ -1,6 +1,3 @@
-import { TCreatePlaylistDto } from '../components/pages/playlists/dto/create.playlists.dto';
-import { TEditPlaylistDto } from '../components/pages/playlists/dto/edit.playlists.dto';
-import { TGetPlaylistDto } from "../components/pages/playlists/dto/get.playlists.dto";
 import { Api } from "../core/enums/api.enum";
 import { TPlaylist } from '../core/types/playlist';
 import { snack } from '../utils/snackbar';
@@ -8,7 +5,7 @@ import { api } from "./api";
 
 export const playlistsApi = api.injectEndpoints({
   endpoints: (builder) => ({
-    getAllPlaylists: builder.query<TGetPlaylistDto[], any>({
+    getAllPlaylists: builder.query<TPlaylist[], any>({
       query: () => ({
         url: '/playlists',
         method: 'get',
@@ -36,7 +33,7 @@ export const playlistsApi = api.injectEndpoints({
       },
       providesTags: (result) => result ? [{ type: `${Api.Playlists}`, id: result.id }] : []
     }),
-    addPlaylist: builder.mutation<TPlaylist, TCreatePlaylistDto>({
+    addPlaylist: builder.mutation<TPlaylist, TPlaylist>({
       query: (body) => ({
         url: '/playlists',
         method: 'post',
@@ -53,11 +50,11 @@ export const playlistsApi = api.injectEndpoints({
       invalidatesTags: (result) => {
         if (!result) return [];
         const res = [{ type: `${Api.Playlists}`, id: 'list' }, { type: `${Api.Playlists}`, id: result.id }, { type: `${Api.Journal}` }];
-        result.items.forEach(item => res.push({ type: `${Api.Contents}`, id: item.contentItem.id }));
+        result.items?.forEach(item => res.push({ type: `${Api.Contents}`, id: item.contentItem.id }));
         return res;
       }
     }),
-    updatePlaylist: builder.mutation<TPlaylist, TEditPlaylistDto>({
+    updatePlaylist: builder.mutation<TPlaylist, TPlaylist>({
       query: (body) => ({
         url: '/playlists',
         method: 'put',
@@ -74,7 +71,7 @@ export const playlistsApi = api.injectEndpoints({
       invalidatesTags: (result) => {
         if (!result) return [];
         const res = [{ type: `${Api.Playlists}`, id: 'list' }, { type: `${Api.Playlists}`, id: result.id }, { type: `${Api.Journal}` }];
-        result.items.forEach(item => res.push({ type: `${Api.Contents}`, id: item.contentItem.id }));
+        result.items?.forEach(item => res.push({ type: `${Api.Contents}`, id: item.contentItem.id }));
         return res;
       }
     }),

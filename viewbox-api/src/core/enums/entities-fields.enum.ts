@@ -1,4 +1,9 @@
 export enum EntityField {
+  ViewpointId = 1,
+  ViewpointName = 2,
+  ViewpointDescription = 3,
+  ViewpointItemViewpointId = 4,
+  ViewpointItemPlaylistId = 5,
   PlaylistId = 6,
   PlaylistName = 7,
   PlaylistDescription = 8,
@@ -32,4 +37,7 @@ export enum EntityField {
   ContentWebpageId = 36,
   ContentWebpageContentItemId = 37,
   ContentWebpageDeletedAt = 38,
+  ViewpointItemStartDate = 39,
+  ViewpointItemExpireDate = 40,
+  ViewpointItemIsDefault = 41,
 }

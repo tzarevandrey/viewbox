@@ -4,8 +4,6 @@ import { useAppDispatch, useAppSelector } from '../../../hooks';
 import { setTitle } from '../../../reducers/title.slice';
 import { useDeleteContentMutation, useGetContentQuery } from '../../../api/content.api';
 import { useNavigate, useParams } from 'react-router-dom';
-import { ContentLoadingPage } from './content.loading.page';
-import { ContentErrorPage } from './content.error.page';
 import { Role } from '../../../core/enums/roles.enum';
 import { ContentType } from '../../../core/enums/content.enum';
 import { Button, Flex, Image } from 'antd';
@@ -15,6 +13,9 @@ import { openModal } from '../../../reducers/modal.slice';
 import { DeleteModal } from '../../shared/delete-modal/delete.modal';
 import { snack } from '../../../utils/snackbar';
 import { URLS } from '../../../core/constants/urls';
+import { getContentName, getContentTypeName, getPageLink } from '../../../utils/func';
+import { Loading } from '../../shared/loading/loading.page';
+import { Error } from '../../shared/error/error.page';
 
 type TProps = {
   functionals?: Functional[];
@@ -31,7 +32,6 @@ export const Content = ({ functionals }: TProps) => {
   const { roles } = useAppSelector(x => x.user);
 
   const navigate = useNavigate();
-
   const dispatch = useAppDispatch();
 
   const [deleteContent] = useDeleteContentMutation();
@@ -44,22 +44,13 @@ export const Content = ({ functionals }: TProps) => {
 
   useEffect(() => {
     let name = '';
-    try {
-      switch (content?.contentType) {
-        case ContentType.Picture: name = `«${content.imageItem?.originalName}»` ?? name;
-          break;
-        case ContentType.Video: name = `«${content.videoItem?.originalName}»` ?? name;
-          break;
-        case ContentType.WebPage: name = `«${content.name}»` ?? name;
-          break;
-      }
-    } catch { }
+    if (content) name = `«${getContentName(content)}»`
     dispatch(setTitle(`Элемент контента ${name}`))
     // eslint-disable-next-line
   }, [content])
 
-  if (contentLoading) return <ContentLoadingPage />
-  if (contentLoadingError) return <ContentErrorPage />
+  if (contentLoading) return <Loading />
+  if (contentLoadingError) return <Error />
 
   return (
     <Flex gap={10}>
@@ -71,8 +62,9 @@ export const Content = ({ functionals }: TProps) => {
                 <div className='content__view__label'>Идентификатор контента:</div>
                 <div className='content__view__value'>{content?.id}</div>
                 <div className='content__view__label'>Идентификатор отображаемого элемента:</div>
-                <div className='content__view__value'>{content?.contentType === ContentType.Picture ? content.imageItem?.id : (
-                  content?.contentType === ContentType.Video ? content.videoItem?.id : content?.webpageItem?.id)}</div>
+                <div className='content__view__value'>
+                  {content?.imageItem?.originalName ?? content?.videoItem?.originalName ?? content?.name}
+                </div>
                 {content?.contentType === ContentType.Picture || content?.contentType === ContentType.Video
                   ? (
                     <Fragment>
@@ -84,9 +76,7 @@ export const Content = ({ functionals }: TProps) => {
               </Fragment>
             ) : null}
             <div className='content__view__label'>Тип контента:</div>
-            <div className='content__view__value'>{content?.contentType === ContentType.Picture ? 'Изображение' : (
-              content?.contentType === ContentType.Video ? 'Видео' : 'Веб-страница')}
-            </div>
+            <div className='content__view__value'>{getContentTypeName(content?.contentType)}</div>
             <div className='content__view__label'>{content?.contentType === ContentType.WebPage ? 'Ссылка' : 'Имя файла'}:</div>
             <div className='content__view__value'>{content?.contentType === ContentType.Picture ? content.imageItem?.originalName : (
               content?.contentType === ContentType.Video ? content.videoItem?.originalName : <a className='value_clickable' target='_blank' rel='noreferrer' href={content?.name}>{content?.name}</a>)}
@@ -101,7 +91,7 @@ export const Content = ({ functionals }: TProps) => {
                     key={playlist.id}
                     className='value_clickable'
                     onClick={() => {
-                      const link = PAGES_CONFIG[Page.Playlists].subpages.find(x => x.functionals.includes(Functional.Read))?.link;
+                      const link = getPageLink(Page.Playlists, Functional.Read);
                       if (link) navigate(link.replace(':id', `${playlist.id}`));
                     }}
                   >
@@ -127,7 +117,7 @@ export const Content = ({ functionals }: TProps) => {
               htmlType='button'
               onClick={() => {
                 if (contentId) {
-                  const link = PAGES_CONFIG[Page.Contents].subpages.find(x => x.functionals.includes(Functional.Update))?.link;
+                  const link = getPageLink(Page.Contents, Functional.Update);
                   if (link) navigate(link.replace(':id', contentId));
                 }
               }}
@@ -139,20 +129,13 @@ export const Content = ({ functionals }: TProps) => {
               htmlType='button'
               danger
               onClick={() => {
-                if (contentId && (!content?.playlists || content.playlists.length === 0)) {
-                  let name = content?.name;
-                  switch (content?.contentType) {
-                    case ContentType.Picture: name = content.imageItem?.originalName ?? name;
-                      break;
-                    case ContentType.Video: name = content.videoItem?.originalName ?? name;
-                      break;
-                  }
+                if (content && (!content?.playlists || content.playlists.length === 0)) {
                   dispatch(openModal(() =>
                     <DeleteModal
                       handler={() => {
-                        deleteContent(+contentId).then(() => navigate(PAGES_CONFIG[Page.Contents].link))
+                        deleteContent(+(content.id ?? 0)).then(() => navigate(PAGES_CONFIG[Page.Contents].link))
                       }}
-                      text={`контент «${name}»`}
+                      text={`контент «${getContentName(content)}»`}
                     />
                   ))
                 } else {

@@ -1,5 +1,3 @@
-import { TEditContentDto } from '../components/pages/contents/dto/edit.content.dto';
-import { TGetContentDto } from "../components/pages/contents/dto/get.content.dto";
 import { Api } from "../core/enums/api.enum";
 import { TContent } from '../core/types/content';
 import { snack } from '../utils/snackbar';
@@ -7,7 +5,7 @@ import { api } from "./api";
 
 export const contentApi = api.injectEndpoints({
   endpoints: (builder) => ({
-    getAllContent: builder.query<TGetContentDto[], any>({
+    getAllContent: builder.query<TContent[], any>({
       query: () => ({
         url: '/content',
         method: 'get'
@@ -69,7 +67,7 @@ export const contentApi = api.injectEndpoints({
       },
       invalidatesTags: (_, error) => error ? [] : [{ type: `${Api.Contents}`, id: 'list' }, { type: `${Api.Journal}` }]
     }),
-    updateContent: builder.mutation<TContent, TEditContentDto>({
+    updateContent: builder.mutation<TContent, TContent>({
       query: (body) => ({
         url: '/content',
         method: 'put',

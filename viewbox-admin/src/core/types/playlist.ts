@@ -1,8 +1,8 @@
 import { TPlaylistItem } from './playlist-item';
 
 export type TPlaylist = {
-  id: number;
+  id?: number;
   name: string;
-  description: string | null;
-  items: TPlaylistItem[];
+  description?: string | null;
+  items?: TPlaylistItem[];
 }

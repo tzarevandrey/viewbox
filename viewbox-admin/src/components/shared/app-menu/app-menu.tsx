@@ -9,16 +9,19 @@ type TProps = {
 }
 
 export const AppMenu = ({ pages }: TProps) => {
+
   const navigate = useNavigate();
+
   const items = Object.entries(PAGES_CONFIG)
-    .filter(entry => pages
-      .includes(+entry[0]))
+    .filter(x => pages.includes(+x[0]))
     .sort((a, b) => a[1].order - b[1].order)
-    .map(entry => ({ key: entry[1].link, label: entry[1].name }));
+    .map(entry => ({ key: entry[1].link, label: entry[1].mainMenuName }));
+
   useEffect(() => {
     if (items.length > 0) navigate(items[0].key);
     // eslint-disable-next-line
   }, [])
+
   return (
     <Menu
       defaultSelectedKeys={[items[0].key]}

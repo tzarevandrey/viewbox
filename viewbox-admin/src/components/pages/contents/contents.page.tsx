@@ -3,16 +3,15 @@ import { useGetAllContentQuery } from '../../../api/content.api';
 import { Functional } from '../../../core/enums/functional.enum';
 import { useAppDispatch } from '../../../hooks';
 import { setTitle } from '../../../reducers/title.slice';
-import { ContentErrorPage } from './content.error.page';
-import { TGetContentDto } from './dto/get.content.dto';
-import { ContentType } from '../../../core/enums/content.enum';
 import { Fragment, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { PAGES_CONFIG } from '../../../core/dictionaries/pages.config.dictionary';
 import { Page } from '../../../core/enums/pages.enum';
 import { COLORS } from '../../../core/constants/colors';
-import { ContentLoadingPage } from './content.loading.page';
 import moment from 'moment';
+import { TContent } from '../../../core/types/content';
+import { getContentColor, getContentName, getPageLink } from '../../../utils/func';
+import { Loading } from '../../shared/loading/loading.page';
+import { Error } from '../../shared/error/error.page';
 
 type TProps = {
   functionals?: Functional[];
@@ -21,12 +20,12 @@ type TProps = {
 export const Contents = ({ functionals }: TProps) => {
 
   const dispatch = useAppDispatch();
+  const navigate = useNavigate();
+
   useEffect(() => {
     dispatch(setTitle('Контент'))
     // eslint-disable-next-line
   }, [])
-
-  const navigate = useNavigate();
 
   const {
     data: contents,
@@ -34,50 +33,27 @@ export const Contents = ({ functionals }: TProps) => {
     isError: contentsLoadingError
   } = useGetAllContentQuery(null);
 
-  const columns: TableProps<TGetContentDto>['columns'] = [
+  const columns: TableProps<TContent>['columns'] = [
     {
       title: 'Файл/Ссылка',
       dataIndex: 'name',
       key: 'name',
       sorter: {
         compare: (a, b) => {
-          let x = a.name;
-          switch (a.contentType) {
-            case ContentType.Picture: x = a.imageItem?.originalName || a.name;
-              break;
-            case ContentType.Video: x = a.videoItem?.originalName || a.name;
-              break;
-          }
-          let y = b.name;
-          switch (b.contentType) {
-            case ContentType.Picture: y = b.imageItem?.originalName || b.name;
-              break;
-            case ContentType.Video: y = b.videoItem?.originalName || b.name;
-              break;
-          }
-          x = x.toLowerCase();
-          y = y.toLowerCase();
+          const x = getContentName(a).toLowerCase();
+          const y = getContentName(b).toLowerCase();
           if (x > y) return 1;
           if (x < y) return -1;
           return 0;
         },
       },
       render: (_, content) => {
-        let color = COLORS.CONTENT_WEB_PAGE;
-        let name = content.name;
-        switch (content.contentType) {
-          case ContentType.Picture: color = COLORS.CONTENT_IMAGE;
-            name = content.imageItem?.originalName ?? name;
-            break;
-          case ContentType.Video: color = COLORS.CONTENT_VIDEO;
-            name = content.videoItem?.originalName ?? name;
-            break;
-        }
+
         return (
           <div className='content-row content-row__first-item' style={{
-            borderColor: color,
+            borderColor: getContentColor(content),
           }
-          }>{name}</div>
+          }>{getContentName(content)}</div>
         )
       }
     },
@@ -95,15 +71,8 @@ export const Contents = ({ functionals }: TProps) => {
         },
       },
       render: (_, content) => {
-        let color = COLORS.CONTENT_WEB_PAGE;
-        switch (content.contentType) {
-          case ContentType.Picture: color = COLORS.CONTENT_IMAGE;
-            break;
-          case ContentType.Video: color = COLORS.CONTENT_VIDEO;
-            break;
-        }
         return (
-          <div className='content-row content-row__middle-item' style={{ borderColor: color }
+          <div className='content-row content-row__middle-item' style={{ borderColor: getContentColor(content) }
           }>{content.description}</div>
         )
       }
@@ -113,28 +82,21 @@ export const Contents = ({ functionals }: TProps) => {
       dataIndex: 'lastUpdated',
       key: 'lastUpdated',
       sorter: {
-        compare: (a, b) => (new Date(b.lastUpdated).getTime() - new Date(a.lastUpdated).getTime()),
+        compare: (a, b) => (new Date(b.lastUpdated ?? 0).getTime() - new Date(a.lastUpdated ?? 0).getTime()),
       },
       render: (_, content) => {
-        let color = COLORS.CONTENT_WEB_PAGE;
-        switch (content.contentType) {
-          case ContentType.Picture: color = COLORS.CONTENT_IMAGE;
-            break;
-          case ContentType.Video: color = COLORS.CONTENT_VIDEO;
-            break;
-        }
         return (
           <div
             className='content-row content-row__last-item'
-            style={{ borderColor: color }}
+            style={{ borderColor: getContentColor(content) }}
           >{moment(content.lastUpdated).format('DD.MM.YYYY HH:mm')}</div>
         )
       }
     }
   ]
 
-  if (contentsLoading) return <ContentLoadingPage />
-  if (contentsLoadingError) return <ContentErrorPage />
+  if (contentsLoading) return <Loading />
+  if (contentsLoadingError) return <Error />
   return (
     <Fragment>
       <div className='contents-page__subheader'>
@@ -142,7 +104,7 @@ export const Contents = ({ functionals }: TProps) => {
           {functionals?.includes(Functional.Create) ? (
             <Button
               onClick={() => {
-                const link = PAGES_CONFIG[Page.Contents].subpages.find(x => x.functionals.includes(Functional.Create))?.link;
+                const link = getPageLink(Page.Contents, Functional.Create);
                 if (link) navigate(link);
               }}
             >Добавить контент</Button>
@@ -154,18 +116,18 @@ export const Contents = ({ functionals }: TProps) => {
           <div style={{ borderColor: COLORS.CONTENT_IMAGE }} className='legend-item'>&nbsp;-&nbsp;изображение</div>
         </div>
       </div>
-      <Table<TGetContentDto>
+      <Table<TContent>
         bordered
         size='small'
         columns={columns}
-        dataSource={[...contents ?? []].sort((a, b) => new Date(b.lastUpdated).getTime() - new Date(a.lastUpdated).getTime())}
+        dataSource={[...contents ?? []].sort((a, b) => new Date(b.lastUpdated ?? 0).getTime() - new Date(a.lastUpdated ?? 0).getTime())}
         rowHoverable
-        rowKey={item => item.id}
+        rowKey={item => item.id ?? 0}
         onRow={item => {
           if (!(functionals?.includes(Functional.Read) || functionals?.includes(Functional.Update))) return {};
           return {
             onClick: () => {
-              const link = PAGES_CONFIG[Page.Contents].subpages.find(x => x.functionals.includes(Functional.Read))?.link;
+              const link = getPageLink(Page.Contents, Functional.Read);
               if (link) navigate(link.replace(':id', `${item.id}`));
             }
           }

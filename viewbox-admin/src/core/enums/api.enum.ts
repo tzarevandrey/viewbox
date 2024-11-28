@@ -4,4 +4,5 @@ export enum Api {
   Contents = 3,
   Groups = 4,
   JournalDetails = 5,
+  Viewpoints = 6,
 }

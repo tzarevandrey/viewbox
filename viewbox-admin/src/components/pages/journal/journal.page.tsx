@@ -4,8 +4,6 @@ import { useAppDispatch } from '../../../hooks';
 import { setTitle } from '../../../reducers/title.slice';
 import { TGetJournalDto } from './dto/get.journal.dto';
 import { useGetPageQuery } from '../../../api/journal.api';
-import { JournalLoadingPage } from './journal.loading.page';
-import { JournalErrorPage } from './journal.error.page';
 import { Button, DatePicker, Form, Pagination, Table, TableProps } from 'antd';
 import { TJournal } from '../../../core/types/journal';
 import moment from 'moment';
@@ -14,8 +12,9 @@ import { EVENT_TYPE_NAMES } from '../../../core/dictionaries/event-types.diction
 import { NUMBERS } from '../../../core/constants/numbers';
 import { openModal } from '../../../reducers/modal.slice';
 import { JournalDetails } from './journal-details.modal';
-import { EventType } from '../../../core/enums/event-types.enum';
-import { COLORS } from '../../../core/constants/colors';
+import { Loading } from '../../shared/loading/loading.page';
+import { Error } from '../../shared/error/error.page';
+import { getEventColor } from '../../../utils/func';
 
 type TProps = {
   functionals?: Functional[];
@@ -44,8 +43,8 @@ export const Journal = ({ functionals }: TProps) => {
     isError: journalLoadingerror
   } = useGetPageQuery(filter);
 
-  if (journalLoading) return <JournalLoadingPage />
-  if (journalLoadingerror) return <JournalErrorPage />
+  if (journalLoading) return <Loading />
+  if (journalLoadingerror) return <Error />
 
   const columns: TableProps<TJournal>['columns'] = [
     {
@@ -126,19 +125,7 @@ export const Journal = ({ functionals }: TProps) => {
         pagination={false}
         size='small'
         onRow={(rowItem) => {
-          let color = '';
-          switch (rowItem.eventType) {
-            case EventType.Create: color = COLORS.EVENT_CREATE;
-              break;
-            case EventType.Update: color = COLORS.EVENT_UPDATE;
-              break;
-            case EventType.Delete: color = COLORS.EVENT_DELETE;
-              break;
-            case EventType.Link: color = COLORS.EVENT_LINK;
-              break;
-            case EventType.Unlink: color = COLORS.EVENT_UNLINK;
-              break;
-          }
+          const color = getEventColor(rowItem.eventType)
           return {
             style: { cursor: 'pointer', color },
             onClick: () => { dispatch(openModal(() => <JournalDetails journal={rowItem} color={color} />)) }

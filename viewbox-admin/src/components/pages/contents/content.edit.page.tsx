@@ -4,11 +4,11 @@ import { useAppDispatch } from '../../../hooks';
 import { setTitle } from '../../../reducers/title.slice';
 import { useGetContentQuery, useUpdateContentMutation } from '../../../api/content.api';
 import { useEffect } from 'react';
-import { ContentLoadingPage } from './content.loading.page';
-import { ContentErrorPage } from './content.error.page';
 import { Button, Flex, Form, Input } from 'antd';
 import { ContentType } from '../../../core/enums/content.enum';
 import TextArea from 'antd/es/input/TextArea';
+import { Loading } from '../../shared/loading/loading.page';
+import { Error } from '../../shared/error/error.page';
 
 type TProps = {
   functionals?: Functional[];
@@ -66,8 +66,8 @@ export const ContentEdit = ({ functionals }: TProps) => {
     // eslint-disable-next-line
   }, [content])
 
-  if (contentLoading) return <ContentLoadingPage />
-  if (contentLoadingError) return <ContentErrorPage />
+  if (contentLoading) return <Loading />
+  if (contentLoadingError) return <Error />
 
   return (
     <Form

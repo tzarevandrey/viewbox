@@ -34,4 +34,12 @@ export const ENTITY_FIELDS_NAMES: {
   [EntityField.ContentWebpageId]: 'Идентификатор',
   [EntityField.ContentWebpageContentItemId]: 'Идентификатор контента',
   [EntityField.ContentWebpageDeletedAt]: 'Дата удаления',
+  [EntityField.ViewpointId]: 'Идентификатор',
+  [EntityField.ViewpointName]: 'Имя',
+  [EntityField.ViewpointDescription]: 'Описание',
+  [EntityField.ViewpointItemPlaylistId]: 'Идентификатор списка воспроизведения',
+  [EntityField.ViewpointItemViewpointId]: 'Иденетификатор панели воспроизведения',
+  [EntityField.ViewpointItemStartDate]: 'Дата начала использования списка воспроизведения',
+  [EntityField.ViewpointItemExpireDate]: 'Дата прекращения использования списка воспроизведения',
+  [EntityField.ViewpointItemIsDefault]: 'Признак списка воспроизведения по умолчанию',
 }

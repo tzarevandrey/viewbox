@@ -3,6 +3,12 @@ import { EntityField } from '../core/enums/entities-fields.enum';
 import moment from 'moment';
 import { Role } from '../core/enums/roles.enum';
 import { ContentType } from '../core/enums/content.enum';
+import { TContent } from '../core/types/content';
+import { COLORS } from '../core/constants/colors';
+import { Page } from '../core/enums/pages.enum';
+import { Functional } from '../core/enums/functional.enum';
+import { PAGES_CONFIG } from '../core/dictionaries/pages.config.dictionary';
+import { EventType } from '../core/enums/event-types.enum';
 
 export function getEnumNames(e: any) {
   return Object.keys(e)
@@ -68,4 +74,88 @@ export function getJournalDetailValue(val: string | null, field: EntityField): R
     case EntityField.ContentWebpageContentItemId: return val;
     case EntityField.ContentWebpageDeletedAt: return moment(val).format(dateFormat);
   }
+}
+
+export function getContentName(content: TContent): string {
+  let name = content.name;
+  switch (content.contentType) {
+    case ContentType.Picture: name = content.imageItem?.originalName ?? name;
+      break;
+    case ContentType.Video: name = content.videoItem?.originalName ?? name;
+      break;
+  }
+  return name;
+}
+
+export function getContentColor(content: TContent): string {
+  let color = '';
+  switch (content.contentType) {
+    case ContentType.Picture: color = COLORS.CONTENT_IMAGE;
+      break;
+    case ContentType.Video: color = COLORS.CONTENT_VIDEO;
+      break;
+    case ContentType.WebPage: color = COLORS.CONTENT_WEB_PAGE;
+      break;
+  }
+  return color;
+}
+
+export function getPageLink(page: Page, functional: Functional): (string | undefined) {
+  return PAGES_CONFIG[page].functionals?.find(x => +Object.keys(x)[0] === functional)?.value.link;
+}
+
+export function getContentTypeName(contentType: ContentType | undefined): string {
+  let name = 'Неопределённый контент';
+  switch (contentType) {
+    case ContentType.Picture: name = 'Изображение';
+      break;
+    case ContentType.Video: name = 'Видео';
+      break;
+    case ContentType.WebPage: name = 'Веб-страница';
+      break;
+  }
+  return name;
+}
+
+export function getRoleName(role: Role): string {
+  let name = '';
+  switch (role) {
+    case Role.Administrator: name = 'Администраторы';
+      break;
+    case Role.Support: name = 'Сопровождение';
+      break;
+    case Role.Viewpoint: name = 'Воспроизведение';
+      break;
+  }
+  return name;
+}
+
+export function getRoleColor(role: Role): string {
+  let color = '';
+  switch (role) {
+    case Role.Administrator: color = COLORS.ROLE_ADMINISTRATOR;
+      break;
+    case Role.Support: color = COLORS.ROLE_SUPPORT;
+      break;
+    case Role.Viewpoint: color = COLORS.ROLE_VIEWPOINT;
+      break;
+  }
+  return color;
+}
+
+export function getEventColor(e: EventType): string {
+  let color = '';
+  switch (e) {
+    case EventType.Create: color = COLORS.EVENT_CREATE;
+      break;
+    case EventType.Update: color = COLORS.EVENT_UPDATE;
+      break;
+    case EventType.Delete: color = COLORS.EVENT_DELETE;
+      break;
+    case EventType.Link: color = COLORS.EVENT_LINK;
+      break;
+    case EventType.Unlink: color = COLORS.EVENT_UNLINK;
+      break;
+  }
+  return color;
 }

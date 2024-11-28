@@ -55,4 +55,16 @@ export const ENTITIES_FIELDS_KEYS: {
     'contentItemId': EntityField.ContentWebpageContentItemId,
     'deletedAt': EntityField.ContentWebpageDeletedAt,
   },
+  [EventEntity.Viewpoint]: {
+    'id': EntityField.ViewpointId,
+    'name': EntityField.ViewpointName,
+    'description': EntityField.ViewpointDescription,
+  },
+  [EventEntity.ViewpointItem]: {
+    'viewpointId': EntityField.ViewpointItemViewpointId,
+    'playlistId': EntityField.ViewpointItemPlaylistId,
+    'startDate': EntityField.ViewpointItemStartDate,
+    'expireDate': EntityField.ViewpointItemExpireDate,
+    'isDefault': EntityField.ViewpointItemIsDefault,
+  }
 }

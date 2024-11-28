@@ -5,13 +5,12 @@ import { setTitle } from '../../../reducers/title.slice';
 import { useNavigate } from 'react-router-dom';
 import { useGetAllGroupsQuery } from '../../../api/groups-api';
 import { Button, Table, TableProps } from 'antd';
-import { TGetGroupDto } from './dto/get.groups.dto';
-import { Role } from '../../../core/enums/roles.enum';
 import { COLORS } from '../../../core/constants/colors';
-import { GroupsLoadingPage } from './groups.loading.page';
-import { GroupsErrorPage } from './groups.error.page';
-import { PAGES_CONFIG } from '../../../core/dictionaries/pages.config.dictionary';
 import { Page } from '../../../core/enums/pages.enum';
+import { TGroup } from '../../../core/types/groups';
+import { getPageLink, getRoleColor, getRoleName } from '../../../utils/func';
+import { Loading } from '../../shared/loading/loading.page';
+import { Error } from '../../shared/error/error.page';
 
 type TProps = {
   functionals?: Functional[];
@@ -32,7 +31,7 @@ export const Groups = ({ functionals }: TProps) => {
     isError: groupsLoadingError
   } = useGetAllGroupsQuery(null);
 
-  const columns: TableProps<TGetGroupDto>['columns'] = [
+  const columns: TableProps<TGroup>['columns'] = [
     {
       title: 'Идентификатор',
       dataIndex: 'id',
@@ -69,26 +68,13 @@ export const Groups = ({ functionals }: TProps) => {
       render: (_, group) => {
         return (
           <div className='groups-row groups-row__roles'>
-            {group.roles.map(role => {
-              let color = '';
-              let title = '';
-              switch (role.role) {
-                case Role.Administrator: color = COLORS.ROLE_ADMINISTRATOR;
-                  title = 'Администраторы';
-                  break;
-                case Role.Support: color = COLORS.ROLE_SUPPORT;
-                  title = 'Сопровождение';
-                  break;
-                case Role.Viewpoint: color = COLORS.ROLE_VIEWPOINT;
-                  title = 'Воспроизведение';
-                  break;
-              }
+            {group.roles?.map(role => {
               return (
                 <div
                   key={`${group.id}_${role.role}`}
                   className='groups-row__role'
-                  style={{ borderColor: color }}
-                  title={title}
+                  style={{ borderColor: getRoleColor(role.role) }}
+                  title={getRoleName(role.role)}
                 ></div>
               )
             })}
@@ -117,8 +103,8 @@ export const Groups = ({ functionals }: TProps) => {
     }
   ]
 
-  if (groupsLoading) return <GroupsLoadingPage />
-  if (groupsLoadingError) return <GroupsErrorPage />
+  if (groupsLoading) return <Loading />
+  if (groupsLoadingError) return <Error />
   return (
     <Fragment>
       <div className='groups-page__subheader'>
@@ -126,7 +112,7 @@ export const Groups = ({ functionals }: TProps) => {
           {functionals?.includes(Functional.Create) ? (
             <Button
               onClick={() => {
-                const link = PAGES_CONFIG[Page.Groups].subpages.find(x => x.functionals.includes(Functional.Create))?.link;
+                const link = getPageLink(Page.Groups, Functional.Create);
                 if (link) navigate(link);
               }}
             >Добавить группу</Button>
@@ -138,18 +124,18 @@ export const Groups = ({ functionals }: TProps) => {
           <div style={{ borderColor: COLORS.ROLE_SUPPORT }} className='groups-legend-item'>&nbsp;-&nbsp;сопровождение</div>
         </div>
       </div>
-      <Table<TGetGroupDto>
+      <Table<TGroup>
         bordered
         size='small'
         columns={columns}
         dataSource={groups}
         rowHoverable
-        rowKey={item => item.id}
+        rowKey={item => item.id ?? 0}
         onRow={item => {
           if (!(functionals?.includes(Functional.Read) || functionals?.includes(Functional.Update))) return {};
           return {
             onClick: () => {
-              const link = PAGES_CONFIG[Page.Groups].subpages.find(x => x.functionals.includes(Functional.Read))?.link;
+              const link = getPageLink(Page.Groups, Functional.Read);
               if (link) navigate(link.replace(':id', `${item.id}`));
             }
           }
