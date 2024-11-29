@@ -4,14 +4,15 @@ import { useAppDispatch } from '../../../hooks';
 import { setTitle } from '../../../reducers/title.slice';
 import { useDeleteGroupMutation, useGetGroupQuery } from '../../../api/groups-api';
 import { useEffect } from 'react';
-import { GroupsLoadingPage } from './groups.loading.page';
-import { GroupsErrorPage } from './groups.error.page';
 import { Button, Flex } from 'antd';
 import { PAGES_CONFIG } from '../../../core/dictionaries/pages.config.dictionary';
 import { Page } from '../../../core/enums/pages.enum';
 import { openModal } from '../../../reducers/modal.slice';
 import { DeleteModal } from '../../shared/delete-modal/delete.modal';
 import { Role } from '../../../core/enums/roles.enum';
+import { Loading } from '../../shared/loading/loading.page';
+import { Error } from '../../shared/error/error.page';
+import { getPageLink } from '../../../utils/func';
 
 type TProps = {
   functionals?: Functional[];
@@ -40,9 +41,9 @@ export const Group = ({ functionals }: TProps) => {
     // eslint-disable-next-line
   }, [group])
 
-  if (groupLoading) return <GroupsLoadingPage />
+  if (groupLoading) return <Loading />
 
-  if (groupLoadingError) return <GroupsErrorPage />
+  if (groupLoadingError) return <Error />
 
   return (
     <div >
@@ -92,7 +93,7 @@ export const Group = ({ functionals }: TProps) => {
             htmlType='button'
             onClick={() => {
               if (groupId) {
-                const link = PAGES_CONFIG[Page.Groups].subpages.find(x => x.functionals.includes(Functional.Update))?.link;
+                const link = getPageLink(Page.Groups, Functional.Update);
                 if (link) navigate(link.replace(':id', groupId));
               }
             }}

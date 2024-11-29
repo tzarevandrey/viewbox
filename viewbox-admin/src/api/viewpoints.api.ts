@@ -89,6 +89,19 @@ export const viewpointsApi = api.injectEndpoints({
         }
       },
       invalidatesTags: (_, error) => !error ? [{ type: `${Api.Viewpoints}`, id: 'list' }, { type: `${Api.Playlists}` }, { type: `${Api.Journal}` }] : []
+    }),
+    testViewpointName: builder.mutation<boolean, string>({
+      query: (name) => ({
+        url: `/viewpoints/test/${name}`,
+        method: 'get'
+      }),
+      async onQueryStarted(_, { queryFulfilled }) {
+        try {
+          await queryFulfilled;
+        } catch (error) {
+          snack.error('Ошибка при проверке имени группы');
+        }
+      },
     })
   }),
   overrideExisting: false
@@ -99,5 +112,6 @@ export const {
   useGetViewpointQuery,
   useAddViewpointMutation,
   useUpdateViewpointMutation,
-  useDeleteViewpointMutation
+  useDeleteViewpointMutation,
+  useTestViewpointNameMutation,
 } = viewpointsApi;

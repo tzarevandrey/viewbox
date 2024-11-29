@@ -1,12 +1,10 @@
 import { Table, TableProps } from 'antd';
 import { TPlaylistItem } from '../../../core/types/playlist-item'
-import { ContentType } from '../../../core/enums/content.enum';
-import { COLORS } from '../../../core/constants/colors';
 import { Functional } from '../../../core/enums/functional.enum';
-import { PAGES_CONFIG } from '../../../core/dictionaries/pages.config.dictionary';
 import { Page } from '../../../core/enums/pages.enum';
 import { useNavigate } from 'react-router-dom';
 import moment from 'moment';
+import { getContentColor, getContentName, getPageLink } from '../../../utils/func';
 
 type TProps = {
   items: TPlaylistItem[];
@@ -29,19 +27,9 @@ export const PlaylistItemsTable = ({ items, functionals }: TProps) => {
   const navigate = useNavigate();
 
   const tableItems: TTableData[] = [...items].sort((a, b) => a.position - b.position).map(item => {
-    let contentItemName = item.contentItem.name;
-    let color = '';
+    const contentItemName = getContentName(item.contentItem);
+    const color = getContentColor(item.contentItem);
     const currentDate = new Date();
-    switch (item.contentItem.contentType) {
-      case ContentType.Picture: color = COLORS.CONTENT_IMAGE;
-        contentItemName = item.contentItem.imageItem?.originalName ?? contentItemName;
-        break;
-      case ContentType.Video: color = COLORS.CONTENT_VIDEO;
-        contentItemName = item.contentItem.videoItem?.originalName ?? contentItemName;
-        break;
-      case ContentType.WebPage: color = COLORS.CONTENT_WEB_PAGE;
-        break;
-    }
     let extClassName = '';
     if (item.expireDate !== null && new Date(item.expireDate).getTime() < currentDate.getTime()) {
       extClassName = 'playlist__view__value_expired'
@@ -49,7 +37,7 @@ export const PlaylistItemsTable = ({ items, functionals }: TProps) => {
       extClassName = 'playlist__view__value_planned'
     }
     return {
-      contentItemId: item.contentItem.id,
+      contentItemId: item.contentItem.id ?? 0,
       contentItemName,
       color,
       extClassName,
@@ -138,7 +126,7 @@ export const PlaylistItemsTable = ({ items, functionals }: TProps) => {
         if (!(functionals?.includes(Functional.Read) || functionals?.includes(Functional.Update))) return {};
         return {
           onClick: () => {
-            const link = PAGES_CONFIG[Page.Contents].subpages.find(x => x.functionals.includes(Functional.Read))?.link;
+            const link = getPageLink(Page.Contents, Functional.Read);
             if (link) navigate(link.replace(':id', `${item.contentItemId}`));
           },
           style: { cursor: 'pointer' }

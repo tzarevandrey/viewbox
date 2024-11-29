@@ -1,4 +1,4 @@
-import { HttpStatus, Injectable } from '@nestjs/common';
+import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/sequelize';
 import { Playlist } from './playlists.model';
 import { PlaylistCreateDto } from './dto/playlists.create.dto';
@@ -10,6 +10,7 @@ import { EventType } from 'src/core/enums/event-types.enum';
 import { ContentItem } from 'src/content-items/content-items.model';
 import { ImageItem } from 'src/content-items/image-items.model';
 import { VideoItem } from 'src/content-items/video-items.model';
+import { Viewpoint } from 'src/viewpoints/viewpoints.model';
 
 @Injectable()
 export class PlaylistsService {
@@ -21,7 +22,7 @@ export class PlaylistsService {
   ) { }
 
   async getOne(id: number) {
-    const playlist = await this.playlistsRepository.findByPk(id, { include: [{ model: PlaylistItem, include: [{ model: ContentItem, include: [{ model: ImageItem }, { model: VideoItem }] }] }] });
+    const playlist = await this.playlistsRepository.findByPk(id, { include: [{ model: PlaylistItem, include: [{ model: ContentItem, include: [{ model: ImageItem }, { model: VideoItem }] }] }, { model: Viewpoint }] });
     return playlist;
   }
 
@@ -58,7 +59,7 @@ export class PlaylistsService {
 
   async update(dto: PlaylistUpdateDto) {
     const playlist = await this.playlistsRepository.findByPk(dto.id, { include: [{ model: PlaylistItem, include: [{ model: ContentItem, include: [{ model: ImageItem }, { model: VideoItem }] }] }] });
-    if (playlist === undefined) return HttpStatus.BAD_REQUEST;
+    if (playlist === undefined) return new HttpException('Список воспроизведения не найден', HttpStatus.BAD_REQUEST);
     const old = { ...playlist.dataValues };
     if (playlist.name !== dto.name || playlist.description !== dto.description) {
       playlist.name = dto.name;
@@ -115,7 +116,7 @@ export class PlaylistsService {
         });
         try {
           this.journalService.addRecord({
-            eventEntity: EventEntity.Playlist,
+            eventEntity: EventEntity.PlaylistItem,
             eventType: EventType.Link,
             entityName: actual.name,
             entityActual: { ...actualItem.dataValues }
@@ -147,6 +148,12 @@ export class PlaylistsService {
     } catch {
       return HttpStatus.INTERNAL_SERVER_ERROR;
     }
+  }
+
+  async test(name: string) {
+    const res = await this.playlistsRepository.findOne({ where: [{ name }] });
+    if (res === undefined) return true;
+    return false;
   }
 
 }

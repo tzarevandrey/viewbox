@@ -3,12 +3,12 @@ import { Functional } from '../../../core/enums/functional.enum';
 import { useAppDispatch, useAppSelector } from '../../../hooks';
 import { setTitle } from '../../../reducers/title.slice';
 import { Fragment, useEffect } from 'react';
-import { useAddPlaylistMutation } from '../../../api/playlists.api';
 import { Button, Flex, Form, Input } from 'antd';
 import TextArea from 'antd/es/input/TextArea';
-import { PlaylistItemEditTable } from './viewpoint-item.edit.table';
-import { clearItems } from '../../../reducers/playlist.slice';
 import { snack } from '../../../utils/snackbar';
+import { clearViewpointItems } from '../../../reducers/viewpoint.slice';
+import { useAddViewpointMutation, useTestViewpointNameMutation } from '../../../api/viewpoints.api';
+import { ViewpointItemEditTable } from './viewpoint-item.edit.table';
 import { COLORS } from '../../../core/constants/colors';
 
 type TProps = {
@@ -21,34 +21,66 @@ export const ViewpointCreate = ({ functionals }: TProps) => {
   const navigate = useNavigate();
 
   useEffect(() => {
-    dispatch(setTitle('Новый список воспроизведения'));
-    dispatch(clearItems());
+    dispatch(setTitle('Новая панель воспроизведения'));
+    dispatch(clearViewpointItems());
     // eslint-disable-next-line
   }, [])
 
-  const [addPlaylist] = useAddPlaylistMutation();
+  const [addViewpoint] = useAddViewpointMutation();
+  const [testViewpointName] = useTestViewpointNameMutation();
 
-  const { items } = useAppSelector(x => x.playlist);
+  const { items } = useAppSelector(x => x.viewpoint);
 
   return (
     <Fragment>
-      <div className='playlist-page__subheader'>
-        <div className='playlist-page__subheader__legend-block'>
-          <div style={{ borderColor: COLORS.CONTENT_WEB_PAGE }} className='legend-item'>&nbsp;-&nbsp;веб-страница</div>
-          <div style={{ borderColor: COLORS.CONTENT_VIDEO }} className='legend-item'>&nbsp;-&nbsp;видео</div>
-          <div style={{ borderColor: COLORS.CONTENT_IMAGE }} className='legend-item'>&nbsp;-&nbsp;изображение</div>
+      <div className='viewpoint-page__subheader'>
+        <div className='viewpoint-page__subheader__legend-block'>
+          <div style={{ fontWeight: 600 }}>список воспроизведения по умолчанию</div>
+          <div style={{ color: COLORS.PLAYLIST_FUTURE }}>воспроизведение запланировано</div>
+          <div style={{ color: COLORS.PLAYLIST_PAST }}>воспроизведение завершено</div>
         </div>
       </div>
       <Form
         layout='vertical'
         onFinish={async (values) => {
-          if (items.find(x => x.startDate !== null && x.expireDate !== null && new Date(x.startDate).getTime() > new Date(x.expireDate).getTime())) {
-            snack.error('Некорректный период');
-          } else {
-            try {
-              await addPlaylist({ ...values, items }).unwrap();
-              navigate(-1);
-            } catch { }
+          let test = true;
+          if (items.find(x => x.isDefault) === undefined) {
+            test = false;
+            snack.error('На задан список воспроизведения по умолчанию');
+          }
+          if (items.find(x => !x.isDefault && x.startDate === null) !== undefined) {
+            test = false;
+            snack.error('На задана дата начала воспроизведения');
+          }
+          const finaledPlaylist = items.filter(x => x.expireDate !== null && x.startDate !== null);
+          if (finaledPlaylist.length > 0) {
+            if (items.find(x => {
+              if (x.startDate === null) return false;
+              const sd = new Date(x.startDate).getTime();
+              if (finaledPlaylist.find(y => x.id !== y.id && new Date(y.startDate ?? 0).getTime() < sd && new Date(y.expireDate ?? 0).getTime() > sd) !== undefined) return true;
+              return false;
+            }) !== undefined || items.find(x => {
+              if (x.expireDate === null) return false;
+              const ed = new Date(x.expireDate).getTime();
+              if (finaledPlaylist.find(y => x.id !== y.id && new Date(y.startDate ?? 0).getTime() < ed && new Date(y.expireDate ?? 0).getTime() > ed) !== undefined) return true;
+            }) !== undefined) {
+              test = false;
+              snack.error('Пересекающиеся периоды воспроизведения')
+            }
+            if (finaledPlaylist.find(x => new Date(x.startDate ?? 0).getTime() > new Date(x.expireDate ?? 0).getTime())) {
+              test = false;
+              snack.error('Некорректный период воспроизведения');
+            }
+          }
+          if (test) {
+            testViewpointName(values.name).unwrap()
+              .then((testResult) => {
+                if (testResult) {
+                  addViewpoint({ ...values, items }).unwrap().then(() => navigate(-1));
+                } else {
+                  snack.error('Панель воспроизведения с таким именем уже существует');
+                }
+              });
           }
         }}
         onReset={() => navigate(-1)}
@@ -71,7 +103,7 @@ export const ViewpointCreate = ({ functionals }: TProps) => {
         <Form.Item
           label='Элементы списка'
         >
-          <PlaylistItemEditTable items={items} />
+          <ViewpointItemEditTable items={items} />
         </Form.Item>
         <Flex className='buttons-block'>
           <Button

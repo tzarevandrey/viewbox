@@ -35,4 +35,9 @@ export class ViewpointsController {
     return await this.viewpointsService.delete(id);
   }
 
+  @Get('/test/:name')
+  async test(@Param('name') name: string) {
+    return await this.viewpointsService.test(name);
+  }
+
 }

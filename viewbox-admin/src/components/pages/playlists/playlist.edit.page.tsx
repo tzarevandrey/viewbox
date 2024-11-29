@@ -9,10 +9,10 @@ import { Button, Flex, Form, Input } from 'antd';
 import { snack } from '../../../utils/snackbar';
 import TextArea from 'antd/es/input/TextArea';
 import { PlaylistItemEditTable } from './playlist-item.edit.table';
-import { useGetPlaylistQuery, useUpdatePlaylistMutation } from '../../../api/playlists.api';
+import { useGetPlaylistQuery, useTestPlaylistNameMutation, useUpdatePlaylistMutation } from '../../../api/playlists.api';
 import { fillItems } from '../../../reducers/playlist.slice';
-import { PlaylistsLoadingPage } from './playlists.loading.page';
-import { PlaylistsErrorPage } from './playlists.error.page';
+import { Loading } from '../../shared/loading/loading.page';
+import { Error } from '../../shared/error/error.page';
 
 type TProps = {
   functionals?: Functional[];
@@ -42,11 +42,12 @@ export const PlaylistEdit = ({ functionals }: TProps) => {
   }, [playlist])
 
   const [updatePlaylist] = useUpdatePlaylistMutation();
+  const [testPlaylistName] = useTestPlaylistNameMutation();
 
   const { items } = useAppSelector(x => x.playlist);
 
-  if (playlistLoading) return <PlaylistsLoadingPage />
-  if (playlistLoadingError) return <PlaylistsErrorPage />
+  if (playlistLoading) return <Loading />
+  if (playlistLoadingError) return <Error />
 
   return (
     <Fragment>
@@ -64,10 +65,17 @@ export const PlaylistEdit = ({ functionals }: TProps) => {
           if (items.find(x => x.startDate !== null && x.expireDate !== null && new Date(x.startDate).getTime() > new Date(x.expireDate).getTime())) {
             snack.error('Некорректный период');
           } else {
-            try {
-              await updatePlaylist({ ...values, items, id: playlist?.id }).unwrap();
-              navigate(-1);
-            } catch { }
+            if (values.name !== playlist?.name) {
+              testPlaylistName(values.name).unwrap().then((testResult) => {
+                if (testResult) {
+                  updatePlaylist({ ...values, items, id: playlist?.id }).unwrap().then(() => navigate(-1));
+                } else {
+                  snack.error('Список воспроизведения с таким именем уже существует');
+                }
+              })
+            } else {
+              updatePlaylist({ ...values, items, id: playlist?.id }).unwrap().then(() => navigate(-1));
+            }
           }
         }}
         onReset={() => navigate(-1)}

@@ -2,13 +2,14 @@ import { useNavigate, useParams } from 'react-router-dom';
 import { Functional } from '../../../core/enums/functional.enum';
 import { useAppDispatch } from '../../../hooks';
 import { setTitle } from '../../../reducers/title.slice';
-import { useGetAllGroupsQuery, useGetGroupQuery, useUpdateGroupMutation } from '../../../api/groups-api';
+import { useGetGroupQuery, useTestGroupNameMutation, useUpdateGroupMutation } from '../../../api/groups-api';
 import { useEffect } from 'react';
-import { GroupsLoadingPage } from './groups.loading.page';
-import { GroupsErrorPage } from './groups.error.page';
 import { Button, Flex, Form, Input, Select } from 'antd';
 import TextArea from 'antd/es/input/TextArea';
 import { Role } from '../../../core/enums/roles.enum';
+import { Loading } from '../../shared/loading/loading.page';
+import { Error } from '../../shared/error/error.page';
+import { snack } from '../../../utils/snackbar';
 
 type TProps = {
   functionals?: Functional[];
@@ -21,9 +22,10 @@ type TParams = {
 export const GroupEdit = ({ functionals }: TProps) => {
   const { id: groupId } = useParams<TParams>();
 
+  const dispatch = useAppDispatch();
   const navigate = useNavigate();
-
   const [updateGroup] = useUpdateGroupMutation();
+  const [testGroupName] = useTestGroupNameMutation();
 
   const {
     data: group,
@@ -31,48 +33,41 @@ export const GroupEdit = ({ functionals }: TProps) => {
     isError: groupLoadingError
   } = useGetGroupQuery(groupId ? +groupId : 0);
 
-  const dispatch = useAppDispatch();
-
-  const {
-    data: groups
-  } = useGetAllGroupsQuery(null);
-
   useEffect(() => {
-    dispatch(setTitle(`Группа доступа ${group?.name}`))
+    let name = '';
+    if (group !== undefined) name = `«${group.name}»`;
+    dispatch(setTitle(`Группа доступа ${name}`))
     // eslint-disable-next-line
   }, [group])
 
-  if (groupLoading) return <GroupsLoadingPage />
+  if (groupLoading) return <Loading />
 
-  if (groupLoadingError) return <GroupsErrorPage />
+  if (groupLoadingError) return <Error />
   return (
     <Form
       layout='vertical'
       initialValues={{
         'name': group?.name,
         'description': group?.description ?? undefined,
-        'roles': group?.roles.map(x => x.role)
+        'roles': group?.roles?.map(x => x.role)
       }}
       onFinish={async (values) => {
-        try {
-          await updateGroup({ ...values, id: group?.id }).unwrap();
-          navigate(-1);
-        } catch { }
+        if (values.name !== group?.name) {
+          testGroupName(values.name).unwrap().then((testResult) => {
+            if (testResult) {
+              updateGroup({ ...values, id: group?.id }).unwrap().then(() => navigate(-1));
+            } else { snack.error('Группа с таким именем уже существует') }
+          })
+        } else {
+          updateGroup({ ...values, id: group?.id }).unwrap().then(() => navigate(-1));
+        }
       }}
       onReset={() => navigate(-1)}
     >
       <Form.Item
         name='name'
         label='Имя группы'
-        rules={[
-          { required: true, message: 'Обязательное значение' },
-          () => ({
-            validator: async (_, name: string) => {
-              if (groups?.filter(x => x.id !== group?.id).map(x => x.name.toLowerCase()).includes(name.toLowerCase())) return Promise.reject('Группа с таким именем уже существует');
-              return Promise.resolve();
-            }
-          })
-        ]}
+        rules={[{ required: true, message: 'Обязательное значение' }]}
       >
         <Input autoComplete='off' />
       </Form.Item>

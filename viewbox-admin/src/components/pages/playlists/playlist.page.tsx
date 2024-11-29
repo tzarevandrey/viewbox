@@ -4,8 +4,6 @@ import { useAppDispatch } from '../../../hooks';
 import { setTitle } from '../../../reducers/title.slice';
 import { useDeletePlaylistMutation, useGetPlaylistQuery } from '../../../api/playlists.api';
 import { Fragment, useEffect } from 'react';
-import { PlaylistsLoadingPage } from './playlists.loading.page';
-import { PlaylistsErrorPage } from './playlists.error.page';
 import { Button, Flex } from 'antd';
 import { PAGES_CONFIG } from '../../../core/dictionaries/pages.config.dictionary';
 import { Page } from '../../../core/enums/pages.enum';
@@ -13,6 +11,10 @@ import { openModal } from '../../../reducers/modal.slice';
 import { DeleteModal } from '../../shared/delete-modal/delete.modal';
 import { COLORS } from '../../../core/constants/colors';
 import { PlaylistItemsTable } from './playlist-items.table';
+import { Loading } from '../../shared/loading/loading.page';
+import { Error } from '../../shared/error/error.page';
+import { getPageLink } from '../../../utils/func';
+import { snack } from '../../../utils/snackbar';
 
 type TProps = {
   functionals?: Functional[];
@@ -47,8 +49,8 @@ export const Playlist = ({ functionals }: TProps) => {
     // eslint-disable-next-line
   }, [playlist])
 
-  if (playlistLoading) return <PlaylistsLoadingPage />
-  if (playlistLoadingError) return <PlaylistsErrorPage />
+  if (playlistLoading) return <Loading />
+  if (playlistLoadingError) return <Error />
 
   return (
     <Fragment>
@@ -70,7 +72,7 @@ export const Playlist = ({ functionals }: TProps) => {
         <div className='playlist__view__value'>{playlist?.description}</div>
         <div className='playlist__view__label'>Элементы списка:</div>
         <div className='playlist__view__table'>
-          {playlist && playlist.items.length > 0
+          {playlist?.items && playlist.items?.length > 0
             ? <PlaylistItemsTable items={playlist.items} functionals={functionals} />
             : <div className='playlist__view__value_out'>Элементы отсутствуют</div>
           }
@@ -87,7 +89,7 @@ export const Playlist = ({ functionals }: TProps) => {
               htmlType='button'
               onClick={() => {
                 if (playlistId) {
-                  const link = PAGES_CONFIG[Page.Playlists].subpages.find(x => x.functionals.includes(Functional.Update))?.link;
+                  const link = getPageLink(Page.Playlists, Functional.Update);
                   if (link) navigate(link.replace(':id', playlistId));
                 }
               }}
@@ -100,14 +102,18 @@ export const Playlist = ({ functionals }: TProps) => {
               danger
               onClick={() => {
                 if (playlistId) {
-                  dispatch(openModal(() =>
-                    <DeleteModal
-                      handler={() => {
-                        deletePlaylist(+playlistId).then(() => navigate(PAGES_CONFIG[Page.Playlists].link))
-                      }}
-                      text={`список воспроизведения «${playlist?.name}»`}
-                    />
-                  ))
+                  if (playlist?.viewpoints && playlist.viewpoints.length > 0) {
+                    snack.error('Список воспроизведения используется, удаление невозможно')
+                  } else {
+                    dispatch(openModal(() =>
+                      <DeleteModal
+                        handler={() => {
+                          deletePlaylist(+playlistId).then(() => navigate(PAGES_CONFIG[Page.Playlists].link))
+                        }}
+                        text={`список воспроизведения «${playlist?.name}»`}
+                      />
+                    ))
+                  }
                 }
               }}
             >Удалить</Button>

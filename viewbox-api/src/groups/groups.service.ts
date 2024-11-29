@@ -118,4 +118,10 @@ export class GroupsService {
     }
   }
 
+  async test(name: string) {
+    const res = await this.groupsRepository.findOne({ where: [{ name }] });
+    if (res === undefined) return true;
+    return false;
+  }
+
 }

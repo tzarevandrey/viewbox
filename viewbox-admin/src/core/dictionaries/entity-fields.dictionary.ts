@@ -42,4 +42,5 @@ export const ENTITY_FIELDS_NAMES: {
   [EntityField.ViewpointItemStartDate]: 'Дата начала использования списка воспроизведения',
   [EntityField.ViewpointItemExpireDate]: 'Дата прекращения использования списка воспроизведения',
   [EntityField.ViewpointItemIsDefault]: 'Признак списка воспроизведения по умолчанию',
+  [EntityField.ViewpointItemId]: 'Идентификатор',
 }

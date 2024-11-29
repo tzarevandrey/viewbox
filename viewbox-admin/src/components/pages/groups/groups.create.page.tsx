@@ -3,10 +3,11 @@ import { Functional } from '../../../core/enums/functional.enum';
 import { useAppDispatch } from '../../../hooks';
 import { setTitle } from '../../../reducers/title.slice';
 import { useEffect } from 'react';
-import { useAddGroupMutation, useGetAllGroupsQuery } from '../../../api/groups-api';
+import { useAddGroupMutation, useTestGroupNameMutation } from '../../../api/groups-api';
 import { Button, Flex, Form, Input, Select } from 'antd';
 import TextArea from 'antd/es/input/TextArea';
 import { Role } from '../../../core/enums/roles.enum';
+import { snack } from '../../../utils/snackbar';
 
 type TProps = {
   functionals?: Functional[];
@@ -16,41 +17,31 @@ export const GroupCreate = ({ functionals }: TProps) => {
 
   const dispatch = useAppDispatch();
   const navigate = useNavigate();
+  const [addGroup] = useAddGroupMutation();
+  const [testGroupName] = useTestGroupNameMutation();
 
   useEffect(() => {
     dispatch(setTitle('Новая группа доступа'));
     // eslint-disable-next-line
   }, [])
 
-  const [addGroup] = useAddGroupMutation();
-
-  const {
-    data: groups
-  } = useGetAllGroupsQuery(null);
 
   return (
     <Form
       layout='vertical'
       onFinish={async (values) => {
-        try {
-          await addGroup(values).unwrap();
-          navigate(-1);
-        } catch { }
+        testGroupName(values.name).unwrap().then((testResult) => {
+          if (testResult) {
+            addGroup(values).unwrap().then(() => navigate(-1))
+          } else { snack.error('Группа с таким именем уже существует') }
+        })
       }}
       onReset={() => navigate(-1)}
     >
       <Form.Item
         label='Имя'
         name='name'
-        rules={[
-          { required: true, message: 'Обязательное значение' },
-          () => ({
-            validator: async (_, name: string) => {
-              if (groups?.map(x => x.name.toLowerCase()).includes(name.toLowerCase())) return Promise.reject('Группа с таким именем уже добавлена');
-              return Promise.resolve();
-            }
-          })
-        ]}
+        rules={[{ required: true, message: 'Обязательное значение' }]}
       >
         <Input autoComplete='off' />
       </Form.Item>

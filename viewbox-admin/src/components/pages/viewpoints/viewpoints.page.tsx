@@ -3,34 +3,35 @@ import { Functional } from '../../../core/enums/functional.enum';
 import { useAppDispatch } from '../../../hooks';
 import { setTitle } from '../../../reducers/title.slice';
 import { useNavigate } from 'react-router-dom';
-import { useGetAllPlaylistsQuery } from '../../../api/playlists.api';
 import { Button, Table, TableProps } from 'antd';
-import { TGetPlaylistDto } from './dto/get.viewpoints.dto';
-import { PlaylistsLoadingPage } from './viewpoints.loading.page';
-import { PlaylistsErrorPage } from './viewpoints.error.page';
-import { PAGES_CONFIG } from '../../../core/dictionaries/pages.config.dictionary';
 import { Page } from '../../../core/enums/pages.enum';
+import { useGetAllViewpointsQuery } from '../../../api/viewpoints.api';
+import { TViewpoint } from '../../../core/types/viewpoint';
+import { Loading } from '../../shared/loading/loading.page';
+import { Error } from '../../shared/error/error.page';
+import { getPageLink } from '../../../utils/func';
 
 type TProps = {
   functionals?: Functional[];
 }
 
 export const Viewpoints = ({ functionals }: TProps) => {
+
   const dispatch = useAppDispatch();
+  const navigate = useNavigate();
+
   useEffect(() => {
-    dispatch(setTitle('Списки воспроизведения'))
+    dispatch(setTitle('Панели воспроизведения'))
     // eslint-disable-next-line
   }, [])
 
-  const navigate = useNavigate();
-
   const {
-    data: playlists,
-    isLoading: playlistsLoading,
-    isError: playlistsLoadingError
-  } = useGetAllPlaylistsQuery(null);
+    data: viewpoints,
+    isLoading: viewpointsLoading,
+    isError: viewpointsLoadingError
+  } = useGetAllViewpointsQuery(null);
 
-  const columns: TableProps<TGetPlaylistDto>['columns'] = [
+  const columns: TableProps<TViewpoint>['columns'] = [
     {
       title: 'Имя',
       dataIndex: 'name',
@@ -44,9 +45,9 @@ export const Viewpoints = ({ functionals }: TProps) => {
           return 0;
         }
       },
-      render: (_, playlist) => {
+      render: (_, viewpoint) => {
         return (
-          <div className='playlists-row'>{playlist.name}</div>
+          <div className='viewpoints-row'>{viewpoint.name}</div>
         )
       }
     },
@@ -63,43 +64,43 @@ export const Viewpoints = ({ functionals }: TProps) => {
           return 0;
         }
       },
-      render: (_, playlist) => {
+      render: (_, viewpoint) => {
         return (
-          <div className='playlists-row'>{playlist.description}</div>
+          <div className='viewpoints-row'>{viewpoint.description}</div>
         )
       }
     },
   ]
 
-  if (playlistsLoading) return <PlaylistsLoadingPage />
-  if (playlistsLoadingError) return <PlaylistsErrorPage />
+  if (viewpointsLoading) return <Loading />
+  if (viewpointsLoadingError) return <Error />
 
   return (
     <Fragment>
-      <div className='playlists-page__subheader'>
-        <div className='playlists-page__subheader__buttons-block buttons-block'>
+      <div className='viewpoints-page__subheader'>
+        <div className='viewpoints-page__subheader__buttons-block buttons-block'>
           {functionals?.includes(Functional.Create) ? (
             <Button
               onClick={() => {
-                const link = PAGES_CONFIG[Page.Playlists].subpages.find(x => x.functionals.includes(Functional.Create))?.link;
+                const link = getPageLink(Page.Viewpoints, Functional.Create);
                 if (link) navigate(link);
               }}
-            >Создать список воспроизведения</Button>
+            >Создать панель воспроизведения</Button>
           ) : null}
         </div>
       </div>
-      <Table<TGetPlaylistDto>
+      <Table<TViewpoint>
         bordered
         size='small'
         columns={columns}
-        dataSource={playlists}
+        dataSource={viewpoints}
         rowHoverable
-        rowKey={item => item.id}
+        rowKey={item => item.id ?? 0}
         onRow={item => {
           if (!(functionals?.includes(Functional.Read) || functionals?.includes(Functional.Update))) return {};
           return {
             onClick: () => {
-              const link = PAGES_CONFIG[Page.Playlists].subpages.find(x => x.functionals.includes(Functional.Read))?.link;
+              const link = getPageLink(Page.Viewpoints, Functional.Read);
               if (link) navigate(link.replace(':id', `${item.id}`));
             },
             style: { cursor: 'pointer' }

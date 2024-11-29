@@ -13,11 +13,14 @@ interface ViewpointItemCreationAttr {
 @Table({ tableName: 'viewpoints_items', createdAt: false, updatedAt: false, deletedAt: false })
 export class ViewpointItem extends Model<ViewpointItem, ViewpointItemCreationAttr> {
 
-  @Column({ type: DataType.INTEGER, allowNull: false, primaryKey: true })
+  @Column({ type: DataType.INTEGER, autoIncrement: true, unique: true, primaryKey: true })
+  id: number;
+
+  @Column({ type: DataType.INTEGER, allowNull: false })
   @ForeignKey(() => Viewpoint)
   viewpointId: number;
 
-  @Column({ type: DataType.INTEGER, allowNull: false, primaryKey: true })
+  @Column({ type: DataType.INTEGER, allowNull: false })
   @ForeignKey(() => Playlist)
   playlistId: number;
 

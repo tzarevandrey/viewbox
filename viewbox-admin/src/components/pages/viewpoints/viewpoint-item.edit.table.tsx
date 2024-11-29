@@ -1,33 +1,31 @@
 import { ContentType } from '../../../core/enums/content.enum';
 import { useAppDispatch } from '../../../hooks';
-import { Button, DatePicker, Flex, Input, Select, Table, TableProps } from 'antd';
-import { useGetAllContentQuery } from '../../../api/content.api';
+import { Button, Checkbox, DatePicker, Flex, Input, Select, Table, TableProps } from 'antd';
 import { COLORS } from '../../../core/constants/colors';
 import { addItem, downItem, removeItem, upItem, updateItem } from '../../../reducers/playlist.slice';
 import { CaretDownOutlined, CaretUpOutlined, CloseOutlined, PlusOutlined } from '@ant-design/icons';
 import { closeModal, openModal } from '../../../reducers/modal.slice';
 import { NUMBERS } from '../../../core/constants/numbers';
 import moment from 'moment';
-import { TCreateViewpointItemDto } from './dto/create.viewpoints.dto';
 import { useGetAllPlaylistsQuery } from '../../../api/playlists.api';
-
-type TTableData = {
-  playlistId: number;
-  startDate: Date | null;
-  expireDate: Date | null;
-  playlistName: string;
-  isDefault: boolean;
-}
+import { TViewpointItem } from '../../../core/types/viewpoint-item';
+import { addViewpointItem, removeViewpointItem, setDefaultPlaylist, updateViewpointItem } from '../../../reducers/viewpoint.slice';
+import { ViewpointItemAddModal } from './viewpoint-item.add.modal';
+import { getPlaylistStyle } from '../../../utils/func';
 
 type TProps = {
-  items: TCreateViewpointItemDto[];
+  items: TViewpointItem[];
 }
 
 export const ViewpointItemEditTable = ({ items }: TProps) => {
 
-  const tableItems = [...items].map(x => {
-    return { ...x, playlistId: x.playlist.id, playlistName: x.playlist.name };
-  });
+  const tableItems = [...items].sort((a, b) => {
+    if (a.startDate === null) return -1;
+    if (b.startDate === null) return 1;
+    const aDate = new Date(a.startDate).getTime();
+    const bDate = new Date(b.startDate).getTime();
+    return bDate - aDate;
+  })
 
   const dispatch = useAppDispatch();
 
@@ -39,59 +37,42 @@ export const ViewpointItemEditTable = ({ items }: TProps) => {
 
   const dateFormat = 'DD.MM.YYYY HH:mm';
 
-  const columns: TableProps<TTableData>['columns'] = [
+  const columns: TableProps<TViewpointItem>['columns'] = [
     {
       title: 'Имя',
-      dataIndex: 'playlistName',
-      key: 'playlistName',
+      dataIndex: 'playlist',
+      key: 'playlist',
       render: (_, item) =>
         <Select
           showSearch
           className='playlist__edit__value'
-          value={item.playlistId}
+          value={item.playlist}
           loading={playlistsLoading}
           disabled={playlistsLoadingError}
           onChange={(e) => {
-            const temp = playlists?.find(x => x.id === e);
-            if (temp) {
-              dispatch(updateItem({
-                contentItemId: e,
-                position: item.position,
-                duration: item.contentType === ContentType.Video ? null : item.duration ?? NUMBERS.DEFAULT_DURATION,
-                startDate: item.startDate,
-                expireDate: item.expireDate,
-                contentName: itemName,
-                contentType: temp.contentType
-              }));
-            }
+            dispatch(updateViewpointItem({
+              ...item,
+              playlist: e
+            }));
           }}
         >
-          {[...(content ?? [])].sort((a, b) => a.contentType - b.contentType).map(cnt => {
-            let optName = cnt.name;
-            let optBorderColor = '';
-            switch (cnt.contentType) {
-              case ContentType.Picture: optName = cnt.imageItem?.originalName ?? optName;
-                optBorderColor = COLORS.CONTENT_IMAGE;
-                break;
-              case ContentType.Video: optName = cnt.videoItem?.originalName ?? optName;
-                optBorderColor = COLORS.CONTENT_VIDEO;
-                break;
-              case ContentType.WebPage: optBorderColor = COLORS.CONTENT_WEB_PAGE;
-                break;
-            }
+          {[...items].sort((a, b) => {
+            const aName = (a.playlist?.name ?? '').toLowerCase();
+            const bName = (b.playlist?.name ?? '').toLowerCase();
+            if (aName > bName) return 1;
+            if (aName < bName) return -1;
+            return 0;
+          }).map(vItem => {
             return (
-              <Select.Option key={cnt.id} value={cnt.id}>
-                <div className='content__select-row' title={optName}>
-                  <div className='content__select-label' style={{ borderColor: optBorderColor }}></div>
-                  <div className='content__select-options'>{optName}</div>
-                </div>
+              <Select.Option key={vItem.id ?? 0} value={vItem.playlist}>
+                {vItem.playlist?.name}
               </Select.Option>
             )
           })}
         </Select>
     },
     {
-      title: 'Период действия',
+      title: 'Период воспроизведения',
       children: [
         {
           title: 'Начало',
@@ -100,12 +81,12 @@ export const ViewpointItemEditTable = ({ items }: TProps) => {
           render: (_, item) => {
             return (
               <DatePicker
-                className='content__edit__value middle-value'
+                className='playlist__edit__value'
                 format={dateFormat}
                 showTime
                 value={item.startDate ? moment(item.startDate) : null}
                 onChange={(e) => {
-                  dispatch(updateItem({ ...item, startDate: e ? e.toDate() : null }))
+                  dispatch(updateViewpointItem({ ...item, startDate: e ? e.toDate() : null }))
                 }}
               />
             )
@@ -118,12 +99,12 @@ export const ViewpointItemEditTable = ({ items }: TProps) => {
           render: (_, item) => {
             return (
               <DatePicker
-                className='content__edit__value middle-value'
+                className='playlist__edit__value middle-value'
                 format={dateFormat}
                 showTime
                 value={item.expireDate ? moment(item.expireDate) : null}
                 onChange={(e) => {
-                  dispatch(updateItem({ ...item, expireDate: e ? e.toDate() : null }))
+                  dispatch(updateViewpointItem({ ...item, expireDate: e ? e.toDate() : null }))
                 }}
               />
             )
@@ -132,58 +113,51 @@ export const ViewpointItemEditTable = ({ items }: TProps) => {
       ]
     },
     {
-      title: 'Длительность',
-      dataIndex: 'duration',
-      key: 'duration',
+      title: 'По умолчанию',
+      dataIndex: 'isDefault',
+      key: 'isDefault',
       render: (_, item) => {
         return (
-          <Input
-            className='content__edit__value middle-value' type='number' value={item.duration ?? 0}
-            disabled={item.contentType === ContentType.Video}
-            onChange={(e) => {
-              const val = e.target.value === '0' ? null : +e.target.value;
-              dispatch(updateItem({ ...item, duration: val }));
-            }}
-          />
+          <Checkbox checked={item.isDefault} onChange={(e) => {
+            if (e.target.checked) {
+              dispatch(setDefaultPlaylist(item.id ?? 0));
+            } else {
+              dispatch(updateViewpointItem({ ...item, startDate: new Date(), expireDate: null }));
+            }
+          }} />
         )
       }
     },
     {
       key: 'buttons',
       title: <Button icon={<PlusOutlined />} onClick={() =>
-        dispatch(openModal(() => <PlaylistItemAddModal items={content} handler={(id) => {
+        dispatch(openModal(() => <ViewpointItemAddModal items={playlists} handler={(id) => {
           dispatch(closeModal());
-          const item = content?.find(x => x.id === id);
-          if (item) dispatch(addItem(item));
+          const item = playlists?.find(x => x.id === id);
+          if (item) dispatch(addViewpointItem(item));
         }} />))} />,
       render: (_, item) => {
         return (
-          <Flex align='center' gap={10}>
-            <Flex vertical gap={5}>
-              <Button onClick={() => {
-                dispatch(upItem(item.position));
-              }} icon={<CaretUpOutlined />}></Button>
-              <Button onClick={() => {
-                dispatch(downItem(item.position));
-              }} icon={<CaretDownOutlined />}></Button>
-            </Flex>
-            <Button onClick={() => {
-              dispatch(removeItem(item.position));
-            }} icon={<CloseOutlined />}></Button>
-          </Flex>
+          <Button onClick={() => {
+            dispatch(removeViewpointItem(item.id ?? 0));
+          }} icon={<CloseOutlined />}></Button>
         )
       }
     }
   ]
 
   return (
-    <Table<TTableData>
+    <Table<TViewpointItem>
       bordered
       size='small'
       columns={columns}
       rowHoverable
       dataSource={tableItems}
-      rowKey={item => item.position}
+      rowKey={item => item.id ?? 0}
+      onRow={(item) => {
+        const currentStyle = getPlaylistStyle(item, items.filter(x => x.id !== item.id));
+        return { style: { ...currentStyle, cursor: 'pointer' } }
+      }}
     />
   )
 }

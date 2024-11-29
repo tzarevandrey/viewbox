@@ -5,6 +5,7 @@ import { api0 } from "./api/auth-api";
 import { titleReducer } from "./reducers/title.slice";
 import { modalReducer } from "./reducers/modal.slice";
 import { playlistReducer } from './reducers/playlist.slice';
+import { viewpointReducer } from './reducers/viewpoint.slice';
 
 const store = configureStore({
   reducer: {
@@ -14,6 +15,7 @@ const store = configureStore({
     title: titleReducer,
     modal: modalReducer,
     playlist: playlistReducer,
+    viewpoint: viewpointReducer,
   },
   middleware: (getDefaultMiddleware) =>
     getDefaultMiddleware({ serializableCheck: false }).concat(api0.middleware).concat(api.middleware)

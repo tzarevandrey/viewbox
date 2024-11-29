@@ -9,6 +9,7 @@ import { Page } from '../core/enums/pages.enum';
 import { Functional } from '../core/enums/functional.enum';
 import { PAGES_CONFIG } from '../core/dictionaries/pages.config.dictionary';
 import { EventType } from '../core/enums/event-types.enum';
+import { TViewpointItem } from '../core/types/viewpoint-item';
 
 export function getEnumNames(e: any) {
   return Object.keys(e)
@@ -101,7 +102,9 @@ export function getContentColor(content: TContent): string {
 }
 
 export function getPageLink(page: Page, functional: Functional): (string | undefined) {
-  return PAGES_CONFIG[page].functionals?.find(x => +Object.keys(x)[0] === functional)?.value.link;
+  const result = PAGES_CONFIG[page].functionals?.find(x => +Object.keys(x)[0] === functional);
+  if (result === undefined) return undefined;
+  return Object.values(result)[0].link;
 }
 
 export function getContentTypeName(contentType: ContentType | undefined): string {
@@ -158,4 +161,18 @@ export function getEventColor(e: EventType): string {
       break;
   }
   return color;
+}
+
+export function getPlaylistStyle(item: TViewpointItem, periods: { startDate: Date | null, expireDate: Date | null }[]): ({ color?: string, fontWeight?: number }) {
+  if (item.startDate === null) return { fontWeight: 600 };
+  const currentDate = Date.now();
+  if (new Date(item.startDate).getTime() > currentDate) return { color: COLORS.PLAYLIST_FUTURE };
+  if (item.expireDate !== null && new Date(item.expireDate).getTime() < currentDate) return { color: COLORS.PLAYLIST_PAST };
+  if (item.expireDate === null
+    && periods.filter(x => x.startDate !== null
+      && new Date(x.startDate).getTime() <= currentDate
+      && new Date(x.startDate).getTime() > new Date(item.startDate ?? 0).getTime()
+      && (x.expireDate === null || new Date(x.expireDate).getTime() >= currentDate))
+      .length > 0) return { color: COLORS.PLAYLIST_PAST };
+  return {};
 }

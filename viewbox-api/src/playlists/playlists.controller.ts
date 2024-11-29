@@ -35,4 +35,9 @@ export class PlaylistsController {
     return await this.playlistsService.delete(id);
   }
 
+  @Get('/test/:name')
+  async test(@Param('name') name: string) {
+    return await this.playlistsService.test(name);
+  }
+
 }

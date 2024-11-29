@@ -89,6 +89,19 @@ export const playlistsApi = api.injectEndpoints({
         }
       },
       invalidatesTags: (_, error) => !error ? [{ type: `${Api.Playlists}`, id: 'list' }, { type: `${Api.Contents}` }, { type: `${Api.Journal}` }] : []
+    }),
+    testPlaylistName: builder.mutation<boolean, string>({
+      query: (name) => ({
+        url: `/playlists/test/${name}`,
+        method: 'get'
+      }),
+      async onQueryStarted(_, { queryFulfilled }) {
+        try {
+          await queryFulfilled;
+        } catch (error) {
+          snack.error('Ошибка при проверке имени списка воспроизведения');
+        }
+      }
     })
   }),
   overrideExisting: false
@@ -99,5 +112,6 @@ export const {
   useGetPlaylistQuery,
   useAddPlaylistMutation,
   useUpdatePlaylistMutation,
-  useDeletePlaylistMutation
+  useDeletePlaylistMutation,
+  useTestPlaylistNameMutation,
 } = playlistsApi;

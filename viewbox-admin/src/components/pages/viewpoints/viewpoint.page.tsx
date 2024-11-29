@@ -2,17 +2,18 @@ import { useNavigate, useParams } from 'react-router-dom';
 import { Functional } from '../../../core/enums/functional.enum';
 import { useAppDispatch } from '../../../hooks';
 import { setTitle } from '../../../reducers/title.slice';
-import { useDeletePlaylistMutation, useGetPlaylistQuery } from '../../../api/playlists.api';
 import { Fragment, useEffect } from 'react';
-import { PlaylistsLoadingPage } from './viewpoints.loading.page';
-import { PlaylistsErrorPage } from './viewpoints.error.page';
 import { Button, Flex } from 'antd';
 import { PAGES_CONFIG } from '../../../core/dictionaries/pages.config.dictionary';
 import { Page } from '../../../core/enums/pages.enum';
 import { openModal } from '../../../reducers/modal.slice';
 import { DeleteModal } from '../../shared/delete-modal/delete.modal';
+import { useDeleteViewpointMutation, useGetViewpointQuery } from '../../../api/viewpoints.api';
+import { Loading } from '../../shared/loading/loading.page';
+import { Error } from '../../shared/error/error.page';
+import { ViewpointItemsTable } from './viewpoint-items.table';
+import { getPageLink } from '../../../utils/func';
 import { COLORS } from '../../../core/constants/colors';
-import { PlaylistItemsTable } from './viewpoint-items.table';
 
 type TProps = {
   functionals?: Functional[];
@@ -24,55 +25,52 @@ type TParams = {
 
 export const Viewpoint = ({ functionals }: TProps) => {
 
-  const { id: playlistId } = useParams<TParams>();
+  const { id: viewpointId } = useParams<TParams>();
 
   const navigate = useNavigate();
-
   const dispatch = useAppDispatch();
 
-  const [deletePlaylist] = useDeletePlaylistMutation();
+  const [deleteViewpoint] = useDeleteViewpointMutation();
 
   const {
-    data: playlist,
-    isLoading: playlistLoading,
-    isError: playlistLoadingError
-  } = useGetPlaylistQuery(playlistId ? +playlistId : 0)
+    data: viewpoint,
+    isLoading: viewpointLoading,
+    isError: viewpointLoadingError
+  } = useGetViewpointQuery(viewpointId ? +viewpointId : 0)
 
   useEffect(() => {
     let name = '';
-    if (playlist) {
-      name = `«${playlist.name}»`
+    if (viewpoint) {
+      name = `«${viewpoint.name}»`
     }
-    dispatch(setTitle(`Список воспроизведения ${name}`));
+    dispatch(setTitle(`Панель воспроизведения ${name}`));
     // eslint-disable-next-line
-  }, [playlist])
+  }, [viewpoint])
 
-  if (playlistLoading) return <PlaylistsLoadingPage />
-  if (playlistLoadingError) return <PlaylistsErrorPage />
+  if (viewpointLoading) return <Loading />
+  if (viewpointLoadingError) return <Error />
 
   return (
     <Fragment>
-      <div className='playlist-page__subheader'>
-        <div className='playlist-page__subheader__legend-block'>
-          <div style={{ borderColor: COLORS.CONTENT_WEB_PAGE }} className='legend-item'>&nbsp;-&nbsp;веб-страница</div>
-          <div style={{ borderColor: COLORS.CONTENT_VIDEO }} className='legend-item'>&nbsp;-&nbsp;видео</div>
-          <div style={{ borderColor: COLORS.CONTENT_IMAGE }} className='legend-item'>&nbsp;-&nbsp;изображение</div>
-          <div className='playlist__view__value_planned'>показ запланирован</div>
-          <div className='playlist__view__value_expired'>период показа истёк</div>
+      <div className='viewpoint-page__subheader'>
+        <div className='viewpoint-page__subheader__legend-block'>
+          <div style={{ fontWeight: 600 }}>список воспроизведения по умолчанию</div>
+          <div style={{ color: COLORS.PLAYLIST_FUTURE }}>воспроизведение запланировано</div>
+          <div style={{ color: COLORS.PLAYLIST_PAST }}>воспроизведение завершено</div>
         </div>
       </div>
-      <div className='playlist__view'>
-        <div className='playlist__view__label'>Идентификатор:</div>
-        <div className='playlist__view__value'>{playlist?.id}</div>
-        <div className='playlist__view__label'>Имя списка:</div>
-        <div className='playlist__view__value'>{playlist?.name}</div>
-        <div className='playlist__view__label'>Описание:</div>
-        <div className='playlist__view__value'>{playlist?.description}</div>
-        <div className='playlist__view__label'>Элементы списка:</div>
-        <div className='playlist__view__table'>
-          {playlist && playlist.items.length > 0
-            ? <PlaylistItemsTable items={playlist.items} functionals={functionals} />
-            : <div className='playlist__view__value_out'>Элементы отсутствуют</div>
+      <div className='viewpoint__view'>
+        <div className='viewpoint__view__label'>Идентификатор:</div>
+        <div className='viewpoint__view__value'>{viewpoint?.id}</div>
+        <div className='viewpoint__view__label'>Имя панели:</div>
+        <div className='viewpoint__view__value'>{viewpoint?.name}</div>
+        <div className='viewpoint__view__label'>Описание:</div>
+        <div className='viewpoint__view__value'>{viewpoint?.description}</div>
+        <div className='viewpoint__view__label'>Списки воспроизведения:</div>
+        <div className='viewpoint__view__table'>
+          {viewpoint?.items && viewpoint.items.length > 0
+            ? <ViewpointItemsTable items={viewpoint.items} functionals={functionals} />
+            : <div className='viewpoint__view__value_out'>Списки отсутствуют</div>
           }
         </div>
         <Flex className='buttons-block buttons-block_left'>
@@ -86,9 +84,9 @@ export const Viewpoint = ({ functionals }: TProps) => {
               type='default'
               htmlType='button'
               onClick={() => {
-                if (playlistId) {
-                  const link = PAGES_CONFIG[Page.Playlists].subpages.find(x => x.functionals.includes(Functional.Update))?.link;
-                  if (link) navigate(link.replace(':id', playlistId));
+                if (viewpointId) {
+                  const link = getPageLink(Page.Viewpoints, Functional.Update);
+                  if (link) navigate(link.replace(':id', viewpointId));
                 }
               }}
             >Изменить</Button>
@@ -99,13 +97,13 @@ export const Viewpoint = ({ functionals }: TProps) => {
               htmlType='button'
               danger
               onClick={() => {
-                if (playlistId) {
+                if (viewpointId) {
                   dispatch(openModal(() =>
                     <DeleteModal
                       handler={() => {
-                        deletePlaylist(+playlistId).then(() => navigate(PAGES_CONFIG[Page.Playlists].link))
+                        deleteViewpoint(+viewpointId).then(() => navigate(PAGES_CONFIG[Page.Viewpoints].link))
                       }}
-                      text={`список воспроизведения «${playlist?.name}»`}
+                      text={`панель воспроизведения «${viewpoint?.name}»`}
                     />
                   ))
                 }

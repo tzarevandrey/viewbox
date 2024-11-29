@@ -81,6 +81,19 @@ export const groupsApi = api.injectEndpoints({
         }
       },
       invalidatesTags: (result) => result ? [{ type: `${Api.Groups}`, id: 'list' }, { type: `${Api.Groups}`, id: result.id }, { type: `${Api.Journal}` }] : []
+    }),
+    testGroupName: builder.mutation<boolean, string>({
+      query: (name) => ({
+        url: `/groups/test/${name}`,
+        method: 'get'
+      }),
+      async onQueryStarted(_, { queryFulfilled }) {
+        try {
+          await queryFulfilled;
+        } catch (error) {
+          snack.error('Ошибка при проверке имени группы');
+        }
+      },
     })
   }),
   overrideExisting: false
@@ -91,5 +104,6 @@ export const {
   useAddGroupMutation,
   useGetGroupQuery,
   useDeleteGroupMutation,
-  useUpdateGroupMutation
+  useUpdateGroupMutation,
+  useTestGroupNameMutation
 } = groupsApi;

@@ -40,4 +40,5 @@ export enum EntityField {
   ViewpointItemStartDate = 39,
   ViewpointItemExpireDate = 40,
   ViewpointItemIsDefault = 41,
+  ViewpointItemId = 42,
 }

@@ -1,15 +1,14 @@
 import { Table, TableProps } from 'antd';
-import { TPlaylistItem } from '../../../core/types/playlist-item'
-import { ContentType } from '../../../core/enums/content.enum';
-import { COLORS } from '../../../core/constants/colors';
 import { Functional } from '../../../core/enums/functional.enum';
-import { PAGES_CONFIG } from '../../../core/dictionaries/pages.config.dictionary';
 import { Page } from '../../../core/enums/pages.enum';
 import { useNavigate } from 'react-router-dom';
 import moment from 'moment';
+import { TViewpointItem } from '../../../core/types/viewpoint-item';
+import { CheckOutlined } from '@ant-design/icons';
+import { getPageLink, getPlaylistStyle } from '../../../utils/func';
 
 type TProps = {
-  items: TPlaylistItem[];
+  items: TViewpointItem[];
   functionals?: Functional[];
 }
 
@@ -28,58 +27,27 @@ export const ViewpointItemsTable = ({ items, functionals }: TProps) => {
 
   const navigate = useNavigate();
 
-  const tableItems: TTableData[] = [...items].sort((a, b) => a.position - b.position).map(item => {
-    let contentItemName = item.contentItem.name;
-    let color = '';
-    const currentDate = new Date();
-    switch (item.contentItem.contentType) {
-      case ContentType.Picture: color = COLORS.CONTENT_IMAGE;
-        contentItemName = item.contentItem.imageItem?.originalName ?? contentItemName;
-        break;
-      case ContentType.Video: color = COLORS.CONTENT_VIDEO;
-        contentItemName = item.contentItem.videoItem?.originalName ?? contentItemName;
-        break;
-      case ContentType.WebPage: color = COLORS.CONTENT_WEB_PAGE;
-        break;
-    }
-    let extClassName = '';
-    if (item.expireDate !== null && new Date(item.expireDate).getTime() < currentDate.getTime()) {
-      extClassName = 'playlist__view__value_expired'
-    } else if (item.startDate !== null && new Date(item.startDate).getTime() < currentDate.getTime()) {
-      extClassName = 'playlist__view__value_planned'
-    }
-    return {
-      contentItemId: item.contentItem.id,
-      contentItemName,
-      color,
-      extClassName,
-      duration: item.duration,
-      startDate: item.startDate,
-      expireDate: item.expireDate,
-      position: item.position
-    }
+  const tableItems: TViewpointItem[] = [...items].sort((a, b) => {
+    if (a.startDate === null) return -1;
+    if (b.startDate === null) return 1;
+    const aDate = new Date(a.startDate).getTime();
+    const bDate = new Date(b.startDate).getTime();
+    return bDate - aDate;
   })
 
-  const columns: TableProps<TTableData>['columns'] = [
-    {
-      title: '',
-      dataIndex: 'contentType',
-      key: 'contentType',
-      render: (_, item) => <div className='playlist-item__content-marker' style={{ borderColor: item.color }}></div>
-    },
+  const columns: TableProps<TViewpointItem>['columns'] = [
     {
       title: 'Имя',
-      dataIndex: 'contentItemName',
-      key: 'contentItemName',
+      dataIndex: 'playlist',
+      key: 'playlist',
       render: (_, item) =>
         <div
-          className={`playlist__view__table__value playlist-row ${item.extClassName}`}
-          style={{ borderColor: item.color }}
-          title={item.contentItemName}
-        >{item.contentItemName}</div>
+          className={'viewpoint__view__table__value viewpoint-row'}
+          title={item.playlist?.name}
+        >{item.playlist?.name}</div>
     },
     {
-      title: 'Период использования',
+      title: 'Период воспроизведения',
 
       children: [
         {
@@ -88,8 +56,7 @@ export const ViewpointItemsTable = ({ items, functionals }: TProps) => {
           key: 'startDate',
           render: (_, item) =>
             <div
-              className={`playlist__view__table__value playlist-row ${item.extClassName}`}
-              style={{ borderColor: item.color }}
+              className={'viewpoint__view__table__value viewpoint-row'}
             >
               {item.startDate
                 ? moment(item.startDate).format('DD.MM.YYYY HH:mm')
@@ -103,8 +70,7 @@ export const ViewpointItemsTable = ({ items, functionals }: TProps) => {
           key: 'expireDate',
           render: (_, item) =>
             <div
-              className={`playlist__view__table__value playlist-row ${item.extClassName}`}
-              style={{ borderColor: item.color }}
+              className={'viewpoint__view__table__value viewpoint-row'}
             >
               {item.expireDate
                 ? moment(item.expireDate).format('DD.MM.YYYY HH:mm')
@@ -115,33 +81,38 @@ export const ViewpointItemsTable = ({ items, functionals }: TProps) => {
       ]
     },
     {
-      title: 'Продолжительность (сек)',
-      dataIndex: 'duration',
-      key: 'duration',
-      render: (_, item) =>
-        <div
-          className={`playlist__view__table__value playlist-row ${item.extClassName}`}
-          style={{ borderColor: item.color }}
-        >{item.duration}</div>
+      title: 'По умолчанию',
+      dataIndex: 'isDefault',
+      key: 'isDefault',
+      render: (_, item) => {
+        if (item.isDefault) {
+          return (
+            <div className='viewpoint__view__table__value viewpoint-row default-playlist-marker'>
+              <CheckOutlined />
+            </div>
+          )
+        } else return null;
+      }
     }
   ]
 
   return (
-    <Table<TTableData>
+    <Table<TViewpointItem>
       bordered
       size='small'
       columns={columns}
       dataSource={tableItems}
       rowHoverable
-      rowKey={(item) => `${item.position}`}
+      rowKey={item => item.id ?? 0}
       onRow={item => {
-        if (!(functionals?.includes(Functional.Read) || functionals?.includes(Functional.Update))) return {};
+        const currentStyle = getPlaylistStyle(item, items.filter(x => x.id !== item.id));
+        if (!(functionals?.includes(Functional.Read) || functionals?.includes(Functional.Update))) return { style: currentStyle };
         return {
           onClick: () => {
-            const link = PAGES_CONFIG[Page.Contents].subpages.find(x => x.functionals.includes(Functional.Read))?.link;
-            if (link) navigate(link.replace(':id', `${item.contentItemId}`));
+            const link = getPageLink(Page.Playlists, Functional.Read);
+            if (link) navigate(link.replace(':id', `${item.playlist?.id}`));
           },
-          style: { cursor: 'pointer' }
+          style: { ...currentStyle, cursor: 'pointer' }
         }
       }}
     />

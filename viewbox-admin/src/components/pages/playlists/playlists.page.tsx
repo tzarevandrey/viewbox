@@ -5,11 +5,11 @@ import { setTitle } from '../../../reducers/title.slice';
 import { useNavigate } from 'react-router-dom';
 import { useGetAllPlaylistsQuery } from '../../../api/playlists.api';
 import { Button, Table, TableProps } from 'antd';
-import { TGetPlaylistDto } from './dto/get.playlists.dto';
-import { PlaylistsLoadingPage } from './playlists.loading.page';
-import { PlaylistsErrorPage } from './playlists.error.page';
-import { PAGES_CONFIG } from '../../../core/dictionaries/pages.config.dictionary';
 import { Page } from '../../../core/enums/pages.enum';
+import { TPlaylist } from '../../../core/types/playlist';
+import { Loading } from '../../shared/loading/loading.page';
+import { Error } from '../../shared/error/error.page';
+import { getPageLink } from '../../../utils/func';
 
 type TProps = {
   functionals?: Functional[];
@@ -30,7 +30,7 @@ export const Playlists = ({ functionals }: TProps) => {
     isError: playlistsLoadingError
   } = useGetAllPlaylistsQuery(null);
 
-  const columns: TableProps<TGetPlaylistDto>['columns'] = [
+  const columns: TableProps<TPlaylist>['columns'] = [
     {
       title: 'Имя',
       dataIndex: 'name',
@@ -71,8 +71,8 @@ export const Playlists = ({ functionals }: TProps) => {
     },
   ]
 
-  if (playlistsLoading) return <PlaylistsLoadingPage />
-  if (playlistsLoadingError) return <PlaylistsErrorPage />
+  if (playlistsLoading) return <Loading />
+  if (playlistsLoadingError) return <Error />
 
   return (
     <Fragment>
@@ -81,25 +81,25 @@ export const Playlists = ({ functionals }: TProps) => {
           {functionals?.includes(Functional.Create) ? (
             <Button
               onClick={() => {
-                const link = PAGES_CONFIG[Page.Playlists].subpages.find(x => x.functionals.includes(Functional.Create))?.link;
+                const link = getPageLink(Page.Playlists, Functional.Create);
                 if (link) navigate(link);
               }}
             >Создать список воспроизведения</Button>
           ) : null}
         </div>
       </div>
-      <Table<TGetPlaylistDto>
+      <Table<TPlaylist>
         bordered
         size='small'
         columns={columns}
         dataSource={playlists}
         rowHoverable
-        rowKey={item => item.id}
+        rowKey={item => item.id ?? 0}
         onRow={item => {
           if (!(functionals?.includes(Functional.Read) || functionals?.includes(Functional.Update))) return {};
           return {
             onClick: () => {
-              const link = PAGES_CONFIG[Page.Playlists].subpages.find(x => x.functionals.includes(Functional.Read))?.link;
+              const link = getPageLink(Page.Playlists, Functional.Read);
               if (link) navigate(link.replace(':id', `${item.id}`));
             },
             style: { cursor: 'pointer' }

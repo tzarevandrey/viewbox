@@ -66,5 +66,6 @@ export const ENTITIES_FIELDS_KEYS: {
     'startDate': EntityField.ViewpointItemStartDate,
     'expireDate': EntityField.ViewpointItemExpireDate,
     'isDefault': EntityField.ViewpointItemIsDefault,
+    'id': EntityField.ViewpointItemId,
   }
 }

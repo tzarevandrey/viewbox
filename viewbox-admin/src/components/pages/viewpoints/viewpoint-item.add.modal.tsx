@@ -1,10 +1,10 @@
 import { Button, Select } from 'antd';
 import { useAppDispatch } from '../../../hooks';
 import { closeModal } from '../../../reducers/modal.slice';
-import { TGetPlaylistDto } from '../playlists/dto/get.playlists.dto';
+import { TPlaylist } from '../../../core/types/playlist';
 
 type TProps = {
-  items?: TGetPlaylistDto[];
+  items?: TPlaylist[];
   handler: (id: number) => void;
 }
 
