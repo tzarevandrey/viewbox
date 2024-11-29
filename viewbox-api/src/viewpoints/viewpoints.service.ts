@@ -133,7 +133,21 @@ export class ViewpointsService {
   }
 
   async delete(id: number) {
-
+    const viewpoint = await this.viewpointsRepository.findByPk(id, {include: [{model: ViewpointItem}]});
+    if (viewpoint === undefined) return new HttpException('Панель воспроизведения не найдена', HttpStatus.BAD_REQUEST);
+    const old = {...viewpoint.dataValues};
+    for(const item of viewpoint.items) {
+      await item.destroy();
+    }
+    await viewpoint.destroy();
+    try {
+      this.journalService.addRecord({
+        eventEntity: EventEntity.Viewpoint,
+        eventType: EventType.Delete,
+        entityName: old.name,
+        entityOld: { ...old }
+      })
+    } catch {}
   }
 
   async test(name: string) {
