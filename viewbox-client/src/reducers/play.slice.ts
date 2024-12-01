@@ -25,3 +25,9 @@ export const playSlice = createSlice({
     }
   }
 })
+
+export const {
+  setNext,
+} = playSlice.actions;
+
+export const playReducer = playSlice.reducer;
