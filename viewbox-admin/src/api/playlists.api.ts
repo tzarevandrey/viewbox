@@ -34,11 +34,19 @@ export const playlistsApi = api.injectEndpoints({
       providesTags: (result) => result ? [{ type: `${Api.Playlists}`, id: result.id }] : []
     }),
     addPlaylist: builder.mutation<TPlaylist, TPlaylist>({
-      query: (body) => ({
-        url: '/playlists',
-        method: 'post',
-        body
-      }),
+      query: (body) => {
+        let bodyPrepared = {
+          ...body, items: body.items?.map(x => {
+            let temp = { ...x, contentItemId: x.contentItem.id };
+            return temp;
+          })
+        }
+        return {
+          url: '/playlists',
+          method: 'post',
+          body: bodyPrepared
+        }
+      },
       async onQueryStarted(_, { queryFulfilled }) {
         try {
           const { data } = await queryFulfilled;
@@ -88,7 +96,7 @@ export const playlistsApi = api.injectEndpoints({
           snack.error('Ошибка при удалении списка воспроизведения');
         }
       },
-      invalidatesTags: (_, error) => !error ? [{ type: `${Api.Playlists}`, id: 'list' }, { type: `${Api.Contents}` }, { type: `${Api.Journal}` }] : []
+      invalidatesTags: (_, error) => !error ? [{ type: `${Api.Playlists}`, id: 'list' }, { type: `${Api.Contents}` }, { type: `${Api.Journal}` }, { type: `${Api.Viewpoints}` }] : []
     }),
     testPlaylistName: builder.mutation<boolean, string>({
       query: (name) => ({
@@ -102,6 +110,21 @@ export const playlistsApi = api.injectEndpoints({
           snack.error('Ошибка при проверке имени списка воспроизведения');
         }
       }
+    }),
+    copyPlaylist: builder.mutation<TPlaylist, number>({
+      query: (id) => ({
+        url: `/playlists/copy/${id}`,
+        method: 'post'
+      }),
+      async onQueryStarted(_, { queryFulfilled }) {
+        try {
+          await queryFulfilled;
+          snack.success('Список воспроизведения успешно скопирован')
+        } catch (error) {
+          snack.error('Ошибка при копировании списка воспроизведения')
+        }
+      },
+      invalidatesTags: (_, error) => !error ? [{ type: `${Api.Playlists}`, id: 'list' }, { type: `${Api.Contents}` }, { type: `${Api.Journal}` }] : []
     })
   }),
   overrideExisting: false
@@ -114,4 +137,5 @@ export const {
   useUpdatePlaylistMutation,
   useDeletePlaylistMutation,
   useTestPlaylistNameMutation,
+  useCopyPlaylistMutation,
 } = playlistsApi;

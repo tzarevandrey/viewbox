@@ -1,0 +1,4 @@
+export const NUMBERS = {
+  DEFAULT_DURATION: 10,
+  DEFAULT_TABLE_ROWS: 10,
+}

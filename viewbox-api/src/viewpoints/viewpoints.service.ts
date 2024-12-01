@@ -63,7 +63,7 @@ export class ViewpointsService {
 
   async update(dto: ViewpointsUpdateDto) {
     const viewpoint = await this.viewpointsRepository.findByPk(dto.id, { include: [{ model: ViewpointItem }] });
-    if (viewpoint === undefined) return new HttpException('Панель воспроизведения не найдена', HttpStatus.BAD_REQUEST);
+    if (viewpoint === null) return new HttpException('Панель воспроизведения не найдена', HttpStatus.BAD_REQUEST);
     const old = { ...viewpoint.dataValues };
     if (old.name !== dto.name || old.description !== dto.description) {
       viewpoint.name = dto.name;
@@ -108,7 +108,7 @@ export class ViewpointsService {
         } catch { }
       } else {
         const viewpointItem = await this.viewpointsItemsRepository.findByPk(item.id);
-        if (viewpointItem !== undefined) {
+        if (viewpointItem !== null) {
           const oldItem = { ...viewpointItem.dataValues };
           if (oldItem.playlistId !== item.playlistId || oldItem.startDate !== item.startDate || oldItem.expireDate !== item.expireDate || oldItem.isDefault !== item.isDefault) {
             viewpointItem.playlistId = item.playlistId;
@@ -134,7 +134,7 @@ export class ViewpointsService {
 
   async delete(id: number) {
     const viewpoint = await this.viewpointsRepository.findByPk(id, {include: [{model: ViewpointItem}]});
-    if (viewpoint === undefined) return new HttpException('Панель воспроизведения не найдена', HttpStatus.BAD_REQUEST);
+    if (viewpoint === null) return new HttpException('Панель воспроизведения не найдена', HttpStatus.BAD_REQUEST);
     const old = {...viewpoint.dataValues};
     for(const item of viewpoint.items) {
       await item.destroy();
@@ -152,7 +152,7 @@ export class ViewpointsService {
 
   async test(name: string) {
     const res = await this.viewpointsRepository.findOne({ where: [{ name }] });
-    if (res === undefined) return true;
+    if (res === null) return true;
     return false;
   }
 

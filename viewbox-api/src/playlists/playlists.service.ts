@@ -59,7 +59,7 @@ export class PlaylistsService {
 
   async update(dto: PlaylistUpdateDto) {
     const playlist = await this.playlistsRepository.findByPk(dto.id, { include: [{ model: PlaylistItem, include: [{ model: ContentItem, include: [{ model: ImageItem }, { model: VideoItem }] }] }] });
-    if (playlist === undefined) return new HttpException('Список воспроизведения не найден', HttpStatus.BAD_REQUEST);
+    if (playlist === null) return new HttpException('Список воспроизведения не найден', HttpStatus.BAD_REQUEST);
     const old = { ...playlist.dataValues };
     if (playlist.name !== dto.name || playlist.description !== dto.description) {
       playlist.name = dto.name;
@@ -91,7 +91,7 @@ export class PlaylistsService {
     }
     for (const item of dto.items) {
       const aItem = actual.items.find(x => x.position === item.position);
-      if (aItem !== undefined) {
+      if (aItem !== null) {
         if (item.duration !== aItem.duration || item.expireDate !== aItem.expireDate || item.position !== aItem.position || item.startDate !== aItem.startDate) {
           const oldItem = { ...aItem.dataValues };
           aItem.duration = item.duration;
@@ -152,8 +152,35 @@ export class PlaylistsService {
 
   async test(name: string) {
     const res = await this.playlistsRepository.findOne({ where: [{ name }] });
-    if (res === undefined) return true;
+    if (res === null) return true;
     return false;
+  }
+
+  async copy(id: number) {
+    const playlist = await this.playlistsRepository.findByPk(id, {include: [{model: PlaylistItem}]});
+    const currentDate = new Date();
+    const name = `${playlist.name}_копия_${currentDate.getDate()}.${currentDate.getMonth()}.${currentDate.getFullYear()}_${currentDate.getHours()}:${currentDate.getMinutes()}:${currentDate.getSeconds()}`;
+    const newPlaylist = await this.playlistsRepository.create({ name, description: playlist.description });
+    try {
+      this.journalService.addRecord({
+        eventEntity: EventEntity.Playlist,
+        eventType: EventType.Create,
+        entityName: newPlaylist.name,
+        entityActual: { ...newPlaylist.dataValues }
+      });
+    } catch {}
+    for (const item of playlist.items) {
+      const playlistItem = await this.playlistsItemsRepository.create({ ...item.dataValues, playlistId: newPlaylist.id });
+      try {
+        this.journalService.addRecord({
+          eventEntity: EventEntity.PlaylistItem,
+          eventType: EventType.Link,
+          entityName: newPlaylist.name,
+          entityActual: { ...playlistItem.dataValues }
+        });
+      } catch {}
+    }
+    return await this.playlistsRepository.findByPk(newPlaylist.id, { include: [{ model: PlaylistItem, include: [{ model: ContentItem, include: [{ model: ImageItem }, { model: VideoItem }] }] }] });
   }
 
 }

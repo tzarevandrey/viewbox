@@ -9,6 +9,7 @@ import { TJournalDetails } from '../../../core/types/journal-details';
 import { ENTITY_FIELDS_NAMES } from '../../../core/dictionaries/entity-fields.dictionary';
 import { closeModal } from '../../../reducers/modal.slice';
 import { Error } from '../../shared/error/error.page';
+import { getJournalDetailValue } from '../../../utils/func';
 
 type TProps = {
   journal: TJournal;
@@ -42,7 +43,7 @@ export const JournalDetails = ({ journal, color }: TProps) => {
       key: 'prevValue',
       render: (_, item) => {
         return (
-          <div>{item.prevValue}</div>
+          <div>{getJournalDetailValue(item.prevValue, item.entityField)}</div>
         )
       }
     },
@@ -52,7 +53,7 @@ export const JournalDetails = ({ journal, color }: TProps) => {
       key: 'actualValue',
       render: (_, item) => {
         return (
-          <div>{item.actualValue}</div>
+          <div>{getJournalDetailValue(item.actualValue, item.entityField)}</div>
         )
       }
     }

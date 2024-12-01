@@ -4,7 +4,7 @@ import { ContentItem } from "src/content-items/content-items.model";
 
 interface PlaylistItemCreationAttr {
   playlistId: number;
-  contentItenId: number;
+  contentItemId: number;
   position: number;
   duration: number | null;
   startDate: Date | null;

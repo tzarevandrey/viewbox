@@ -1,11 +1,7 @@
-import { ContentType } from '../../../core/enums/content.enum';
 import { useAppDispatch } from '../../../hooks';
-import { Button, Checkbox, DatePicker, Flex, Input, Select, Table, TableProps } from 'antd';
-import { COLORS } from '../../../core/constants/colors';
-import { addItem, downItem, removeItem, upItem, updateItem } from '../../../reducers/playlist.slice';
-import { CaretDownOutlined, CaretUpOutlined, CloseOutlined, PlusOutlined } from '@ant-design/icons';
+import { Button, Checkbox, DatePicker, Select, Table, TableProps } from 'antd';
+import { CloseOutlined, PlusOutlined } from '@ant-design/icons';
 import { closeModal, openModal } from '../../../reducers/modal.slice';
-import { NUMBERS } from '../../../core/constants/numbers';
 import moment from 'moment';
 import { useGetAllPlaylistsQuery } from '../../../api/playlists.api';
 import { TViewpointItem } from '../../../core/types/viewpoint-item';
@@ -20,6 +16,8 @@ type TProps = {
 export const ViewpointItemEditTable = ({ items }: TProps) => {
 
   const tableItems = [...items].sort((a, b) => {
+    if (a.isDefault) return -1;
+    if (b.isDefault) return 1;
     if (a.startDate === null) return -1;
     if (b.startDate === null) return 1;
     const aDate = new Date(a.startDate).getTime();
@@ -46,14 +44,17 @@ export const ViewpointItemEditTable = ({ items }: TProps) => {
         <Select
           showSearch
           className='playlist__edit__value'
-          value={item.playlist}
+          value={item.playlist?.id}
           loading={playlistsLoading}
           disabled={playlistsLoadingError}
           onChange={(e) => {
-            dispatch(updateViewpointItem({
-              ...item,
-              playlist: e
-            }));
+            const eItem = playlists?.find(x => x.id === e);
+            if (eItem !== undefined) {
+              dispatch(updateViewpointItem({
+                ...item,
+                playlist: eItem
+              }));
+            }
           }}
         >
           {[...items].sort((a, b) => {
@@ -64,7 +65,7 @@ export const ViewpointItemEditTable = ({ items }: TProps) => {
             return 0;
           }).map(vItem => {
             return (
-              <Select.Option key={vItem.id ?? 0} value={vItem.playlist}>
+              <Select.Option key={vItem.id ?? 0} value={vItem.playlist?.id}>
                 {vItem.playlist?.name}
               </Select.Option>
             )
@@ -122,7 +123,7 @@ export const ViewpointItemEditTable = ({ items }: TProps) => {
             if (e.target.checked) {
               dispatch(setDefaultPlaylist(item.id ?? 0));
             } else {
-              dispatch(updateViewpointItem({ ...item, startDate: new Date(), expireDate: null }));
+              dispatch(updateViewpointItem({ ...item, startDate: new Date(), expireDate: null, isDefault: false }));
             }
           }} />
         )

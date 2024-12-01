@@ -14,6 +14,9 @@ import { Error } from '../../shared/error/error.page';
 import { ViewpointItemsTable } from './viewpoint-items.table';
 import { getPageLink } from '../../../utils/func';
 import { COLORS } from '../../../core/constants/colors';
+import { URLS } from '../../../core/constants/urls';
+import { CopyOutlined } from '@ant-design/icons';
+import { snack } from '../../../utils/snackbar';
 
 type TProps = {
   functionals?: Functional[];
@@ -60,6 +63,18 @@ export const Viewpoint = ({ functionals }: TProps) => {
         </div>
       </div>
       <div className='viewpoint__view'>
+        <div className='viewpoint__view__label'>Ссылка для подключения:</div>
+        <div className='viewpoint__view__value'>
+          <div className='viewpoint__view__link-block'>
+            <a className='value_clickable' target='_blank' rel='noreferrer' href={`${URLS.BASE_VIEW}/play/${viewpoint?.id}`}>{`${URLS.BASE_VIEW}/play/${viewpoint?.id}`}</a>
+            <CopyOutlined
+              className='copy-icon'
+              onClick={() => {
+                navigator.clipboard.writeText(`${URLS.BASE_VIEW}/play/${viewpoint?.id}`).then(() => snack.success('Ссылка скопирована'))
+              }}
+            />
+          </div>
+        </div>
         <div className='viewpoint__view__label'>Идентификатор:</div>
         <div className='viewpoint__view__value'>{viewpoint?.id}</div>
         <div className='viewpoint__view__label'>Имя панели:</div>

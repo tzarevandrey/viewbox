@@ -40,4 +40,9 @@ export class PlaylistsController {
     return await this.playlistsService.test(name);
   }
 
+  @Post('/copy/:id')
+  async copy(@Param('id') id: number) {
+    return await this.playlistsService.copy(id);
+  }
+
 }

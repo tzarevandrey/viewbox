@@ -2,7 +2,7 @@ import { useNavigate, useParams } from 'react-router-dom';
 import { Functional } from '../../../core/enums/functional.enum';
 import { useAppDispatch } from '../../../hooks';
 import { setTitle } from '../../../reducers/title.slice';
-import { useDeletePlaylistMutation, useGetPlaylistQuery } from '../../../api/playlists.api';
+import { useCopyPlaylistMutation, useDeletePlaylistMutation, useGetPlaylistQuery } from '../../../api/playlists.api';
 import { Fragment, useEffect } from 'react';
 import { Button, Flex } from 'antd';
 import { PAGES_CONFIG } from '../../../core/dictionaries/pages.config.dictionary';
@@ -33,6 +33,7 @@ export const Playlist = ({ functionals }: TProps) => {
   const dispatch = useAppDispatch();
 
   const [deletePlaylist] = useDeletePlaylistMutation();
+  const [copyPlaylist] = useCopyPlaylistMutation();
 
   const {
     data: playlist,
@@ -94,6 +95,17 @@ export const Playlist = ({ functionals }: TProps) => {
                 }
               }}
             >Изменить</Button>
+          ) : null}
+          {functionals?.includes(Functional.Update) || functionals?.includes(Functional.Create) ? (
+            <Button
+              type='default'
+              htmlType='button'
+              onClick={() => {
+                if (playlistId) {
+                  copyPlaylist(playlist?.id ?? 0).unwrap().then(() => navigate(PAGES_CONFIG[Page.Playlists].link));
+                }
+              }}
+            >Копировать</Button>
           ) : null}
           {functionals?.includes(Functional.Delete) ? (
             <Button

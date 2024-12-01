@@ -53,7 +53,7 @@ export class GroupsService {
 
   async update(dto: GroupUpdateDto) {
     const group = await this.groupsRepository.findByPk(dto.id, { include: [{ model: GroupRole }] });
-    if (group === undefined) throw new HttpException(`Группа ${dto.id} не найдена`, HttpStatus.BAD_REQUEST);
+    if (group === null) throw new HttpException(`Группа ${dto.id} не найдена`, HttpStatus.BAD_REQUEST);
     const old = { ...group.dataValues };
     if (group.name !== dto.name || (group.description ?? null) !== (dto.description ?? null)) {
       group.name = dto.name;
@@ -120,7 +120,7 @@ export class GroupsService {
 
   async test(name: string) {
     const res = await this.groupsRepository.findOne({ where: [{ name }] });
-    if (res === undefined) return true;
+    if (res === null) return true;
     return false;
   }
 

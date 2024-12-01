@@ -39,19 +39,23 @@ export const PlaylistItemEditTable = ({ items }: TProps) => {
       render: (_, item) =>
         <Select
           showSearch
-          className='content__edit__value first-value'
-          value={item.contentItem}
+          className='content__edit__value first-value content__select-row'
+          value={item.contentItem.id}
           loading={contentLoading}
           disabled={contentLoadingError}
 
           onChange={(e) => {
-            dispatch(updateItem({
-              contentItem: e,
-              position: item.position,
-              duration: e.contentType === ContentType.Video ? null : item.duration ?? NUMBERS.DEFAULT_DURATION,
-              startDate: item.startDate,
-              expireDate: item.expireDate
-            }));
+            const eItem = content?.find(x => x.id === e);
+            if (eItem !== undefined) {
+              dispatch(updateItem({
+                contentItem: eItem,
+                position: item.position,
+                duration: eItem.contentType === ContentType.Video ? null : item.duration ?? NUMBERS.DEFAULT_DURATION,
+                startDate: item.startDate,
+                expireDate: item.expireDate
+              }));
+            }
+
           }}
         >
           {[...(content ?? [])].sort((a, b) => a.contentType - b.contentType).map(cnt => {
@@ -78,7 +82,7 @@ export const PlaylistItemEditTable = ({ items }: TProps) => {
           render: (_, item) => {
             return (
               <DatePicker
-                className='content__edit__value middle-value'
+                className='content__edit__value edit__value_date middle-value'
                 format={dateFormat}
                 showTime
                 value={item.startDate ? moment(item.startDate) : null}
@@ -96,7 +100,7 @@ export const PlaylistItemEditTable = ({ items }: TProps) => {
           render: (_, item) => {
             return (
               <DatePicker
-                className='content__edit__value middle-value'
+                className='content__edit__value edit__value_date middle-value'
                 format={dateFormat}
                 showTime
                 value={item.expireDate ? moment(item.expireDate) : null}

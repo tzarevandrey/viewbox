@@ -34,11 +34,19 @@ export const viewpointsApi = api.injectEndpoints({
       providesTags: (result) => result ? [{ type: `${Api.Viewpoints}`, id: result.id }] : []
     }),
     addViewpoint: builder.mutation<TViewpoint, TViewpoint>({
-      query: (body) => ({
-        url: '/viewpoints',
-        method: 'post',
-        body
-      }),
+      query: (body) => {
+        let bodyPrepared = {
+          ...body, items: body.items?.map(x => {
+            let temp = { ...x, playlistId: x.playlist?.id };
+            return temp;
+          })
+        }
+        return {
+          url: '/viewpoints',
+          method: 'post',
+          body: bodyPrepared
+        }
+      },
       async onQueryStarted(_, { queryFulfilled }) {
         try {
           const { data } = await queryFulfilled;

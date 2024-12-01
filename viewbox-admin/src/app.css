@@ -39,7 +39,8 @@
 }
 
 .content-row,
-.groups-row {
+.groups-row,
+.viewpoints-row {
   overflow: hidden;
   cursor: pointer;
 }
@@ -82,19 +83,23 @@
 .contents-page__subheader,
 .groups-page__subheader,
 .playlists-page__subheader,
-.playlist-page__subheader {
+.playlist-page__subheader,
+.viewpoints-page__subheader,
+.viewpoint-page__subheader {
   display: flex;
   justify-content: space-between;
   padding: 0 8px 8px 0;
 }
 
-.playlist-page__subheader {
+.playlist-page__subheader,
+.viewpoint-page__subheader {
   justify-content: end;
 }
 
 .contents-page__subheader__legend-block,
 .groups-page__subheader__legend-block,
-.playlist-page__subheader__legend-block {
+.playlist-page__subheader__legend-block,
+.viewpoint-page__subheader__legend-block {
   display: grid;
   grid-template-columns: 1fr;
 }
@@ -136,7 +141,8 @@
 .content__view,
 .group__view,
 .playlist__view,
-.journal-details__main {
+.journal-details__main,
+.viewpoint__view {
   display: grid;
   grid-template-columns: auto 1fr;
   gap: 10px;
@@ -147,7 +153,8 @@
 .content__view__label,
 .group__view__label,
 .playlist__view__label,
-.journal-detail__main__label {
+.journal-detail__main__label,
+.viewpoint__view__label {
   display: flex;
   justify-content: end;
   color: darkgray;
@@ -157,7 +164,8 @@
 .content__view__value,
 .group__view__value,
 .playlist__view__value,
-.journal-detail__main__value {
+.journal-detail__main__value,
+.viewpoint__view__value {
   font-weight: 600;
 }
 
@@ -171,7 +179,8 @@
 
 .content__view__value_out,
 .group__view__value_out,
-.playlist__view__value_out {
+.playlist__view__value_out,
+.viewpoint__view__value_out {
   color: darkgray;
 }
 
@@ -188,7 +197,8 @@
 
 .contents-page__subheader__buttons-block,
 .groups-page__subheader__buttons-block,
-.playlists-page__subheader__buttons-block {
+.playlists-page__subheader__buttons-block,
+.viewpoints-page__subheader__buttons-block {
   display: flex;
   align-items: center;
 }
@@ -234,13 +244,15 @@
   font-weight: 600;
 }
 
-.playlist_add-item_modal {
+.playlist_add-item_modal,
+.viewpoint_add-item_modal {
   display: flex;
   flex-direction: column;
   gap: 10px;
 }
 
-.content__select-row {
+.content__select-row,
+.playlist__select-row {
   display: flex;
   gap: 5px;
   align-items: center;
@@ -304,4 +316,17 @@
 .content__view__preview {
   max-width: 400px;
   min-width: 400px;
+}
+
+.edit__value_date {
+  min-width: 150px;
+}
+
+.viewpoint__view__link-block {
+  display: flex;
+  gap: 10px;
+}
+
+.copy-icon {
+  font-size: 24px;
 }
