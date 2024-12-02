@@ -1,8 +1,7 @@
 import { useParams } from "react-router-dom";
-import { useAppDispatch, useAppSelector } from "../../../hooks";
-import { useGetActualPlaylistQuery } from "../../../api/viewpoint.api";
-import { useEffect } from "react";
-import { setNext } from "../../../reducers/play.slice";
+import { useAppSelector, useViewpoint } from "../../../hooks";
+import { Fragment } from "react";
+import { ViewItem } from '../../shared/view-item.element';
 
 type TParams = {
   id: string;
@@ -11,22 +10,18 @@ type TParams = {
 export const Play = () => {
 
   const { id: viewpointId } = useParams<TParams>();
-  const dispatch = useAppDispatch();
+  useViewpoint(viewpointId ? +viewpointId : 0);
 
-  const {
-    data: items,
-    isLoading,
-    isError,
-  } = useGetActualPlaylistQuery(viewpointId ? +viewpointId : 0);
-
-  useEffect(() => {
-    if (items) dispatch(setNext(items));
-    // eslint-disable-next-line
-  }, [items]);
-
-  const { currentList } = useAppSelector(x => x.play);
+  const { currentList, nextList, flag } = useAppSelector(x => x.play);
 
   return (
-    <></>
+    <Fragment>
+      <div className={`content-view ${flag ? 'content-view_now' : 'content-view_next'}`}>
+        {currentList.map(item => <ViewItem key={`current${item.position}`} item={item} runFlag={true} />)}
+      </div>
+      <div className={`content-view ${!flag ? 'content-view_now' : 'content-view_next'}`}>
+        {nextList.map(item => <ViewItem key={`next${item.position}`} item={item} runFlag={false} />)}
+      </div>
+    </Fragment>
   )
 }

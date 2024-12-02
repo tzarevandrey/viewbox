@@ -4,30 +4,53 @@ import { TPlaylistItem } from "../core/types/playlist-item"
 type TState = {
   currentList: TPlaylistItem[];
   nextList: TPlaylistItem[];
+  flag: boolean;
+  currentIndex: number;
 }
 
 const initialState: TState = {
   currentList: [],
-  nextList: []
+  nextList: [],
+  flag: false,
+  currentIndex: 1,
 }
 
 export const playSlice = createSlice({
   name: 'play',
   initialState,
   reducers: {
-    setNext: (state, actions: PayloadAction<TPlaylistItem[]>) => {
-      if (state.nextList.length === 0) {
+    setItems: (state, actions: PayloadAction<TPlaylistItem[]>) => {
+      if (state.flag) {
         state.currentList = [...actions.payload];
+        if (state.nextList.length === 0) state.nextList = [...actions.payload];
       } else {
-        state.currentList = [...state.nextList];
-      } 
-      state.nextList = [...actions.payload];
+        state.nextList = [...actions.payload];
+        if (state.currentList.length === 0) state.currentList = [...actions.payload];
+      }
+    },
+    goNext: (state) => {
+      if (state.flag) {
+        if (state.currentIndex >= state.nextList.length) {
+          state.currentIndex = 1;
+          state.flag = !state.flag;
+        } else {
+          state.currentIndex = state.currentIndex + 1;
+        }
+      } else {
+        if (state.currentIndex >= state.currentList.length) {
+          state.currentIndex = 1;
+          state.flag = !state.flag;
+        } else {
+          state.currentIndex = state.currentIndex + 1;
+        }
+      }
     }
   }
 })
 
 export const {
-  setNext,
+  setItems,
+  goNext,
 } = playSlice.actions;
 
 export const playReducer = playSlice.reducer;

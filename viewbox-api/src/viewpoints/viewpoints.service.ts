@@ -8,6 +8,8 @@ import { ViewpointsUpdateDto } from './dto/viewpoints.update.dto';
 import { Playlist } from 'src/playlists/playlists.model';
 import { EventEntity } from 'src/core/enums/event-entities.enum';
 import { EventType } from 'src/core/enums/event-types.enum';
+import { ContentItem } from 'src/content-items/content-items.model';
+import { PlaylistItem } from 'src/playlists/playlists.items.model';
 
 @Injectable()
 export class ViewpointsService {
@@ -133,10 +135,10 @@ export class ViewpointsService {
   }
 
   async delete(id: number) {
-    const viewpoint = await this.viewpointsRepository.findByPk(id, {include: [{model: ViewpointItem}]});
+    const viewpoint = await this.viewpointsRepository.findByPk(id, { include: [{ model: ViewpointItem }] });
     if (viewpoint === null) return new HttpException('Панель воспроизведения не найдена', HttpStatus.BAD_REQUEST);
-    const old = {...viewpoint.dataValues};
-    for(const item of viewpoint.items) {
+    const old = { ...viewpoint.dataValues };
+    for (const item of viewpoint.items) {
       await item.destroy();
     }
     await viewpoint.destroy();
@@ -147,13 +149,44 @@ export class ViewpointsService {
         entityName: old.name,
         entityOld: { ...old }
       })
-    } catch {}
+    } catch { }
   }
 
   async test(name: string) {
     const res = await this.viewpointsRepository.findOne({ where: [{ name }] });
     if (res === null) return true;
     return false;
+  }
+
+  async play(id: number) {
+    const viewpoint = await this.viewpointsRepository.findByPk(id,
+      {
+        include: [{
+          model: ViewpointItem,
+          include: [{
+            model: Playlist,
+            include: [{
+              model: PlaylistItem,
+              include: [{ model: ContentItem }]
+            }]
+          }]
+        }]
+      });
+    if (viewpoint === undefined || viewpoint.items.length === 0) return new HttpException('Панель не найдена или не настроена', HttpStatus.BAD_REQUEST);
+    const currentDate = Date.now();
+    const selectedItems = viewpoint.items.filter(x => x.startDate !== null
+      && new Date(x.startDate).getTime() <= currentDate
+      && (x.expireDate === null
+        || new Date(x.expireDate).getTime() > currentDate));
+    if (selectedItems.length !== 0) {
+      const mVal = Math.max(...selectedItems.map(x => new Date(x.startDate).getTime()));
+      const result = selectedItems.find(x => x.startDate === new Date(mVal));
+      return result.playlist.items;
+    } else {
+      const defaultPlaylist = viewpoint.items.find(x => x.isDefault);
+      if (defaultPlaylist === undefined) return new HttpException('Список воспроизведения не найден', HttpStatus.BAD_REQUEST);
+      return defaultPlaylist.playlist.items;
+    }
   }
 
 }

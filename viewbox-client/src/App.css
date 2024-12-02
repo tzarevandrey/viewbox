@@ -5,3 +5,34 @@
   height: 100vh;
   overflow: hidden;
 }
+
+.content-view {
+  display: flex;
+  position: absolute;
+  inset: 0;
+}
+
+.content__viewed {
+  opacity: 1;
+}
+
+.content__hided {
+  opacity: 0;
+}
+
+.content-view_now {
+  opacity: 1;
+}
+
+.content-view_next {
+  opacity: 0;
+}
+
+.content__image,
+.content__video,
+.content__webpage {
+  display: flex;
+  inset: 0;
+  object-fit: cover;
+  border: 0;
+}

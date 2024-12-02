@@ -1,4 +1,4 @@
-import { BrowserRouter, Route, Routes } from 'react-router-dom';
+import { BrowserRouter, Navigate, Route, Routes } from 'react-router-dom';
 import { useAppDispatch, useAuth } from './hooks';
 import './app.css';
 // import { Error } from './components/shared/error/error.page';
@@ -19,30 +19,20 @@ function App() {
   } = useAuth();
 
   useEffect(() => {
-    if (!isLoading && data) {
+    if (!isLoading && !isError && data) {
       dispatch(setAuth(data));
     }
     // eslint-disable-next-line
-  }, [isLoading, data])
+  }, [isLoading, isError, data])
 
   return (
     <BrowserRouter>
-      {!isLoading
-        ? (
-          !isError && data
-            ? (
-              <div className='app-container'>
-                <Routes>
-                  <Route path='/play/:id' element={<Play />} />
-                  <Route path='/test/:id' element={<Test />} />
-                  <Route path='/' element={<Viewpoints />} />
-                </Routes>
-              </div>
-            ) : null
-            // <Error />
-        ) : null
-        // <Loading />
-      }
+      <Routes>
+        <Route path='/play/:id' element={<Play />} />
+        <Route path='/test/:id' element={<Test />} />
+        <Route path='/' element={<Viewpoints />} />
+        <Route path='*' element={<Navigate to='/' />} />
+      </Routes>
     </BrowserRouter>
   );
 }
