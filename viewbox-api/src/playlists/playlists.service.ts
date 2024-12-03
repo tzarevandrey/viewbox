@@ -11,6 +11,7 @@ import { ContentItem } from 'src/content-items/content-items.model';
 import { ImageItem } from 'src/content-items/image-items.model';
 import { VideoItem } from 'src/content-items/video-items.model';
 import { Viewpoint } from 'src/viewpoints/viewpoints.model';
+import { ViewpointItem } from 'src/viewpoints/viewpoints.items.model';
 
 @Injectable()
 export class PlaylistsService {
@@ -22,7 +23,7 @@ export class PlaylistsService {
   ) { }
 
   async getOne(id: number) {
-    const playlist = await this.playlistsRepository.findByPk(id, { include: [{ model: PlaylistItem, include: [{ model: ContentItem, include: [{ model: ImageItem }, { model: VideoItem }] }] }, { model: Viewpoint }] });
+    const playlist = await this.playlistsRepository.findByPk(id, { include: [{ model: ViewpointItem, include: [{ model: Viewpoint }] }, { model: PlaylistItem, include: [{ model: ContentItem, include: [{ model: ImageItem }, { model: VideoItem }] }] }] });
     return playlist;
   }
 
@@ -91,7 +92,7 @@ export class PlaylistsService {
     }
     for (const item of dto.items) {
       const aItem = actual.items.find(x => x.position === item.position);
-      if (aItem !== null) {
+      if (aItem !== undefined) {
         if (item.duration !== aItem.duration || item.expireDate !== aItem.expireDate || item.position !== aItem.position || item.startDate !== aItem.startDate) {
           const oldItem = { ...aItem.dataValues };
           aItem.duration = item.duration;
@@ -157,7 +158,7 @@ export class PlaylistsService {
   }
 
   async copy(id: number) {
-    const playlist = await this.playlistsRepository.findByPk(id, {include: [{model: PlaylistItem}]});
+    const playlist = await this.playlistsRepository.findByPk(id, { include: [{ model: PlaylistItem }] });
     const currentDate = new Date();
     const name = `${playlist.name}_копия_${currentDate.getDate()}.${currentDate.getMonth()}.${currentDate.getFullYear()}_${currentDate.getHours()}:${currentDate.getMinutes()}:${currentDate.getSeconds()}`;
     const newPlaylist = await this.playlistsRepository.create({ name, description: playlist.description });
@@ -168,7 +169,7 @@ export class PlaylistsService {
         entityName: newPlaylist.name,
         entityActual: { ...newPlaylist.dataValues }
       });
-    } catch {}
+    } catch { }
     for (const item of playlist.items) {
       const playlistItem = await this.playlistsItemsRepository.create({ ...item.dataValues, playlistId: newPlaylist.id });
       try {
@@ -178,7 +179,7 @@ export class PlaylistsService {
           entityName: newPlaylist.name,
           entityActual: { ...playlistItem.dataValues }
         });
-      } catch {}
+      } catch { }
     }
     return await this.playlistsRepository.findByPk(newPlaylist.id, { include: [{ model: PlaylistItem, include: [{ model: ContentItem, include: [{ model: ImageItem }, { model: VideoItem }] }] }] });
   }

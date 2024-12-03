@@ -29,7 +29,7 @@ export const playSlice = createSlice({
       }
     },
     goNext: (state) => {
-      if (state.flag) {
+      if (!state.flag) {
         if (state.currentIndex >= state.nextList.length) {
           state.currentIndex = 1;
           state.flag = !state.flag;

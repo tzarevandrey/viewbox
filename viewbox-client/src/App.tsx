@@ -12,18 +12,14 @@ function App() {
 
   const dispatch = useAppDispatch();
 
-  const {
-    isLoading,
-    isError,
-    data
-  } = useAuth();
+  const { data } = useAuth();
 
   useEffect(() => {
-    if (!isLoading && !isError && data) {
+    if (data) {
       dispatch(setAuth(data));
     }
     // eslint-disable-next-line
-  }, [isLoading, isError, data])
+  }, [data])
 
   return (
     <BrowserRouter>

@@ -35,7 +35,7 @@ export const viewpointsApi = api.injectEndpoints({
     }),
     addViewpoint: builder.mutation<TViewpoint, TViewpoint>({
       query: (body) => {
-        let bodyPrepared = {
+        const bodyPrepared = {
           ...body, items: body.items?.map(x => {
             let temp = { ...x, playlistId: x.playlist?.id };
             return temp;

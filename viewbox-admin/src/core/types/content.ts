@@ -1,5 +1,5 @@
 import { ContentType } from '../enums/content.enum';
-import { TPlaylist } from './playlist';
+import { TPlaylistItem } from './playlist-item';
 
 export type TContent = {
   id?: number;
@@ -18,5 +18,5 @@ export type TContent = {
   webpageItem?: {
     id: number;
   },
-  playlists?: TPlaylist[];
+  playlistItems?: TPlaylistItem[];
 }

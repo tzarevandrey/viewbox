@@ -11,6 +11,8 @@ import { ContentUpdateDto } from './dto/content-items.update.dto';
 import { JournalsService } from 'src/journals/journals.service';
 import { EventEntity } from 'src/core/enums/event-entities.enum';
 import { EventType } from 'src/core/enums/event-types.enum';
+import { PlaylistItem } from 'src/playlists/playlists.items.model';
+import { Playlist } from 'src/playlists/playlists.model';
 
 @Injectable()
 export class ContentItemsService {
@@ -32,7 +34,7 @@ export class ContentItemsService {
 
   async getOne(id: number) {
     const content = await this.contentRepository.findByPk(id, {
-      include: [{ all: true }]
+      include: [{ model: ImageItem }, { model: VideoItem }, { model: WebpageItem }, { model: PlaylistItem, include: [{ model: Playlist }] }]
     })
     if (!content) throw new HttpException(`Контент ${id} не найден`, HttpStatus.BAD_REQUEST);
     return content;

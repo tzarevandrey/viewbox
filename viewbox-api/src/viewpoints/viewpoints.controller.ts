@@ -42,7 +42,7 @@ export class ViewpointsController {
 
   @Get('/play/:id')
   async play(@Param('id') id: number) {
-    await this.viewpointsService.play(id);
+    return await this.viewpointsService.play(id);
   }
 
 }

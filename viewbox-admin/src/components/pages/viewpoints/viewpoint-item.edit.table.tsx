@@ -57,16 +57,16 @@ export const ViewpointItemEditTable = ({ items }: TProps) => {
             }
           }}
         >
-          {[...items].sort((a, b) => {
-            const aName = (a.playlist?.name ?? '').toLowerCase();
-            const bName = (b.playlist?.name ?? '').toLowerCase();
+          {[...(playlists ?? [])].sort((a, b) => {
+            const aName = (a.name ?? '').toLowerCase();
+            const bName = (b.name ?? '').toLowerCase();
             if (aName > bName) return 1;
             if (aName < bName) return -1;
             return 0;
           }).map(vItem => {
             return (
-              <Select.Option key={vItem.id ?? 0} value={vItem.playlist?.id}>
-                {vItem.playlist?.name}
+              <Select.Option key={vItem.id ?? 0} value={vItem.id}>
+                {vItem.name}
               </Select.Option>
             )
           })}
@@ -132,7 +132,7 @@ export const ViewpointItemEditTable = ({ items }: TProps) => {
     {
       key: 'buttons',
       title: <Button icon={<PlusOutlined />} onClick={() =>
-        dispatch(openModal(() => <ViewpointItemAddModal items={playlists} handler={(id) => {
+        dispatch(openModal(() => <ViewpointItemAddModal items={playlists?.filter(x => !items.map(y => y.playlist?.id).includes(x.id))} handler={(id) => {
           dispatch(closeModal());
           const item = playlists?.find(x => x.id === id);
           if (item) dispatch(addViewpointItem(item));

@@ -84,18 +84,18 @@ export const Content = ({ functionals }: TProps) => {
             <div className='content__view__label'>Описание:</div>
             <div className='content__view__value'>{content?.description}</div>
             <div className='content__view__label'>Используется в списках воспроизведения:</div>
-            {(content?.playlists?.length ?? 0) > 0 ? (
+            {(content?.playlistItems?.length ?? 0) > 0 ? (
               <div className='content__view__value content__view__value__list'>
-                {content?.playlists?.map(playlist => (
+                {content?.playlistItems?.map(playlistItem => (
                   <div
-                    key={playlist.id}
+                    key={playlistItem.position}
                     className='value_clickable'
                     onClick={() => {
                       const link = getPageLink(Page.Playlists, Functional.Read);
-                      if (link) navigate(link.replace(':id', `${playlist.id}`));
+                      if (link) navigate(link.replace(':id', `${playlistItem.playlist?.id}`));
                     }}
                   >
-                    {playlist.name}
+                    {playlistItem.playlist?.name}
                   </div>
                 ))}
               </div>
@@ -129,7 +129,7 @@ export const Content = ({ functionals }: TProps) => {
               htmlType='button'
               danger
               onClick={() => {
-                if (content && (!content?.playlists || content.playlists.length === 0)) {
+                if (content && (!content?.playlistItems || content.playlistItems.length === 0)) {
                   dispatch(openModal(() =>
                     <DeleteModal
                       handler={() => {

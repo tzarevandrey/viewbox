@@ -1,10 +1,10 @@
 import { TPlaylistItem } from './playlist-item';
-import { TViewpoint } from './viewpoint';
+import { TViewpointItem } from './viewpoint-item';
 
 export type TPlaylist = {
   id?: number;
   name: string;
   description?: string | null;
   items?: TPlaylistItem[];
-  viewpoints?: TViewpoint[];
+  viewpointItems?: TViewpointItem[];
 }

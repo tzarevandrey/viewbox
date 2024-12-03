@@ -3,7 +3,7 @@ import { api } from "./api";
 
 export const playlistApi = api.injectEndpoints({
   endpoints: (builder) => ({
-    getPlaylist: builder.query<TPlaylistItem[], number>({
+    getPlaylist: builder.mutation<TPlaylistItem[], number>({
       query: (id) => ({
         url: `/playlists/play/${id}`,
         method: 'get'
@@ -14,5 +14,5 @@ export const playlistApi = api.injectEndpoints({
 })
 
 export const {
-  useGetPlaylistQuery,
+  useGetPlaylistMutation,
 } = playlistApi;

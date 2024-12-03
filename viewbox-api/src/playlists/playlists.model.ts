@@ -1,7 +1,6 @@
-import { BelongsToMany, Column, DataType, HasMany, Model, Table } from "sequelize-typescript";
+import { Column, DataType, HasMany, Model, Table } from "sequelize-typescript";
 import { PlaylistItem } from "./playlists.items.model";
 import { ViewpointItem } from 'src/viewpoints/viewpoints.items.model';
-import { Viewpoint } from 'src/viewpoints/viewpoints.model';
 
 interface PlaylistCreationAttr {
   name: string;
@@ -23,7 +22,7 @@ export class Playlist extends Model<Playlist, PlaylistCreationAttr> {
   @HasMany(() => PlaylistItem)
   items: PlaylistItem[];
 
-  @BelongsToMany(() => Viewpoint, () => ViewpointItem)
-  viewpoints: Viewpoint[];
+  @HasMany(() => ViewpointItem)
+  viewpointItems: ViewpointItem[];
 
 }

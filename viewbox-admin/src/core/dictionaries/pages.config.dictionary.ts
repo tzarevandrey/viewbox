@@ -104,18 +104,18 @@ export const PAGES_CONFIG: {
   },
   [Page.Viewpoints]: {
     mainMenuName: 'Панели воспроизведения',
-    link: '/viwpoints',
+    link: '/viewpoints',
     Jsx: Viewpoints,
     order: 10,
     functionals: [
       {
-        [Functional.Create]: { link: '/viwpoints/new', Jsx: ViewpointCreate }
+        [Functional.Create]: { link: '/viewpoints/new', Jsx: ViewpointCreate }
       },
       {
-        [Functional.Read]: { link: '/viwpoints/:id', Jsx: Viewpoint }
+        [Functional.Read]: { link: '/viewpoints/:id', Jsx: Viewpoint }
       },
       {
-        [Functional.Update]: { link: '/viwpoints/edit/:id', Jsx: ViewpointEdit }
+        [Functional.Update]: { link: '/viewpoints/edit/:id', Jsx: ViewpointEdit }
       }
     ]
   },

@@ -21,7 +21,7 @@ export const playlistSlice = createSlice({
     },
     removeItem: (state, action: PayloadAction<number>) => {
       state.items = state.items.filter(x => x.position !== action.payload)
-        .map(x => x.position > action.payload ? { ...x, position: action.payload - 1 } : x);
+        .map(x => x.position > action.payload ? { ...x, position: x.position - 1 } : x);
     },
     addItem: (state, action: PayloadAction<TContent>) => {
       const position = state.items.length + 1;

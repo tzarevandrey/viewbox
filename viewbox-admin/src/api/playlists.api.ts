@@ -35,7 +35,7 @@ export const playlistsApi = api.injectEndpoints({
     }),
     addPlaylist: builder.mutation<TPlaylist, TPlaylist>({
       query: (body) => {
-        let bodyPrepared = {
+        const bodyPrepared = {
           ...body, items: body.items?.map(x => {
             let temp = { ...x, contentItemId: x.contentItem.id };
             return temp;
@@ -63,11 +63,19 @@ export const playlistsApi = api.injectEndpoints({
       }
     }),
     updatePlaylist: builder.mutation<TPlaylist, TPlaylist>({
-      query: (body) => ({
-        url: '/playlists',
-        method: 'put',
-        body
-      }),
+      query: (body) => {
+        const bodyPrepared = {
+          ...body, items: body.items?.map(x => {
+            let temp = { ...x, contentItemId: x.contentItem.id ?? x.contentItem.id };
+            return temp;
+          })
+        }
+        return {
+          url: '/playlists',
+          method: 'put',
+          body: bodyPrepared
+        }
+      },
       async onQueryStarted(_, { queryFulfilled }) {
         try {
           const { data } = await queryFulfilled;

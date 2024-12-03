@@ -1,4 +1,5 @@
 import { TContent } from './content'
+import { TPlaylist } from './playlist';
 
 export type TPlaylistItem = {
   contentItem: TContent;
@@ -6,4 +7,5 @@ export type TPlaylistItem = {
   duration: number | null;
   startDate: Date | null;
   expireDate: Date | null;
+  playlist?: TPlaylist;
 }

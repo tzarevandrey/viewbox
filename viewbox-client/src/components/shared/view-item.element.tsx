@@ -18,38 +18,40 @@ export const ViewItem = ({ item, runFlag }: TProps) => {
   const { currentIndex, flag } = useAppSelector(x => x.play);
 
   useEffect(() => {
-    if ((item.contentItem.contentType === ContentType.Picture || item.contentItem.contentType === ContentType.WebPage)
-      && currentIndex === item.position
-      && flag === runFlag) {
-      setTimeout(() => dispatch(goNext()), (item.duration ?? NUMBERS.DEFAULT_DURATION) * 1000);
+    if (runFlag
+      && (item.contentItem.contentType === ContentType.Picture || item.contentItem.contentType === ContentType.WebPage)
+      && currentIndex === item.position) {
+      setTimeout(() => {
+        console.log(item.position, runFlag);
+        dispatch(goNext());
+      }, (item.duration ?? NUMBERS.DEFAULT_DURATION) * 1000);
     }
-  }, [currentIndex]);
+  }, [currentIndex, flag]);
 
-  let extendedClass = currentIndex === item.position && flag === runFlag ? 'content__viewed' : 'content__hided';
+  let extendedClass = currentIndex === item.position && runFlag ? 'content__viewed' : 'content__hided';
 
   if (item.contentItem.contentType === ContentType.Picture) return (
-    <img
-      className={`content__image ${extendedClass}`}
-      src={`${URLS.BASE_API}/${item.contentItem.name}`}
-    />
+    <div className={`content__image ${extendedClass}`}>
+      <img src={`${URLS.BASE_API}/${item.contentItem.name}`} alt='' />
+    </div>
   )
 
   if (item.contentItem.contentType === ContentType.WebPage) return (
-    <iframe
-      className={`content__webpage ${extendedClass}`}
-      src={item.contentItem.name}
-    />
+    <div className={`content__webpage ${extendedClass}`}>
+      <iframe src={item.contentItem.name} title={`${item.contentItem.name}_${item.position}`} />
+    </div>
   )
 
   if (item.contentItem.contentType === ContentType.Video) return (
-    <video
-      controls={false}
-      preload='true'
-      className={`content__video ${extendedClass}`}
-      onEnded={() => dispatch(goNext())}
-    >
-      <source src={`${URLS.BASE_API}/${item.contentItem.name}`} />
-    </video>
+    <div className={`content__video ${extendedClass}`}>
+      <video
+        controls={false}
+        preload='true'
+        onEnded={() => dispatch(goNext())}
+      >
+        <source src={`${URLS.BASE_API}/${item.contentItem.name}`} />
+      </video>
+    </div>
   )
 
   return <></>

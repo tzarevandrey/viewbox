@@ -114,7 +114,7 @@ export const Playlist = ({ functionals }: TProps) => {
               danger
               onClick={() => {
                 if (playlistId) {
-                  if (playlist?.viewpoints && playlist.viewpoints.length > 0) {
+                  if (playlist?.viewpointItems && playlist.viewpointItems.length > 0) {
                     snack.error('Список воспроизведения используется, удаление невозможно')
                   } else {
                     dispatch(openModal(() =>
