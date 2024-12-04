@@ -45,4 +45,9 @@ export class PlaylistsController {
     return await this.playlistsService.copy(id);
   }
 
+  @Get('/play/:id')
+  async play(@Param('id') id: number) {
+    return await this.playlistsService.play(id);
+  }
+
 }

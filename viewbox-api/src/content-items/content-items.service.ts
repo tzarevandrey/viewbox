@@ -11,8 +11,8 @@ import { ContentUpdateDto } from './dto/content-items.update.dto';
 import { JournalsService } from 'src/journals/journals.service';
 import { EventEntity } from 'src/core/enums/event-entities.enum';
 import { EventType } from 'src/core/enums/event-types.enum';
-import { PlaylistItem } from 'src/playlists/playlists.items.model';
 import { Playlist } from 'src/playlists/playlists.model';
+import { PlaylistItem } from 'src/playlists/playlists.items.model';
 
 @Injectable()
 export class ContentItemsService {
@@ -22,6 +22,7 @@ export class ContentItemsService {
     @InjectModel(ImageItem) private iamgeRepository: typeof ImageItem,
     @InjectModel(VideoItem) private videoRepository: typeof VideoItem,
     @InjectModel(WebpageItem) private webpageRepository: typeof WebpageItem,
+    @InjectModel(Playlist) private playlistRepository: typeof Playlist,
     private filesService: FilesService,
     private journalService: JournalsService
   ) { }
@@ -34,10 +35,11 @@ export class ContentItemsService {
 
   async getOne(id: number) {
     const content = await this.contentRepository.findByPk(id, {
-      include: [{ model: ImageItem }, { model: VideoItem }, { model: WebpageItem }, { model: PlaylistItem, include: [{ model: Playlist }] }]
+      include: [{ model: ImageItem }, { model: VideoItem }, { model: WebpageItem }]
     })
-    if (!content) throw new HttpException(`Контент ${id} не найден`, HttpStatus.BAD_REQUEST);
-    return content;
+    if (!content) return new HttpException(`Контент ${id} не найден`, HttpStatus.BAD_REQUEST);
+    const playlists = await this.playlistRepository.findAll({ include: [{ model: PlaylistItem, required: true, where: [{ contentItemId: id }] }] });
+    return { ...content.dataValues, playlists: playlists.map(x => ({ id: x.id, name: x.name })) };
   }
 
   async addContent(dto: ContentItemCreateDto, file?: Express.Multer.File) {

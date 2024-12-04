@@ -1,3 +1,4 @@
+import { TContentGetDto } from '../components/pages/contents/dto/content.get.dto';
 import { Api } from "../core/enums/api.enum";
 import { TContent } from '../core/types/content';
 import { snack } from '../utils/snackbar';
@@ -19,7 +20,7 @@ export const contentApi = api.injectEndpoints({
       },
       providesTags: (result) => result ? [{ type: `${Api.Contents}`, id: 'list' }] : []
     }),
-    getContent: builder.query<TContent, number>({
+    getContent: builder.query<TContentGetDto, number>({
       query: (id) => ({
         url: `/content/${id}`,
         method: 'get',

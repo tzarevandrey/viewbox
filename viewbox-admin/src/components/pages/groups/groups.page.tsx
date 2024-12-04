@@ -125,6 +125,7 @@ export const Groups = ({ functionals }: TProps) => {
         </div>
       </div>
       <Table<TGroup>
+        locale={{ emptyText: 'группы доступа отсутствуют' }}
         bordered
         size='small'
         columns={columns}

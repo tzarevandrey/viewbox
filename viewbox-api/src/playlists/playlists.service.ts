@@ -12,6 +12,7 @@ import { ImageItem } from 'src/content-items/image-items.model';
 import { VideoItem } from 'src/content-items/video-items.model';
 import { Viewpoint } from 'src/viewpoints/viewpoints.model';
 import { ViewpointItem } from 'src/viewpoints/viewpoints.items.model';
+import { Op } from 'sequelize';
 
 @Injectable()
 export class PlaylistsService {
@@ -19,12 +20,15 @@ export class PlaylistsService {
   constructor(
     @InjectModel(Playlist) private playlistsRepository: typeof Playlist,
     @InjectModel(PlaylistItem) private playlistsItemsRepository: typeof PlaylistItem,
+    @InjectModel(Viewpoint) private viewpointRepository: typeof Viewpoint,
     private journalService: JournalsService
   ) { }
 
   async getOne(id: number) {
-    const playlist = await this.playlistsRepository.findByPk(id, { include: [{ model: ViewpointItem, include: [{ model: Viewpoint }] }, { model: PlaylistItem, include: [{ model: ContentItem, include: [{ model: ImageItem }, { model: VideoItem }] }] }] });
-    return playlist;
+    const playlist = await this.playlistsRepository.findByPk(id, { include: [{ model: PlaylistItem, include: [{ model: ContentItem, include: [{ model: ImageItem }, { model: VideoItem }] }] }] });
+    if (!playlist) return new HttpException(`Список воспроизведения ${id} не найден`, HttpStatus.BAD_REQUEST);
+    const viewpoints = await this.viewpointRepository.findAll({ include: [{ model: ViewpointItem, required: true, where: [{ playlistId: id }] }] });
+    return { ...playlist.dataValues, viewpoints: viewpoints.map(x => ({ id: x.id, name: x.name })) };
   }
 
   async add(dto: PlaylistCreateDto) {
@@ -171,7 +175,9 @@ export class PlaylistsService {
       });
     } catch { }
     for (const item of playlist.items) {
-      const playlistItem = await this.playlistsItemsRepository.create({ ...item.dataValues, playlistId: newPlaylist.id });
+      let temp = { ...item.dataValues };
+      delete temp['id'];
+      const playlistItem = await this.playlistsItemsRepository.create({ ...temp, playlistId: newPlaylist.id });
       try {
         this.journalService.addRecord({
           eventEntity: EventEntity.PlaylistItem,
@@ -182,6 +188,35 @@ export class PlaylistsService {
       } catch { }
     }
     return await this.playlistsRepository.findByPk(newPlaylist.id, { include: [{ model: PlaylistItem, include: [{ model: ContentItem, include: [{ model: ImageItem }, { model: VideoItem }] }] }] });
+  }
+
+  async play(id: number) {
+    const currentDate = new Date();
+    const playlist = await this.playlistsRepository.findByPk(id, {
+      include: [{
+        model: PlaylistItem, where: [{
+          [Op.and]: [
+            {
+              startDate: {
+                [Op.or]: [
+                  { [Op.eq]: null },
+                  { [Op.lte]: currentDate }
+                ]
+              }
+            },
+            {
+              expireDate: {
+                [Op.or]: [
+                  { [Op.eq]: null },
+                  { [Op.gte]: currentDate }
+                ]
+              }
+            }
+          ]
+        }], include: [{ model: ContentItem, include: [{ model: ImageItem }, { model: VideoItem }] }]
+      }]
+    })
+    return playlist.items;
   }
 
 }

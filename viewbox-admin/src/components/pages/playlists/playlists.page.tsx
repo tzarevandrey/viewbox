@@ -89,6 +89,7 @@ export const Playlists = ({ functionals }: TProps) => {
         </div>
       </div>
       <Table<TPlaylist>
+        locale={{ emptyText: 'списки воспроизведения отсутствуют' }}
         bordered
         size='small'
         columns={columns}

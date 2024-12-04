@@ -10,6 +10,7 @@ import { EventEntity } from 'src/core/enums/event-entities.enum';
 import { EventType } from 'src/core/enums/event-types.enum';
 import { ContentItem } from 'src/content-items/content-items.model';
 import { PlaylistItem } from 'src/playlists/playlists.items.model';
+import { Op } from 'sequelize';
 
 @Injectable()
 export class ViewpointsService {
@@ -50,7 +51,9 @@ export class ViewpointsService {
       });
     } catch { }
     for (const item of dto.items) {
-      const viewpointItem = await this.viewpointsItemsRepository.create({ ...item, viewpointId: viewpoint.id });
+      let temp = { ...item };
+      delete temp['id'];
+      const viewpointItem = await this.viewpointsItemsRepository.create({ ...temp, viewpointId: viewpoint.id });
       try {
         this.journalService.addRecord({
           eventEntity: EventEntity.ViewpointItem,
@@ -159,6 +162,7 @@ export class ViewpointsService {
   }
 
   async play(id: number) {
+    const cd = new Date();
     const viewpoint = await this.viewpointsRepository.findByPk(id,
       {
         include: [{
@@ -167,20 +171,40 @@ export class ViewpointsService {
             model: Playlist,
             include: [{
               model: PlaylistItem,
+              where: [{
+                [Op.and]: [
+                  {
+                    startDate: {
+                      [Op.or]: [
+                        { [Op.eq]: null },
+                        { [Op.lte]: cd }
+                      ]
+                    }
+                  },
+                  {
+                    expireDate: {
+                      [Op.or]: [
+                        { [Op.eq]: null },
+                        { [Op.gte]: cd }
+                      ]
+                    }
+                  }
+                ]
+              }],
               include: [{ model: ContentItem }]
             }]
           }]
         }]
       });
     if (viewpoint === undefined || viewpoint.items.length === 0) return new HttpException('Панель не найдена или не настроена', HttpStatus.BAD_REQUEST);
-    const currentDate = Date.now();
+    const currentDate = cd.getTime();
     const selectedItems = viewpoint.items.filter(x => x.startDate !== null
       && new Date(x.startDate).getTime() <= currentDate
       && (x.expireDate === null
         || new Date(x.expireDate).getTime() > currentDate));
     if (selectedItems.length !== 0) {
       const mVal = Math.max(...selectedItems.map(x => new Date(x.startDate).getTime()));
-      const result = selectedItems.find(x => x.startDate === new Date(mVal));
+      const result = selectedItems.find(x => new Date(x.startDate).getTime() === mVal);
       return result.playlist.items;
     } else {
       const defaultPlaylist = viewpoint.items.find(x => x.isDefault);

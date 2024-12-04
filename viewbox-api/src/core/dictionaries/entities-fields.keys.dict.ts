@@ -13,6 +13,7 @@ export const ENTITIES_FIELDS_KEYS: {
     'deletedAt': EntityField.PlaylistDeletedAt,
   },
   [EventEntity.PlaylistItem]: {
+    'id': EntityField.PlaylistItemId,
     'playlistId': EntityField.PlaylistItemPlaylistId,
     'contentItemId': EntityField.PlaylistItemContentItemId,
     'position': EntityField.PlaylistItemPosition,

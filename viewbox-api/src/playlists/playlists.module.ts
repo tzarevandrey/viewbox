@@ -6,6 +6,7 @@ import { Playlist } from './playlists.model';
 import { PlaylistItem } from './playlists.items.model';
 import { JwtModule } from '@nestjs/jwt';
 import { JournalsModule } from 'src/journals/journals.module';
+import { Viewpoint } from 'src/viewpoints/viewpoints.model';
 
 @Module({
   providers: [PlaylistsService],
@@ -14,7 +15,8 @@ import { JournalsModule } from 'src/journals/journals.module';
   imports: [
     SequelizeModule.forFeature([
       Playlist,
-      PlaylistItem
+      PlaylistItem,
+      Viewpoint,
     ]),
     JwtModule,
     JournalsModule

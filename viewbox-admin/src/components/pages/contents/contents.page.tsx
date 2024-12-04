@@ -117,6 +117,7 @@ export const Contents = ({ functionals }: TProps) => {
         </div>
       </div>
       <Table<TContent>
+        locale={{ emptyText: 'контент отсутствует' }}
         bordered
         size='small'
         columns={columns}

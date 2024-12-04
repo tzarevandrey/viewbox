@@ -132,7 +132,7 @@ export const ViewpointItemEditTable = ({ items }: TProps) => {
     {
       key: 'buttons',
       title: <Button icon={<PlusOutlined />} onClick={() =>
-        dispatch(openModal(() => <ViewpointItemAddModal items={playlists?.filter(x => !items.map(y => y.playlist?.id).includes(x.id))} handler={(id) => {
+        dispatch(openModal(() => <ViewpointItemAddModal items={playlists} handler={(id) => {
           dispatch(closeModal());
           const item = playlists?.find(x => x.id === id);
           if (item) dispatch(addViewpointItem(item));

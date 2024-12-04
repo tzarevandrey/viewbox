@@ -31,6 +31,11 @@ export function getJournalDetailValue(val: string | null, field: EntityField): R
   const dateFormat = 'DD.MM.YYYY HH:mm'
 
   switch (field) {
+    case EntityField.ViewpointId: return val;
+    case EntityField.ViewpointName: return val;
+    case EntityField.ViewpointDescription: return val;
+    case EntityField.ViewpointItemViewpointId: return val;
+    case EntityField.ViewpointItemPlaylistId: return val;
     case EntityField.PlaylistId: return val;
     case EntityField.PlaylistName: return val;
     case EntityField.PlaylistDescription: return val;
@@ -74,6 +79,13 @@ export function getJournalDetailValue(val: string | null, field: EntityField): R
     case EntityField.ContentWebpageId: return val;
     case EntityField.ContentWebpageContentItemId: return val;
     case EntityField.ContentWebpageDeletedAt: return moment(val).format(dateFormat);
+    case EntityField.ViewpointItemStartDate: return moment(val).format(dateFormat);
+    case EntityField.ViewpointItemExpireDate: return moment(val).format(dateFormat);
+    case EntityField.ViewpointItemIsDefault: if (val.toLowerCase() === 'true') {
+      return 'Да';
+    } else { return 'Нет'; }
+    case EntityField.ViewpointItemId: return val;
+    case EntityField.PlaylistItemId: return val;
   }
 }
 

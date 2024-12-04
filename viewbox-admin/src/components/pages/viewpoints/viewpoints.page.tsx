@@ -90,6 +90,7 @@ export const Viewpoints = ({ functionals }: TProps) => {
         </div>
       </div>
       <Table<TViewpoint>
+        locale={{ emptyText: 'панели воспроизведения отсутствуют' }}
         bordered
         size='small'
         columns={columns}

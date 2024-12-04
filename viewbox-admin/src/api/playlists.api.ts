@@ -1,3 +1,4 @@
+import { TPlaylistGetDto } from '../components/pages/playlists/dto/playlist.get.dto';
 import { Api } from "../core/enums/api.enum";
 import { TPlaylist } from '../core/types/playlist';
 import { snack } from '../utils/snackbar';
@@ -19,7 +20,7 @@ export const playlistsApi = api.injectEndpoints({
       },
       providesTags: (result) => result ? [{ type: `${Api.Playlists}`, id: 'list' }] : []
     }),
-    getPlaylist: builder.query<TPlaylist, number>({
+    getPlaylist: builder.query<TPlaylistGetDto, number>({
       query: (id) => ({
         url: `/playlists/${id}`,
         method: 'get'

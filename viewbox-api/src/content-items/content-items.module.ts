@@ -9,6 +9,7 @@ import { WebpageItem } from './webpage-items.model';
 import { JwtModule } from '@nestjs/jwt';
 import { FilesModule } from 'src/files/files.module';
 import { JournalsModule } from 'src/journals/journals.module';
+import { Playlist } from 'src/playlists/playlists.model';
 
 @Module({
   providers: [ContentItemsService],
@@ -19,6 +20,7 @@ import { JournalsModule } from 'src/journals/journals.module';
       ImageItem,
       VideoItem,
       WebpageItem,
+      Playlist,
     ]),
     JwtModule,
     FilesModule,

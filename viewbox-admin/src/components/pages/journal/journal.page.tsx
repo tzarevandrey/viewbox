@@ -117,6 +117,7 @@ export const Journal = ({ functionals }: TProps) => {
         </div>
       </Form>
       <Table<TJournal>
+        locale={{ emptyText: 'события отсутствуют' }}
         bordered
         columns={columns}
         dataSource={[...(journal?.data ?? [])].sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime())}

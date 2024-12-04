@@ -63,11 +63,19 @@ export const viewpointsApi = api.injectEndpoints({
       }
     }),
     updateViewpoint: builder.mutation<TViewpoint, TViewpoint>({
-      query: (body) => ({
-        url: '/viewpoints',
-        method: 'put',
-        body
-      }),
+      query: (body) => {
+        const bodyPrepared = {
+          ...body, items: body.items?.map(x => {
+            let temp = { ...x, playlistId: x.playlist?.id };
+            return temp;
+          })
+        }
+        return {
+          url: '/viewpoints',
+          method: 'put',
+          body: bodyPrepared
+        }
+      },
       async onQueryStarted(_, { queryFulfilled }) {
         try {
           const { data } = await queryFulfilled;

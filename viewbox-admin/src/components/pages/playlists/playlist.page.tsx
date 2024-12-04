@@ -15,6 +15,8 @@ import { Loading } from '../../shared/loading/loading.page';
 import { Error } from '../../shared/error/error.page';
 import { getPageLink } from '../../../utils/func';
 import { snack } from '../../../utils/snackbar';
+import { CopyOutlined } from '@ant-design/icons';
+import { URLS } from '../../../core/constants/urls';
 
 type TProps = {
   functionals?: Functional[];
@@ -65,6 +67,23 @@ export const Playlist = ({ functionals }: TProps) => {
         </div>
       </div>
       <div className='playlist__view'>
+        {playlist && playlist?.items.length > 0
+          ? (
+            <Fragment>
+              <div className='playlist__view__label'>Ссылка для просмотра:</div>
+              <div className='playlist__view__link-block'>
+                <a className='value_clickable' target='_blank' rel='noreferrer' href={`${URLS.BASE_VIEW}/test/${playlist?.id}`}>{`${URLS.BASE_VIEW}/test/${playlist?.id}`}</a>
+                <CopyOutlined
+                  className='copy-icon'
+                  onClick={() => {
+                    navigator.clipboard.writeText(`${URLS.BASE_VIEW}/test/${playlist?.id}`).then(() => snack.success('Ссылка скопирована'))
+                  }}
+                />
+              </div>
+            </Fragment>
+          )
+          : null
+        }
         <div className='playlist__view__label'>Идентификатор:</div>
         <div className='playlist__view__value'>{playlist?.id}</div>
         <div className='playlist__view__label'>Имя списка:</div>
@@ -114,7 +133,7 @@ export const Playlist = ({ functionals }: TProps) => {
               danger
               onClick={() => {
                 if (playlistId) {
-                  if (playlist?.viewpointItems && playlist.viewpointItems.length > 0) {
+                  if (playlist?.viewpoints && playlist.viewpoints.length > 0) {
                     snack.error('Список воспроизведения используется, удаление невозможно')
                   } else {
                     dispatch(openModal(() =>

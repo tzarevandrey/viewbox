@@ -322,7 +322,8 @@
   min-width: 150px;
 }
 
-.viewpoint__view__link-block {
+.viewpoint__view__link-block,
+.playlist__view__link-block {
   display: flex;
   gap: 10px;
 }

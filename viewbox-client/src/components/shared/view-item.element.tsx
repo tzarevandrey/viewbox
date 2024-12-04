@@ -22,10 +22,10 @@ export const ViewItem = ({ item, runFlag }: TProps) => {
       && (item.contentItem.contentType === ContentType.Picture || item.contentItem.contentType === ContentType.WebPage)
       && currentIndex === item.position) {
       setTimeout(() => {
-        console.log(item.position, runFlag);
         dispatch(goNext());
       }, (item.duration ?? NUMBERS.DEFAULT_DURATION) * 1000);
     }
+    // eslint-disable-next-line
   }, [currentIndex, flag]);
 
   let extendedClass = currentIndex === item.position && runFlag ? 'content__viewed' : 'content__hided';
