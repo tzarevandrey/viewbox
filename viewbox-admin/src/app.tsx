@@ -84,8 +84,7 @@ function App() {
                         )
                       }
                       return null;
-                    })
-                    }
+                    })}
                   </Routes>
                 </div>
               </div>
